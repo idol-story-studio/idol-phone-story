@@ -13,6 +13,7 @@
 #appbody>.content{height:calc(100% - 115px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
 #home .pages{overflow:hidden}
 </style>
+<link rel="stylesheet" href="css/instagram.css">
 </head>
 <body>
 <div id="phone">
@@ -25,7 +26,7 @@
 </div>
 <script>
 const CONFIG={
-  password:"1130",userName:"林知夏",contactName:"姜允澈",twitterHandle:"@xia_private",
+  password:"1130",userName:"姜敏熙",contactName:"宋亨俊",twitterHandle:"@minhee_private",
   chat:[{from:"them",text:"你到家了吗？",time:"晚上 9:14"},{from:"me",text:"刚到，你呢？",time:"晚上 9:15"},{from:"them",text:"我还在练习室。今天的事……我想当面和你说。",time:"晚上 9:16"}],
   tweets:["今天的月亮很亮。突然想起某个人说过，看到月亮就会想到我。","如果明天可以不用假装不认识就好了。"],
   notes:["11月30日：记得给他准备生日礼物。","没有发出去的那封信：其实我一直都知道。"],
@@ -79,7 +80,7 @@ function stopRing(){if(ringTimer){clearInterval(ringTimer);ringTimer=null}}
 function notify(message){if(activeApp==="kkt"&&current==="appview")return;ding();$("toast").textContent="KakaoTalk · "+message;$("toast").style.display="block";clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").style.display="none",3600)}
 
 function wrap(title,body,extra=""){show("appview");$("appbody").innerHTML=`<div class="apphead"><button class="back" onclick="goHome()">‹ 返回</button><span>${title}</span><span style="width:48px;text-align:right">${extra}</span></div>${body}`}
-function openApp(k){activeApp=k;if(k==="ig"){startCall();return}if(k==="kkt"){friends();return}if(k==="phone"){calls();return}if(k==="x"){twitter();return}if(k==="notes"){noteList();return}if(k==="photos"){photos();return}if(k==="msg"){messages();return}if(k==="camera"){camera();return}wrap(apps.find(a=>a[1]===k)?.[0]||"应用",'<div class="content" style="padding-top:45px;text-align:center;color:#888">这里暂时没有新的内容</div>')}
+function openApp(k){activeApp=k;if(k==="ig"){instagram();return}if(k==="kkt"){friends();return}if(k==="phone"){calls();return}if(k==="x"){twitter();return}if(k==="notes"){noteList();return}if(k==="photos"){photos();return}if(k==="msg"){messages();return}if(k==="camera"){camera();return}wrap(apps.find(a=>a[1]===k)?.[0]||"应用",'<div class="content" style="padding-top:45px;text-align:center;color:#888">这里暂时没有新的内容</div>')}
 function friends(){activeApp="kkt";wrap("好友",`<div class="content"><div class="item" onclick="profile()"><div class="avatar">夏</div><div class="itemmain"><div class="itemtitle">${CONFIG.userName}</div><div class="itemsub">今天也要开心</div></div></div><h4>好友 1</h4><div class="item" onclick="chatRoom()"><div class="avatar">允</div><div class="itemmain"><div class="itemtitle">${CONFIG.contactName}</div><div class="itemsub">${chat.at(-1)?.text||""}</div></div><span class="muted">1</span></div></div><div class="tabs"><button onclick="friends()">●<br>好友</button><button onclick="chatRoom()">▤<br>聊天</button><button onclick="friends()">⌕<br>发现</button><button onclick="profile()">•••<br>更多</button></div>`)}
 function profile(){activeApp="kkt";wrap("个人资料",`<div class="content" style="text-align:center;padding-top:65px"><div class="avatar" style="margin:auto;width:100px;height:100px;font-size:40px">夏</div><h2>${CONFIG.userName}</h2><p>今天也要开心</p><button class="choice" onclick="friends()">返回好友列表</button></div>`)}
 function chatRoom(){activeApp="kkt";let rows=chat.map(m=>`<div class="bubbleline ${m.from==="me"?"me":""}">${m.from==="me"?`<span class="chatmeta">${m.time||"刚刚"}</span>`:""}<div class="bubble">${escapeHtml(m.text)}</div>${m.from!=="me"?`<span class="chatmeta">${m.time||"刚刚"}</span>`:""}</div>`).join("");
@@ -103,4 +104,5 @@ function startCall(type="Instagram"){audioReady();callSession++;clearInterval(ca
 function answerCall(){stopRing();$("answer").style.display="none";$("pip").style.display="grid";$("callsub").textContent="正在通话";callStart=Date.now();let session=callSession;clearInterval(callTimer);callTimer=setInterval(()=>{let s=Math.floor((Date.now()-callStart)/1000);$("calltimer").textContent=`通话中 · ${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`},500);CONFIG.callLines.forEach(line=>setTimeout(()=>{if(callSession===session&&$("call").classList.contains("show"))$("callmsg").textContent=line.text},line.delay))}
 function endCall(){stopRing();clearInterval(callTimer);goHome()}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-</script></body></html>
+</script>
+<script src="js/instagram.js"></script></body></html>
