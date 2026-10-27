@@ -116,3 +116,10 @@
 #ch2-chat .story-options{display:flex;flex-direction:column;gap:7px}
 #ch2-chat .story-option{display:block;width:100%;background:rgba(255,255,255,.13);color:#fff;border:1px solid #ffffff35;border-radius:12px;padding:11px;font-size:13px}
 #ch2-chat .story-end{color:#fff;text-align:center;padding:10px}
+
+/* Chapter 2 IG replies: one option per row, fixed below scrollable history. */
+.ch2-ig-choices{flex-direction:column!important;gap:8px;width:100%;flex:0 0 auto;padding:12px 14px calc(14px + env(safe-area-inset-bottom,0px));background:rgba(76,84,96,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.ch2-ig-choices .story-options{display:flex;flex-direction:column;gap:8px;width:100%}
+.ch2-ig-choices .story-option{display:block;width:100%;min-height:42px;border:1px solid #ffffff36;background:#ffffff20;border-radius:12px;color:#fff;font-size:13px;text-align:center;line-height:1.45;padding:10px 12px}
+.ig-root:has(#ch2-dm-choices){display:flex;flex-direction:column;min-height:0;height:100%}
+.ig-root:has(#ch2-dm-choices) #ig-scroll{flex:1 1 auto;min-height:0;overflow-y:auto}
