@@ -21,3 +21,11 @@
 #chatbody{scroll-behavior:auto;overscroll-behavior:contain}
 #toast.story-notification{cursor:pointer;z-index:120!important}
 #toast.story-notification:active{background:rgba(235,235,240,.98)}
+
+/* KakaoTalk chat-list unread counters and delayed typing feedback */
+.story-contact-unread{margin-left:auto;flex:0 0 auto;min-width:21px;height:21px;padding:2px 6px;border-radius:14px;background:#f34b55;color:#fff;font-size:12px;font-weight:700;line-height:17px;text-align:center;align-self:center}
+.story-typing{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;min-height:35px}
+.story-typing span{height:7px;width:7px;border-radius:50%;background:#b1b1b1;animation:storyTyping 1.25s infinite}
+.story-typing span:nth-child(2){animation-delay:.18s}
+.story-typing span:nth-child(3){animation-delay:.36s}
+@keyframes storyTyping{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
