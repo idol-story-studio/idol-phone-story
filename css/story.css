@@ -134,3 +134,49 @@
 .story-ch1-chat .story-options{display:flex;flex-direction:column;gap:7px;width:100%}
 .story-ch1-chat .story-option{display:block;width:100%;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);color:#fff;text-align:center;font-size:13px}
 .story-caller-avatar{width:88px;height:88px;border-radius:50%;margin:0 auto 16px;display:grid;place-items:center;background:linear-gradient(145deg,#9ca9bb,#697d97);color:#fff;font-size:38px;font-weight:500;box-shadow:0 4px 18px #0002}
+
+/* X mobile profile and timeline — scoped to story mode. */
+#appview:has(.story-x-shell) #appbody{height:100%;display:flex;flex-direction:column;overflow:hidden;background:#000;color:#f7f9f9}
+#appview:has(.story-x-shell) .apphead{display:none}
+.story-x-shell{display:flex;flex:1;min-height:0;flex-direction:column;background:#000;color:#f7f9f9;margin:0 -18px;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
+.story-x-top{display:flex;align-items:center;gap:26px;padding:9px 16px 10px;border-bottom:1px solid #2f3336;flex:0 0 auto;min-height:54px}
+.story-x-back{font-size:34px;line-height:32px;cursor:pointer;width:26px}
+.story-x-top strong{font-size:19px;display:block;line-height:23px}
+.story-x-top small{display:block;color:#71767b;font-size:12px;margin-top:1px}
+.story-x-topmore{margin-left:auto;font-size:24px}
+.story-x-shell .story-x{flex:1 1 auto;min-height:0;height:auto;margin:0;overflow-y:auto;padding-bottom:10px;background:#000;color:#f7f9f9;overscroll-behavior:contain}
+.story-x-shell .story-x-banner{height:128px;background:linear-gradient(115deg,#37495b,#64718a 48%,#9a8d9c)}
+.story-x-shell .story-x-profile{padding:0 15px 15px;border-bottom:0}
+.story-x-profile-actions{display:flex;align-items:flex-start;justify-content:space-between;min-height:67px}
+.story-x-profile-avatar{width:78px;height:78px;margin-top:-38px;border:4px solid #000;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#c3b2ad,#7a8da2);color:#fff;font-size:31px;font-weight:650;position:relative}
+.story-x-edit{margin-top:12px;border:1px solid #536471;background:transparent;color:#eff3f4;border-radius:22px;font-weight:700;font-size:13px;padding:8px 15px}
+.story-x-display{display:flex;align-items:center;gap:5px;font-size:20px;line-height:26px}
+.story-x-handle,.story-x-meta{color:#71767b;font-size:14px}
+.story-x-bio{font-size:14px;line-height:1.55;margin:13px 0 8px}
+.story-x-meta{margin:0 0 10px}
+.story-x-stats{font-size:13px;color:#71767b}
+.story-x-stats strong{color:#f7f9f9}
+.story-x-tabs{display:flex;justify-content:space-around;border-bottom:1px solid #2f3336;margin-top:8px}
+.story-x-tabs span{position:relative;padding:15px 8px;color:#71767b;font-size:14px;font-weight:600}
+.story-x-tabs span.selected{color:#f7f9f9}
+.story-x-tabs span.selected:after{content:"";position:absolute;bottom:0;left:15%;right:15%;height:4px;border-radius:6px;background:#1d9bf0}
+.story-x-shell .story-x-post{padding:12px 13px 13px;border-bottom:1px solid #2f3336;line-height:1.5}
+.story-x-reposted{font-size:12px;color:#71767b;padding:0 0 6px 48px;font-weight:600}
+.story-x-postrow{display:flex;align-items:flex-start;gap:10px}
+.story-x-avatar{width:39px;height:39px;flex:0 0 39px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#c3b2ad,#7a8da2);font-size:18px;font-weight:600}
+.story-x-avatar.story-x-brand{background:#222;color:#fff;font-weight:800}
+.story-x-postmain{flex:1;min-width:0}
+.story-x-authorline{display:flex;align-items:baseline;gap:5px;font-size:14px;white-space:nowrap;overflow:hidden}
+.story-x-authorline strong{flex:0 0 auto}
+.story-x-handle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.story-x-more{margin-left:auto;color:#71767b;font-size:18px}
+.story-x-privacy{font-size:12px;color:#71767b;margin:3px 0}
+.story-x-posttext{font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;margin:4px 0 12px}
+.story-x-actions{display:flex;align-items:center;justify-content:space-between;color:#71767b;gap:5px;font-size:17px}
+.story-x-actions span,.story-x-actions button{white-space:nowrap}
+.story-x-actions small{font-size:11px;color:#71767b}
+.story-x-actions button{border:0;background:none;color:#71767b;padding:0;font-size:17px}
+.story-x-actions button.liked{color:#f91880}
+.story-x-bottom{height:52px;display:flex;align-items:center;justify-content:space-around;border-top:1px solid #2f3336;flex:0 0 auto;font-size:25px;background:#000}
+.story-x-bottom .selected{color:#f7f9f9}
+.story-x-shell .story-x-foot{font-size:12px;color:#71767b;padding:14px 18px;text-align:center}
