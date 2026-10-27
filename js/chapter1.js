@@ -26,6 +26,7 @@ function gameNotifyContact(id){game.chatUnread[id]++;gameSyncKktUnread();if(acti
 function gameUnlock(app){return app==='notes'||['photos','calendar','map','settings','youtube','spotify','camera','msg'].includes(app)||(app==='kkt'&&game.stage!=='intro')||(app==='x'&&['x','phone','wonjin','end','chapter2'].includes(game.stage))||(app==='phone'&&(['phone','wonjin','end','chapter2'].includes(game.stage)&&game.phoneNoteRead))||(app==='ig'&&game.chapter2)}
 function gameLocked(){let t=$('toast');t.className='toast';t.onclick=null;t.textContent='当前未开放该功能';t.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.display='none',2200)}
 function gameExitX(){if(activeApp==='x'&&game.stage==='x'&&game.xSeen.size===4){game.stage='phone';game.xExited=true;gameNotify('notes','新的线索');}}
+const originalStoryShow=show;let storyUnlockedOnce=false;show=function(id){let previous=current;originalStoryShow(id);if(id==='home'&&!storyUnlockedOnce&&(previous==='pass'||previous==='lock')){storyUnlockedOnce=true;setTimeout(()=>{if(game.stage==='intro'&&game.unread.notes>0&&current!=='lock'&&current!=='pass')gameShowBanner('notes','备忘录有新的内容')},1600)}};
 const oldHome=goHome;goHome=function(){gameExitX();oldHome();gameBadge()};
 const oldOpen=openApp;openApp=function(k){if(!gameUnlock(k)){gameLocked();return}if(k==='notes'){gameNotes();return}if(k==='kkt'){gameFriends();return}if(k==='x'){gameX();return}if(k==='phone'){gameCalls();return}oldOpen(k)};
 beginPhoneStory=function(){}; // remove the obsolete 120-second call
