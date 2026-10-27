@@ -1,1 +1,15 @@
 .appicon{position:relative}.story-badge{position:absolute;right:-7px;top:-8px;min-width:21px;height:21px;padding:2px 5px;border-radius:20px;background:#ff3447;color:#fff;font-size:12px;font-weight:700;line-height:17px;text-align:center;text-shadow:none;box-shadow:0 1px 4px #0003}.story-prose{padding:24px 22px;line-height:1.9;white-space:normal}.story-prose p{white-space:pre-line}.story-notes .note{cursor:pointer}.story-date{text-align:center;font-size:12px;color:#777;margin:14px 0}.story-blocked{padding:12px;text-align:center;color:#c34a4a;font-size:12px}.story-progress{height:8px;background:#e5e3eb;border-radius:20px;overflow:hidden}.story-progress span{display:block;width:10%;height:100%;background:#9d8dc3}.story-ending{text-align:center}.story-x{height:calc(100dvh - 115px);overflow-y:auto;background:#050505;color:#fff;margin:0 -18px;padding-bottom:60px;overscroll-behavior:contain}.story-x-banner{height:120px;background:linear-gradient(120deg,#303d55,#8c7187)}.story-x-profile{padding:20px;border-bottom:1px solid #343434}.story-x-profile div,.story-x-time{color:#999;font-size:12px}.story-x-post{padding:18px 20px;border-bottom:1px solid #303030;line-height:1.65}.story-x-author{font-weight:700;font-size:14px}.story-x-post p{white-space:pre-wrap}.story-x-foot{text-align:center;color:#999;font-size:12px;padding:24px}
+/* Unclipped home-screen unread badges: attach to the app button, not the icon. */
+.app{position:relative;overflow:visible}
+.appicon{overflow:hidden}
+.story-badge{z-index:60;top:-9px;right:calc(50% - 38px);min-width:22px;height:22px;line-height:18px;background:#ff3048;border:2px solid #fff;box-shadow:0 2px 5px #0004;pointer-events:none}
+.dock .story-badge{right:calc(50% - 37px)}
+/* iOS-style notification banner with app icon, label, timestamp and summary. */
+#toast.story-notification{position:absolute;top:53px;left:12px;right:12px;z-index:100;display:none;align-items:center;gap:11px;text-align:left;padding:12px 14px;background:rgba(248,248,252,.94);color:#1d1d21;border:1px solid rgba(255,255,255,.7);border-radius:19px;box-shadow:0 8px 28px #0004;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);font-size:14px}
+.story-notification-icon{width:40px;height:40px;flex:0 0 40px;display:grid;place-items:center;border-radius:11px;background:#fee500;color:#352b00;font-size:12px;font-weight:900}
+.story-notification-text{flex:1;min-width:0}
+.story-notification-app{font-weight:700;font-size:13px;display:flex;justify-content:space-between;gap:10px}
+.story-notification-app span{font-size:11px;font-weight:400;color:#777}
+.story-notification-body{margin-top:4px;font-size:13px;line-height:1.4}
+.story-notes .note{padding:16px;margin-bottom:12px}
+.story-ending .choice{margin-top:28px}
