@@ -70,3 +70,7 @@ igAllComments=function(i){
  }
  return rows;
 };
+
+/* First opening Instagram in Chapter 2 goes to Minhee's own profile. */
+const ch2OldOpenApp=openApp;
+openApp=function(k){if(k==='ig'&&ch2Active()&&CH2.phase==='ig'){activeApp='ig';instagram('profile');return}return ch2OldOpenApp(k)};
