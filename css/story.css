@@ -29,3 +29,10 @@
 .story-typing span:nth-child(2){animation-delay:.18s}
 .story-typing span:nth-child(3){animation-delay:.36s}
 @keyframes storyTyping{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+
+/* Keep the entire KakaoTalk conversation area blue, regardless of message count. */
+#appview:has(#chatbody) #appbody{background:#b6c6d2;min-height:100%;height:100%;display:flex;flex-direction:column;overflow:hidden}
+#appview:has(#chatbody) .apphead{flex:0 0 auto;background:#b6c6d2}
+#appview:has(#chatbody) #chatbody{flex:1 1 auto;min-height:0;height:auto!important;background:#b6c6d2}
+#appview:has(#chatbody) .story-send{position:relative!important;bottom:auto!important;left:auto!important;right:auto!important;flex:0 0 auto;width:100%;background:#fff}
+#appview:has(#chatbody) .story-send[style*="display:none"]{display:none!important}
