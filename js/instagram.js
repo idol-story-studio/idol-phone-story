@@ -84,14 +84,30 @@ const IG_EXTRA_COMMENTS={
  7:[['Allen','生日快乐敏熙！🎂'],['具廷谟','生日快乐！今天开心一点ㅎㅎ'],['徐宇瑸','我们敏熙生日快乐🤍'],['咸元进','蛋糕好吃吗ㅋㅋ'],['金太英','生日快乐哥！！'],['安性珉','生日快乐ㅎㅎ']],
  8:[['朴世琳','以后也一起拿奖吧'],['Allen','永远记得今天'],['咸元进','大家都辛苦了ㅠㅠ'],['安性珉','下次也一起！']]
 };
-const IG_FAN_NAMES=['luvity_0914','星星收藏夹','小狗观察日记','今天也喜欢敏熙','九颗星的宇宙','舞台记录簿'];
-const IG_FAN_WORDS=['这张照片也太好看了ㅠㅠ','一直支持你们！','今天也被帅到了ㅋㅋ','好期待下一次舞台！','照片的氛围好喜欢🤍','辛苦啦，好好休息！'];
+/* Each post has its own fan voices; names and messages are intentionally distinct. */
+const IG_FAN_COMMENTS=[
+ [['minhee_archive','这张黑色造型我真的反复看了十遍'],['bluehour_1024','这个眼神谁能顶得住啊ㅠㅠ'],['minhee_focus','请问这组还有别的照片吗！']],
+ [['louder_luvity','九个人一起站在这里真的好幸福ㅠㅠ'],['starry_ot9','这次回归一定要健健康康的！'],['cravity_stage','概念照的氛围绝了，舞台快来'],['our_nine_stars','从出道陪到现在，好骄傲']],
+ [['comeback_clock','LOUDER 到底什么时候能听完整版！'],['ninebeats','已经开始倒数了啊啊啊'],['stage_cam_lover','这次编舞感觉会很厉害']],
+ [['conceptcollector','这套概念图色调太漂亮了'],['luvity_blueprint','全员造型都好适合啊！'],['album_shelf','专辑已经预购了，快来吧']],
+ [['award_night_99','看到你们拿奖我真的哭了ㅠㅠ'],['always_luvity','以后还要一起拿好多好多奖'],['tiny_star_0529','后台合照看起来好幸福']],
+ [['gym_minhee','练完记得好好吃饭啊ㅋㅋ'],['protein_luv','敏熙这次是不是又练背了'],['healthy_puppy','注意休息！别太累']],
+ [['hyeongmin_daily','omg你们真的不是一对吗？？'],['two_puppies_09','这是什么小情侣拍照氛围ㅋㅋ'],['couple_detective','不是，旁边那个笑得也太甜了吧']],
+ [['birthday_minnie','我们敏熙小狗生日快乐！！！🎂'],['0917_cakeclub','今天要做世界上最幸福的小狗'],['minhee_day_only','生日快乐！九个人一起吃蛋糕了吗'],['luvity_birthday','希望新的一岁每天都开心ㅠㅠ']],
+ [['trophy_shelf','拿奖的时候你们眼睛都亮了ㅠㅠ'],['nineforever','CRAVITY 值得所有掌声'],['firstrow_luv','下次现场见！我们还要一起欢呼']],
+ [['blackcoat_lover','这件外套是谁的呀ㅋㅋ'],['closet_clue','等等，这不是之前双人照那件吗'],['softfocus_77','拍得像电影截图一样']],
+ [['backstage_whisper','后台你们到底在笑什么ㅋㅋ'],['two_shadows','怎么又靠这么近啊！'],['laughing_star','光看照片都觉得好吵哈哈哈']],
+ [['sunny_side_729','夏天的感觉一下子就来了'],['puppy_cam','笑起来真的好像小狗'],['weekend_luv','请多发这种日常！']],
+ [['drink_date_716','两杯饮料？谁跟你一起呀👀'],['couple_moment','这个角度像有人坐在你对面拍的'],['icedlatte_00','夏天就是要喝冰的！']],
+ [['breadtime_705','面包看起来好好吃'],['little_bakery','所以最后到底是谁吃了ㅋㅋ'],['snack_luvity','好喜欢这种随手记录']],
+ [['heartnote_624','这张的氛围好暧昧啊啊'],['shipper_corner','拜托你们不要再这样对视了'],['quiet_luv','这张我先收藏了🤍']]
+];
 let igNavOrigin='profile',igCommentOrigin='post',igReplyTarget=null,igSavedScroll={feed:0,profile:0};
 function igAllComments(i){
  const original=IG_POSTS[i][4],extras=IG_EXTRA_COMMENTS[i]||[];
  const members=[...original.filter(c=>c[0]!=='姜敏熙'),...extras].filter((c,j,a)=>a.findIndex(x=>x[0]===c[0])===j).map(c=>({name:c[0],text:c[1],member:true,replyTo:null}));
  const own=original.filter(c=>c[0]==='姜敏熙').map(c=>({name:c[0],text:c[1],member:true,replyTo:members[0]?.name||null}));
- const fans=IG_FAN_NAMES.slice(0,[1,2,3,7,8].includes(i)?6:3).map((name,j)=>({name,text:IG_FAN_WORDS[(i+j)%6],member:false,replyTo:null}));
+ const fans=(IG_FAN_COMMENTS[i]||[]).map(([name,text])=>({name,text,member:false,replyTo:null}));
  const added=(igUserComments[i]||[]).map(c=>({name:c[0],text:c[1],member:c[0]==='姜敏熙',replyTo:c[2]||null}));
  return [...members,...own,...fans,...added];
 }
