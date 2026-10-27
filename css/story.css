@@ -46,3 +46,22 @@
 .story-lock-time{align-self:flex-start;font-size:11px;color:#5c5f68}
 .story-notes .note .itemsub{display:none!important}
 .story-notes .note{min-height:54px;display:flex;align-items:center}
+
+/* Compose briefly before sending; preserve the existing chat layout. */
+.story-composing{display:flex;align-items:center;gap:9px;padding:9px 14px;color:#757b85;font-size:12px}
+.story-composing .story-typing{width:auto;min-height:16px}
+.bubbleline .chatmeta:empty{display:none}
+/* Native-like pull-down notification center, scoped to the phone viewport. */
+#story-notification-center{position:absolute;inset:0;z-index:200;display:flex;flex-direction:column;background:linear-gradient(155deg,rgba(48,65,102,.96),rgba(142,145,177,.97));color:#fff;transform:translateY(-105%);transition:transform .26s ease;pointer-events:none;overflow:hidden;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+#story-notification-center.open{transform:translateY(0);pointer-events:auto}
+.story-nc-head{display:flex;align-items:center;justify-content:space-between;padding:55px 18px 18px;gap:12px}
+.story-nc-head strong{font-size:21px}
+.story-nc-head button{background:transparent;color:#fff;font-size:14px;padding:8px}
+.story-nc-list{flex:1;overflow-y:auto;padding:0 16px 16px}
+.story-nc-card{display:flex;align-items:center;text-align:left;gap:11px;width:100%;margin-bottom:9px;padding:13px;border-radius:16px;background:rgba(245,246,250,.89);color:#222;border:1px solid #fff5;box-shadow:0 3px 10px #0002}
+.story-nc-icon{width:39px;height:39px;flex:0 0 39px;display:grid;place-items:center;background:#fee500;color:#392c00;border-radius:10px;font-size:11px;font-weight:800}
+.story-nc-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px;font-size:13px}
+.story-nc-info span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.story-nc-card small{align-self:flex-start;color:#666;font-size:11px}
+.story-nc-empty{text-align:center;padding:70px 10px;color:#fffc;font-size:14px}
+.story-nc-hint{text-align:center;font-size:12px;padding:14px 0 27px;color:#fffc}
