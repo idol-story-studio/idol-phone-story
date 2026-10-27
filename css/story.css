@@ -123,3 +123,14 @@
 .ch2-ig-choices .story-option{display:block;width:100%;min-height:42px;border:1px solid #ffffff36;background:#ffffff20;border-radius:12px;color:#fff;font-size:13px;text-align:center;line-height:1.45;padding:10px 12px}
 .ig-root:has(#ch2-dm-choices){display:flex;flex-direction:column;min-height:0;height:100%}
 .ig-root:has(#ch2-dm-choices) #ig-scroll{flex:1 1 auto;min-height:0;overflow-y:auto}
+
+/* Chapter 1 uses the same fixed-bottom KakaoTalk shell as Chapter 2. */
+#appview:has(.story-ch1-chat) #appbody{display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden;background:#b6c6d2}
+#appview:has(.story-ch1-chat) .apphead{flex:0 0 auto;background:#b6c6d2}
+.story-ch1-chat{display:flex;flex:1 1 auto;flex-direction:column;min-height:0;width:100%;overflow:hidden}
+.story-ch1-chat #chatbody{flex:1 1 auto;min-height:0;height:auto!important;overflow-y:auto}
+.story-ch1-chat .story-send{flex:0 0 auto;position:relative!important;bottom:auto!important;width:100%;display:flex;flex-direction:column;background:rgba(76,84,96,.78)!important;color:#fff;padding:9px 12px calc(12px + env(safe-area-inset-bottom,0px));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.story-ch1-chat .story-send[style*="display:none"]{display:none!important}
+.story-ch1-chat .story-options{display:flex;flex-direction:column;gap:7px;width:100%}
+.story-ch1-chat .story-option{display:block;width:100%;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);color:#fff;text-align:center;font-size:13px}
+.story-caller-avatar{width:88px;height:88px;border-radius:50%;margin:0 auto 16px;display:grid;place-items:center;background:linear-gradient(145deg,#9ca9bb,#697d97);color:#fff;font-size:38px;font-weight:500;box-shadow:0 4px 18px #0002}
