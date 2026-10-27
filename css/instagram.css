@@ -24,3 +24,11 @@
 .ig-album-caption{padding:15px 20px 30px;background:#fff;min-height:90px}
 .ig-album-caption p{font-size:12px;color:#777}
 .ig-bottom small{display:block;font-size:10px}
+
+/* IG media uses full-bleed cropped frames, matching the profile grid. */
+.ig-fullphoto,.ig-feedphoto{background:#fff;aspect-ratio:4/5}
+.ig-fullphoto img,.ig-feedphoto img{object-fit:cover;object-position:center;width:100%;height:100%}
+.ig-inline-comments{padding:3px 0 5px;font-size:13px;line-height:1.6}
+.ig-inline-comments>div{margin:3px 0}
+.ig-reply-target{color:#5277a0}
+.ig-reply-button{background:none;border:0;color:#888;padding:0;font-size:12px}
