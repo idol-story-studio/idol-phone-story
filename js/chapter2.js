@@ -15,7 +15,7 @@ function ch2Timer(fn,ms){const session=CH2.session;const id=setTimeout(()=>{if(s
 function ch2Notify(id){const node=$('ch2-chat');if(activeApp==='kkt'&&current==='appview'&&node&&node.dataset.id===id){ch2Chat(id);return}CH2.unread[id]=(CH2.unread[id]||0)+1;game.unread.kkt=CH2.unread.woobin+CH2.unread.serim;gameBadge();if(typeof ding==='function')ding();gameShowBanner('kkt',(id==='woobin'?'徐宇瑸':'朴世琳')+'发来了一条新消息')}
 function ch2Append(id,who,text,delay){ch2Timer(()=>{CH2.messages[id].push([who,text]);if(who==='them')ch2Notify(id);else if(activeApp==='kkt'&&$('ch2-chat'))ch2Chat(id)},delay)}
 function ch2Sequence(id,lines,after){let delay=0;lines.forEach((t,i)=>{delay+=i===0?700:1900+Math.min(t.length*30,1100);ch2Append(id,t[0],t[1],delay)});if(after)ch2Timer(after,delay+1800)}
-function ch2Start(){CH2.session++;CH2.phase='ig';CH2.postSeen=false;CH2.commentSeen=false;CH2.dmRead=false;CH2.dmSent=false;CH2.photosNote=false;CH2.photosSeen=new Set();CH2.woobinStep=0;CH2.serimStep=0;CH2.fileSeen=false;CH2.earringSeen=false;CH2.woobinFinal=0;CH2.done=false;CH2.messages={woobin:[],serim:[]};CH2.unread={woobin:0,serim:0};igChats.hyeongjun=CH2_DM.map(([from,text],i)=>({from,text,time:i===0?'几周前':i===16?'两周前':''}));igSave();game.chapter2=true;game.stage='chapter2';game.chapterEnd=true;game.phoneNoteRead=true;game.xExited=true;game.chatBlocked=true;game.callDone=true;game.unread.notes=0;gameBadge();activeApp='notes';wrap('第二章','<div class="content story-prose"><h2>我们不是一直很好吗？</h2><p>Instagram 已开放。先看看过去留下的照片吧。</p><button class="choice" onclick="ch2OpenInstagram()">打开 Instagram</button></div>')}
+function ch2Start(){CH2.session++;CH2.phase='ig';CH2.postSeen=false;CH2.commentSeen=false;CH2.dmRead=false;CH2.dmSent=false;CH2.photosNote=false;CH2.photosSeen=new Set();CH2.woobinStep=0;CH2.serimStep=0;CH2.fileSeen=false;CH2.earringSeen=false;CH2.woobinFinal=0;CH2.done=false;CH2.messages={woobin:[],serim:[]};CH2.unread={woobin:0,serim:0};const existing=igChats.hyeongjun||[];const oldChapter2=existing.filter(m=>m.ch2Script);const earlier=existing.filter(m=>!m.ch2Script);igChats.hyeongjun=[...CH2_DM.map(([from,text],i)=>({from,text,time:i===0?'几周前':i===16?'两周前':'',ch2Script:true})),...earlier];igSave();game.chapter2=true;game.stage='chapter2';game.chapterEnd=true;game.phoneNoteRead=true;game.xExited=true;game.chatBlocked=true;game.callDone=true;game.unread.notes=0;gameBadge();activeApp='notes';wrap('第二章','<div class="content story-prose"><h2>我们不是一直很好吗？</h2><p>Instagram 已开放。先看看过去留下的照片吧。</p><button class="choice" onclick="ch2OpenInstagram()">打开 Instagram</button></div>')}
 function ch2OpenInstagram(){instagram('profile')}
 function ch2SeePost(i){if(!ch2Active()||CH2.phase!=='ig')return;if([6,9,10,11,12,14].includes(i))CH2.postSeen=true}
 function ch2SeeComments(i){if(!ch2Active()||CH2.phase!=='ig'||!CH2.postSeen)return;if([6,9,10,11,12,14].includes(i)){CH2.commentSeen=true;CH2.phase='dm';}}
@@ -60,3 +60,13 @@ const ch2OldAlbumPhoto=igAlbumPhoto;igAlbumPhoto=function(i){ch2OldAlbumPhoto(i)
 const ch2OldIGBase=igBase;igBase=function(header,content,bottom){ch2OldIGBase(header,content,bottom);if(ch2Active()&&CH2.phase==='dm'&&igScreen==='profile'){const inbox=document.querySelector('.ig-header button:last-child');if(inbox)inbox.classList.add('ch2-inbox-unread')}};
 const ch2OldChapterMenu=gameChapterMenu;gameChapterMenu=function(){ch2OldChapterMenu()};
 const ch2OldStartFromMenu=gameStartChapter2FromMenu;gameStartChapter2FromMenu=function(){ch2Start()};
+
+/* Chapter 2's dual-photo comments use the approved dialogue, not the generic previews. */
+const ch2OldAllComments=igAllComments;
+igAllComments=function(i){
+ const rows=ch2OldAllComments(i);
+ if(i===6&&ch2Active()){
+  return [{name:'宋亨俊',text:'拍了十几张你就选这一张？',member:true,replyTo:null},{name:'姜敏熙',text:'因为这张你最好看啊ㅋㅋ',member:true,replyTo:'宋亨俊'},{name:'宋亨俊',text:'其他张不好看吗？',member:true,replyTo:'姜敏熙'},{name:'姜敏熙',text:'都好看都好看',member:true,replyTo:'宋亨俊'},{name:'徐宇瑸',text:'你们两个能不能先把练习室的灯关了',member:true,replyTo:null},...rows.filter(c=>!c.member)];
+ }
+ return rows;
+};
