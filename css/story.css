@@ -13,3 +13,11 @@
 .story-notification-body{margin-top:4px;font-size:13px;line-height:1.4}
 .story-notes .note{padding:16px;margin-bottom:12px}
 .story-ending .choice{margin-top:28px}
+
+/* KakaoTalk-style unread markers and failed outgoing message indicator. */
+.story-unread-count{font-size:11px;font-weight:700;color:#f5dc00;align-self:flex-end;padding-bottom:4px;text-shadow:0 1px 1px #0003}
+.story-send-failed{display:inline-grid;place-items:center;align-self:flex-end;width:18px;height:18px;border-radius:50%;background:#f14545;color:white;font-weight:900;font-size:13px;margin-bottom:3px}
+.story-send[style*="display:none"]{display:none!important}
+#chatbody{scroll-behavior:auto;overscroll-behavior:contain}
+#toast.story-notification{cursor:pointer;z-index:120!important}
+#toast.story-notification:active{background:rgba(235,235,240,.98)}
