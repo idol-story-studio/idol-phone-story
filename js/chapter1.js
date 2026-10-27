@@ -32,7 +32,18 @@ const originalStoryShow=show;let storyUnlockedOnce=false;show=function(id){let p
 const oldHome=goHome;goHome=function(){gameExitX();oldHome();gameBadge()};
 const oldOpen=openApp;openApp=function(k){if(!gameUnlock(k)){gameLocked();return}if(k==='notes'){gameNotes();return}if(k==='kkt'){gameFriends();return}if(k==='x'){gameX();return}if(k==='phone'){gameCalls();return}oldOpen(k)};
 beginPhoneStory=function(){}; // remove the obsolete 120-second call
-function gameNotes(){activeApp='notes';gameClear('notes');let second=game.xExited;let end=game.chapterEnd;wrap('备忘录','<div class="content story-notes"><div class="note" onclick="gameReadNote()"><strong>第一章</strong></div>'+(second?'<div class="note" onclick="gameReadPhoneNote()"><strong>新的线索</strong></div>':'')+(end?'<div class="note" onclick="gameReadEnding()"><strong>第一章已结束</strong></div>':'')+'</div>')}
+function gameNotes(){activeApp='notes';gameClear('notes');let second=game.xExited;let end=game.chapterEnd;wrap('备忘录','<div class="content story-notes"><div class="note" onclick="gameReadNote()"><strong>第一章</strong></div>'+(second?'<div class="note" onclick="gameReadPhoneNote()"><strong>新的线索</strong></div>':'')+(end?'<div class="note" onclick="gameReadEnding()"><strong>第一章已结束</strong></div>':'')+'<div class="note" onclick="gameChapterMenu()"><strong>跳转至其他章节</strong></div></div>')}
+function gameChapterMenu(){
+ activeApp='notes';
+ const chapter=game.chapter2?2:1;
+ const destinations=[1,2].filter(n=>n!==chapter);
+ wrap('跳转至其他章节','<div class="content story-notes"><p class="story-chapter-hint">选择已开放章节，方便检查剧情与页面。</p>'+destinations.map(n=>'<button class="note story-chapter-button" onclick="gameJumpChapter('+n+')"><strong>前往第'+(n===1?'一':'二')+'章</strong></button>').join('')+'<p class="story-chapter-hint">第三章及后续章节尚未制作，暂不提供无效跳转。</p></div>');
+}
+function gameJumpChapter(n){
+ if(n===2){game.chapter2=true;game.chapterEnd=true;game.stage='chapter2';game.phoneNoteRead=true;game.xExited=true;game.xReady=true;game.xSeen=new Set([0,1,2,3]);game.chatBlocked=true;game.kktRead=true;game.callDone=true;gameStartChapter2FromMenu();return}
+ if(n===1){game.chapter2=false;game.chapterEnd=false;game.stage='intro';game.notesRead=false;game.kktRead=false;game.hyeongjunReadToEnd=false;game.replyDelayReady=false;clearTimeout(game.replyDelayTimer);game.replyDelayTimer=null;game.chatBlocked=false;game.sendingBlockedReply=false;game.callDone=false;game.callFinished=false;game.callType=null;game.xExited=false;game.xSeen=new Set();game.phoneNoteRead=false;game.wonjinMessage=false;game.wonjinReply=false;game.wonjinDelivered=0;game.wonjinReplyDelivered=false;game.wonjinChoiceReady=false;game.dials=0;game.chatUnread={hyeongjun:3,wonjin:0};game.unread={notes:1,kkt:0};gameSyncKktUnread();gameNotes();return}
+}
+function gameStartChapter2FromMenu(){activeApp='notes';wrap('第二章','<div class="content story-prose story-ending"><h2>第二章</h2><p>Instagram 已开放。</p><p>第二章剧情仍在制作中，可以先探索 Instagram。</p><button class="choice" onclick="openApp(\'ig\')">打开 Instagram</button></div>')}
 function gameReadPhoneNote(){activeApp='notes';game.phoneNoteRead=true;wrap('新的线索','<div class="content story-prose"><h2>新的线索</h2><p>昨天的我好像决定今天给亨俊打电话。通话记录里有那么多未接来电。他之前明明一直在找我。……现在再打过去，还会接吗？</p><button class="choice" onclick="gameNotes()">返回备忘录</button></div>')}
 function gameReadNote(){activeApp='notes';wrap('第一章','<div class="content story-prose"><h2>第一章</h2>'+CH1.intro.split('\n\n').map(t=>'<p>'+escapeHtml(t)+'</p>').join('')+'<button class="choice" onclick="gameFinishIntro()">已阅读，返回备忘录</button></div>')}
 function gameFinishIntro(){if(game.stage==='intro'){game.stage='kkt';game.chatUnread.hyeongjun=3;gameSyncKktUnread();setTimeout(()=>{if(game.stage==='kkt'&&!game.kktRead&&!(activeApp==='kkt'&&current==='appview'))gameShowBanner('kkt','宋亨俊发来了一条新消息')},1000)}gameNotes()}
@@ -45,8 +56,8 @@ function gameChat(id){
  game.kktRead=true;
  let lines='<div class="story-date">一周前</div>'+CH1.history.map(([who,t],i)=>gameBubble(who==='我',t,'晚上 '+(8+Math.floor(i/3))+':'+String(12+i*4).padStart(2,'0'),false,false,i===0||CH1.history[i-1][0]!==who)).join('');
  lines+='<div class="story-date">今天早上</div>'+CH1.morning.map((t,i)=>gameBubble(false,t,'上午 9:'+String(12+i*6).padStart(2,'0'),!game.hyeongjunReadToEnd,false,i===0)).join('');
- if(game.chatBlocked)lines+=gameBubble(true,'怎么回事？发生什么了？','刚刚',false,true);
- let action=game.stage==='kkt'&&!game.chatBlocked?'<button class="choice" onclick="gameBlockedReply()">怎么回事？发生什么了？　发送</button>':'<div class="story-end">当前对话已结束</div>';
+ if(game.chatBlocked)lines+=gameBubble(true,game.selectedHyeongjunReply||'怎么回事？发生什么了？','刚刚',false,true);
+ let action=game.stage==='kkt'&&!game.chatBlocked?gameReplyOptions('hyeongjun'): '<div class="story-end">当前对话已结束</div>';
  let showReply=game.chatBlocked||game.replyDelayReady;
  wrap('宋亨俊','<div class="chatbody" id="chatbody" onscroll="gameCheckChatScroll()">'+lines+'</div><div class="story-send" id="story-reply" style="'+(showReply?'':'display:none')+'">'+action+'</div>');
  let el=$('chatbody');
@@ -66,7 +77,7 @@ function gameBubble(me,t,time,unread=false,failed=false,showTime=true){
  let status=(unread?'<span class="story-unread-count">1</span>':'')+(failed?'<span class="story-send-failed" aria-label="发送失败">!</span>':'');
  return '<div class="bubbleline '+(me?'me':'')+'">'+(me?meta+status:'')+'<div class="bubble">'+escapeHtml(t)+'</div>'+(me?'':status+meta)+'</div>';
 }
-function gameBlockedReply(){if(game.stage!=='kkt'||game.chatBlocked||game.sendingBlockedReply)return;game.sendingBlockedReply=true;let area=$('story-reply');if(area)area.innerHTML='<div class="story-composing">正在输入<span class="story-typing"><span></span><span></span><span></span></span></div>';setTimeout(()=>{if(game.stage!=='kkt')return;game.chatBlocked=true;game.stage='call';gameChat('hyeongjun');setTimeout(()=>gameIncomingWonjin(),8000)},1100)}
+function gameBlockedReply(choice){if(game.stage!=='kkt'||game.chatBlocked||game.sendingBlockedReply)return;game.selectedHyeongjunReply=choice||'怎么回事？发生什么了？';game.sendingBlockedReply=true;let area=$('story-reply');if(area)area.innerHTML='<div class="story-composing">正在输入<span class="story-typing"><span></span><span></span><span></span></span></div>';setTimeout(()=>{if(game.stage!=='kkt')return;game.chatBlocked=true;game.stage='call';gameChat('hyeongjun');setTimeout(()=>gameIncomingWonjin(),8000)},1100)}
 function gameIncomingWonjin(){if(game.stage!=='call'||game.callDone)return;game.callType='wonjin';game.callFinished=false;game.callIndex=0;callSession++;clearInterval(callTimer);$('call').classList.add('show');$('callerName').textContent='咸元进';$('calltimer').textContent='电话 · 来电中…';$('callsub').textContent='来电';$('callmsg').textContent='';$('answer').style.display='block';$('pip').style.display='none';startRing()}
 answerCall=function(){if(game.callType!=='wonjin')return;stopRing();$('answer').style.display='none';$('pip').style.display='none';$('callsub').textContent='正在通话';let session=++callSession;callStart=Date.now();clearInterval(callTimer);callTimer=setInterval(()=>{let s=Math.floor((Date.now()-callStart)/1000);$('calltimer').textContent='通话中 · '+String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},500);let elapsed=1000;const gaps=[3000,3000,4000,3000,3000,4000,3000,4000];CH1.call.forEach((t,i)=>{let delay=elapsed;setTimeout(()=>{if(callSession!==session)return;$('callmsg').textContent='咸元进：'+t},delay);elapsed+=gaps[i]||4000});setTimeout(()=>{if(callSession===session){game.callFinished=true;$('callsub').textContent='通话结束后可挂断'}},elapsed)}
 endCall=function(){if(game.callType==='wonjin'){if(!game.callFinished){if($('answer').style.display==='none'){gameLocked();return}game.callType=null;stopRing();clearInterval(callTimer);oldHome();setTimeout(()=>{if(game.stage==='call'&&!game.callDone)gameIncomingWonjin()},1800);return}game.callDone=true;game.callType=null;if(game.stage==='call'){game.stage='x'}}stopRing();clearInterval(callTimer);oldHome();gameBadge()};
@@ -83,14 +94,14 @@ function gameWonjinChat(){
  activeApp='kkt';game.chatUnread.wonjin=0;gameSyncKktUnread();
  const lines=[["them","说真的，你还是去跟亨俊好好道个歉吧。"],["them","我没见过他这么生气。"],["me","可是他把我的 KKT 和电话都拉黑了。"],["them","……你俩真是。"],["them","那你去 IG 试试看吧。"],["them","不过别再说什么“你应该懂我”的话了。"]];
  const count=game.wonjinReplyDelivered?6:game.wonjinReply?Math.min(6,game.wonjinDelivered):Math.min(2,game.wonjinDelivered);
- let rows=lines.slice(0,count).map(([who,t],i)=>gameBubble(who==='me',t,'刚刚',false,false,i===0||lines[i-1][0]!==who)).join('');
+ let rows=lines.slice(0,count).map(([who,t],i)=>gameBubble(who==='me'?(true):false,who==='me'?(game.selectedWonjinReply||t):t,'刚刚',false,false,i===0||lines[i-1][0]!==who)).join('');
  if(game.wonjinDelivered>=2&&!game.wonjinReply&&!game.wonjinChoiceReady&&!game.wonjinChoiceTimer){game.wonjinChoiceTimer=setTimeout(()=>{game.wonjinChoiceReady=true;game.wonjinChoiceTimer=null;if(activeApp==='kkt'&&document.getElementById('wonjin-chat'))gameWonjinChat()},2000)}
- const action=game.wonjinReplyDelivered?'<div class="story-end">当前对话已结束</div>':game.wonjinReply?'<div class="story-typing"><span></span><span></span><span></span></div>':game.wonjinChoiceReady?'<button class="choice" onclick="gameReplyWonjin()">可是他把我的 KKT 和电话都拉黑了。</button>':'<div class="story-typing"><span></span><span></span><span></span></div>';
+ const action=game.wonjinReplyDelivered?'<div class="story-end">当前对话已结束</div>':game.wonjinReply?'<div class="story-typing"><span></span><span></span><span></span></div>':game.wonjinChoiceReady?gameReplyOptions('wonjin'):'<div class="story-typing"><span></span><span></span><span></span></div>';
  wrap('咸元进','<div id="wonjin-chat"><div class="chatbody" id="chatbody">'+rows+'</div><div class="story-send">'+action+'</div></div>');$('chatbody').scrollTop=$('chatbody').scrollHeight;
 }
-function gameReplyWonjin(){
+function gameReplyWonjin(choice){
  if(game.wonjinReply||game.wonjinDelivered<2||!game.wonjinChoiceReady)return;
- game.wonjinReply=true;
+ game.wonjinReply=true;game.selectedWonjinReply=choice||'可是他把我的 KKT 和电话都拉黑了。';
  let area=document.querySelector('#wonjin-chat .story-send');if(area)area.innerHTML='<div class="story-composing">正在输入<span class="story-typing"><span></span><span></span><span></span></span></div>';
  setTimeout(()=>{if(activeApp==='kkt'&&document.getElementById('wonjin-chat'))gameWonjinChat()},1000);
  [2500,5100,7700].forEach((delay,i)=>setTimeout(()=>{
@@ -124,3 +135,10 @@ document.getElementById('phone').addEventListener('touchend',e=>{if(storyNotific
 
 gameSyncKktUnread();
 setTimeout(()=>{if(game.stage==='intro'&&game.unread.notes>0)gameShowBanner('notes','备忘录有新的内容')},2200);
+
+/* Optional dialogue choices: different player text, identical approved plot outcome. */
+function gameReplyOptions(kind){
+ const options=kind==='hyeongjun'?['怎么回事？发生什么了？','亨俊，你能告诉我到底怎么了吗？','我们能不能好好聊一下？']:['可是他把我的 KKT 和电话都拉黑了。','我也想道歉，但现在根本联系不上他。','我试过打电话了，他好像不愿意接。'];
+ const callback=kind==='hyeongjun'?'gameBlockedReply':'gameReplyWonjin';
+ return '<div class="story-options">'+options.map((v,i)=>'<button class="story-option" onclick="'+callback+'('+JSON.stringify(v).replace(/"/g,'&quot;')+')">'+escapeHtml(v)+'</button>').join('')+'</div>';
+}
