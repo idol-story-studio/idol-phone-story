@@ -130,8 +130,9 @@ function storyCloseNotificationCenter(){if(storyNotificationCenter)storyNotifica
 function storyClearNotificationCenter(){storyNotifications.length=0;storyRefreshNotificationCenter()}
 document.getElementById('phone').addEventListener('touchstart',e=>{if(e.touches.length!==1)return;let y=e.touches[0].clientY-$('phone').getBoundingClientRect().top;storySwipeStart=y<65?e.touches[0].clientY:null},{passive:true});
 document.getElementById('phone').addEventListener('touchend',e=>{if(storySwipeStart===null)return;let diff=e.changedTouches[0].clientY-storySwipeStart;storySwipeStart=null;if(diff>75)storyOpenNotificationCenter()},{passive:true});
-document.getElementById('phone').addEventListener('touchstart',e=>{if(storyNotificationCenter?.classList.contains('open'))storySwipeStart=e.touches[0].clientY},{passive:true});
-document.getElementById('phone').addEventListener('touchend',e=>{if(storyNotificationCenter?.classList.contains('open')&&storySwipeStart!==null){let d=e.changedTouches[0].clientY-storySwipeStart;if(d< -65)storyCloseNotificationCenter();storySwipeStart=null}},{passive:true});
+let storyPanelTouchStart=null;
+document.getElementById('phone').addEventListener('touchstart',e=>{if(storyNotificationCenter?.classList.contains('open'))storyPanelTouchStart=e.touches[0].clientY},{passive:true});
+document.getElementById('phone').addEventListener('touchend',e=>{if(storyNotificationCenter?.classList.contains('open')&&storyPanelTouchStart!==null){let d=e.changedTouches[0].clientY-storyPanelTouchStart;if(d< -65)storyCloseNotificationCenter();storyPanelTouchStart=null}},{passive:true});
 
 gameSyncKktUnread();
 setTimeout(()=>{if(game.stage==='intro'&&game.unread.notes>0)gameShowBanner('notes','备忘录有新的内容')},2200);
