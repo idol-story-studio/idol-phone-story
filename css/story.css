@@ -65,3 +65,30 @@
 .story-nc-card small{align-self:flex-start;color:#666;font-size:11px}
 .story-nc-empty{text-align:center;padding:70px 10px;color:#fffc;font-size:14px}
 .story-nc-hint{text-align:center;font-size:12px;padding:14px 0 27px;color:#fffc}
+
+/* KakaoTalk fixed bottom choice tray, matching the phone viewport. */
+#appview:has(#chatbody) .story-send{
+ background:rgba(76,84,96,.78)!important;
+ color:#fff;
+ padding:9px 12px calc(12px + env(safe-area-inset-bottom,0px));
+ backdrop-filter:blur(14px);
+ -webkit-backdrop-filter:blur(14px);
+ border-top:1px solid rgba(255,255,255,.18);
+ display:flex;
+ flex-direction:column;
+ gap:7px;
+ flex-shrink:0;
+}
+#appview:has(#chatbody) .story-options{display:flex;flex-direction:column;gap:7px;width:100%}
+#appview:has(#chatbody) .story-option{
+ display:block;width:100%;border:1px solid rgba(255,255,255,.22);
+ background:rgba(255,255,255,.13);color:#fff;
+ border-radius:12px;padding:11px 12px;line-height:1.45;
+ text-align:center;font-size:13px;cursor:pointer;
+}
+#appview:has(#chatbody) .story-option:active{background:rgba(255,255,255,.3)}
+#appview:has(#chatbody) .story-end{background:transparent;color:#fff;text-align:center;padding:10px;font-size:13px}
+#appview:has(#chatbody) .story-composing{color:#fff}
+#appview:has(#chatbody) .story-typing span{background:rgba(255,255,255,.9)}
+.story-chapter-hint{font-size:12px;color:#7c7c86;line-height:1.6;margin:10px 2px 17px}
+.story-chapter-button{width:100%;border:0;text-align:left;background:#fff;color:#242424;cursor:pointer}
