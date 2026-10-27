@@ -92,3 +92,17 @@
 #appview:has(#chatbody) .story-typing span{background:rgba(255,255,255,.9)}
 .story-chapter-hint{font-size:12px;color:#7c7c86;line-height:1.6;margin:10px 2px 17px}
 .story-chapter-button{width:100%;border:0;text-align:left;background:#fff;color:#242424;cursor:pointer}
+
+/* Chapter 2: attached styling worksheet and selectable Instagram DMs */
+.ch2-attachment{display:flex;flex-direction:column;gap:6px;margin:14px 20px;padding:15px;border-radius:14px;background:#fff;color:#272a30;box-shadow:0 2px 9px #0001;cursor:pointer}
+.ch2-attachment strong{font-size:13px;overflow-wrap:anywhere}
+.ch2-attachment small{font-size:11px;color:#777}
+.ch2-file-hint{font-size:12px;color:#7d8189}
+.ch2-sheet-scroll{max-width:100%;overflow-x:auto;overflow-y:auto;border:1px solid #e1e2e6;border-radius:9px;background:white}
+.ch2-sheet-scroll table{border-collapse:collapse;min-width:350px;width:100%;font-size:12px}
+.ch2-sheet-scroll th,.ch2-sheet-scroll td{border:1px solid #e6e7eb;padding:11px 10px;white-space:nowrap;text-align:left}
+.ch2-sheet-scroll th{background:#f2f4f7}
+.ch2-sheet-scroll tr:active,.ch2-sheet-scroll .ch2-visited{background:#fff7d6}
+.ch2-ig-choices{display:flex;flex-direction:column;gap:7px;padding:12px;background:rgba(90,98,110,.85);backdrop-filter:blur(12px)}
+.ch2-ig-choices .story-option{padding:11px 10px;border-radius:11px;background:#ffffff24;color:white;text-align:center;font-size:13px}
+.ch2-inbox-unread:after{content:'•';position:absolute;color:#e53b50;font-size:20px;transform:translate(-3px,-10px)}
