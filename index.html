@@ -12,6 +12,8 @@
 #appbody>.story-send{bottom:20px;z-index:3;min-height:65px}
 #appbody>.content{height:calc(100% - 115px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
 #home .pages{overflow:hidden}
+
+.ch3-group{padding:12px}.story-group-line{padding:8px 12px;background:#f1f1f4;border-radius:12px;margin:8px 0}.story-group-line b{font-size:12px}.story-group-line p{margin:4px 0}.ch3-search{padding:12px}.ch3-search input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px}.ch3-annotation{margin:15px;padding:14px;background:#fff9e6;border-left:3px solid #e0b55a;line-height:1.7}.ch3-read{text-align:right;color:#888;font-size:11px;margin:4px 14px 12px}
 </style>
 <link rel="stylesheet" href="css/instagram.css">
 <link rel="stylesheet" href="css/story.css">
@@ -64,7 +66,7 @@ notes:`<svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#fff"
 camera:`<svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#d8d9dd"/><rect x="10" y="20" width="44" height="30" rx="7" fill="#fff"/><circle cx="32" cy="35" r="12" fill="#9fa3aa"/><circle cx="32" cy="35" r="8" fill="#444c5d"/></svg>`,
 generic:(emoji,bg)=>`<svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="${bg}"/><text x="32" y="43" font-size="32" text-anchor="middle">${emoji}</text></svg>`
 };
-const apps=[["KakaoTalk","kkt"],["Instagram","ig"],["X","x"],["相册","photos"],["备忘录","notes"],["日历","calendar"],["地图","map"],["设置","settings"],["YouTube","youtube"],["Spotify","spotify"],["相机","camera"],["电话","phone"]];
+const apps=[["KakaoTalk","kkt"],["Instagram","ig"],["X","x"],["相册","photos"],["备忘录","notes"],["文件","files"],["日历","calendar"],["地图","map"],["设置","settings"],["YouTube","youtube"],["Spotify","spotify"],["相机","camera"],["电话","phone"]];
 function icon(k){return icons[k]||({calendar:icons.generic("31","#fff"),map:icons.generic("🗺️","#b8e3f6"),settings:icons.generic("⚙️","#a5a6ad"),youtube:icons.generic("▶","#fa2222"),spotify:icons.generic("≋","#18c85e")}[k]||icons.generic("✦","#888"))}
 function appBtn(name,key,dock=false){return `<button class="app" onclick="openApp('${key}')"><span class="appicon">${icon(key)}</span>${dock?"":`<span>${name}</span>`}</button>`}
 $("apps").innerHTML=apps.slice(0,8).map(a=>appBtn(...a)).join("");$("apps2").innerHTML=apps.slice(8).map(a=>appBtn(...a)).join("");$("dock").innerHTML=[["电话","phone"],["KakaoTalk","kkt"],["信息","msg"],["相机","camera"]].map(a=>appBtn(...a,true)).join("");
@@ -114,4 +116,5 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 </script>
 <script src="js/instagram.js"></script>
 <script src="js/chapter1.js"></script>
-<script src="js/chapter2.js"></script></body></html>
+<script src="js/chapter2.js"></script>
+<script src="js/chapter3.js"></script></body></html>
