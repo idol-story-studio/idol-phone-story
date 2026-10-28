@@ -53,20 +53,7 @@ function ch4Group(quiet=false){if(!ch4Is())return;CH4.groupSeen=true;if(CH4.step
 function ch4SearchOpen(id){const q=prompt('搜索聊天记录');if(!q)return;const data=id==='group'?CH4.group.map(([n,t])=>n+'：'+t):CH4.lines.map(m=>m.text);const hits=data.filter(t=>t.includes(q));activeApp='kkt';wrap('搜索结果','<div class="content">'+(hits.length?hits.map(t=>'<div class="note">'+escapeHtml(t)+'</div>').join(''):'<p>没有找到相关记录</p>')+'<button class="choice" onclick="'+(id==='group'?'ch4Group()':'ch4Room()')+'">返回聊天</button></div>')}
 function ch4BreadPhoto(){activeApp='kkt';wrap('照片','<div class="content" style="text-align:center;padding:12px;background:#111;color:#fff"><img src="assets/ch4_steamed_bread.jpg" alt="蒸面包照片" style="max-width:100%;max-height:75vh;object-fit:contain" onerror="this.alt=\'照片加载失败\'"><p>蒸面包</p><button class="choice" onclick="ch4Room()">返回聊天</button></div>')}
 function ch4Friends(){if(!ch4Is())return;activeApp='kkt';const entries=[['hyeongjun','宋亨俊',CH4.lines.at(-1)?.text||'已恢复联系','ch4Room()'],['group','CRAVITY 🐾',CH4.group.at(-1)?.[1]||'历史消息','ch4Group()'],['wonjin','咸元进','历史聊天',"ch2Chat('wonjin')"],['woobin','徐宇瑸','历史聊天',"ch2Chat('woobin')"],['serim','朴世琳','历史聊天',"ch2Chat('serim')"]];wrap('KakaoTalk','<div class="content">'+entries.map(([id,name,preview,fn])=>'<div class="item" onclick="'+fn+'"><div class="avatar">'+name[0]+'</div><div class="itemmain"><div class="itemtitle">'+name+'</div><div class="itemsub">'+escapeHtml(preview)+'</div></div></div>').join('')+'</div>')}
-function ch4Notes(){
- if(!ch4Is())return ch4OldNotes();
- activeApp='notes';gameClear('notes');
- const row=(title,fn)=>'<div class="note" onclick="'+fn+'"><strong>'+escapeHtml(title)+'</strong></div>';
- let html=row('第一章','gameReadNote()')+row('第二章','ch2ReadInitialNote()')+row('第三章','ch3Note(-1)')+row('第四章','ch4ReadNote(0)');
- CH4.notes.forEach((n,i)=>{
-  if(i===0||n.title==='已解锁的新应用')return;
-  const number=CH4.notes.slice(1,i+1).filter(x=>x.title!=='已解锁的新应用'&&x.title!=='通话记录').length;
-  html+=row(n.title==='通话记录'?'通话记录':'新线索'+number,'ch4ReadNote('+i+')');
- });
- if(CH4.done)html+=row('第四章已结束','ch4Ending()');
- html+=row('跳转至其他章节','gameChapterMenu()');
- wrap('备忘录','<div class="content story-notes">'+html+'</div>');
-}
+function ch4Notes(){return gameNotes()}
 function ch4ReadNote(i){const n=CH4.notes[i];if(!n)return ch4Notes();activeApp='notes';let dest='';if(n.dest==='private')dest='<button class="choice" onclick="ch4Room()">前往宋亨俊的 KakaoTalk 私聊</button>';else if(n.dest==='kkt')dest='<button class="choice" onclick="ch4Friends()">前往 KakaoTalk</button>';else if(n.dest==='delivery')dest='<button class="choice" onclick="ch4Delivery()">前往外卖民族</button>';else if(n.dest==='calendar')dest='<button class="choice" onclick="ch4Calendar()">前往日历（可选）</button>';else if(n.dest==='apps')dest='<button class="choice" onclick="ch4Calendar()">前往日历（可选）</button><button class="choice" onclick="ch4Delivery()">前往外卖民族（可选）</button>';wrap(n.title,'<div class="content story-prose"><p>'+escapeHtml(n.text)+'</p>'+dest+'<button class="choice" onclick="ch4Notes()">返回备忘录</button></div>')}
 function ch4Ending(){activeApp='notes';wrap('第四章已结束','<div class="content story-prose story-ending"><h2>第四章 · 还在生气吗？</h2><p>还是没有和好。\n但他刚刚打电话来了。</p><p>回忆进度：4/10</p><button class="choice" onclick="ch4Notes()">返回备忘录</button></div>')}
 
@@ -91,7 +78,7 @@ function ch4Calls(){activeApp='phone';wrap('最近通话','<div class="content">
 const ch4OldUnlock=gameUnlock;gameUnlock=function(k){if(ch4Is()&&['calendar','delivery','phone','kkt','notes','ig','photos','x','files'].includes(k))return true;return ch4OldUnlock(k)};
 const ch4OldOpen=openApp;openApp=function(k){if(ch4Is()){if(k==='ig'){game.chapter2=true;return ch4OldOpen(k)}if(k==='calendar')return ch4Calendar();if(k==='delivery')return ch4Delivery();if(k==='notes')return ch4Notes();if(k==='phone')return ch4Calls();if(k==='kkt')return ch4Friends()}return ch4OldOpen(k)};
 const ch4OldChat=gameChat;gameChat=function(id){if(ch4Is()&&id==='hyeongjun')return ch4Room();if(ch4Is()&&id==='group')return ch4Group();return ch4OldChat(id)};
-const ch4OldNotes=gameNotes;gameNotes=function(){if(ch4Is())return ch4Notes();return ch4OldNotes()};
+// Chapter four uses the shared Notes renderer.
 const ch4OldFriends=gameFriends;gameFriends=function(){if(ch4Is())return ch4Friends();return ch4OldFriends()};
 const ch4OldMenu=gameChapterMenu;gameChapterMenu=function(){if(ch4Is()){activeApp='notes';wrap('跳转至其他章节','<div class="content story-notes"><p class="story-chapter-hint">选择已开放章节。</p><button class="note story-chapter-button" onclick="gameJumpChapter(1)">前往第一章</button><button class="note story-chapter-button" onclick="gameJumpChapter(2)">前往第二章</button><button class="note story-chapter-button" onclick="ch3Start()">前往第三章</button><button class="note story-chapter-button" onclick="ch4Notes()">前往第四章</button></div>');return}ch4OldMenu();if(CH3.done){const el=document.querySelector('.story-chapter-button[onclick="ch3Start()"]');if(el&&!document.querySelector('.story-chapter-button[onclick="ch4Start()"]'))el.insertAdjacentHTML('afterend','<button class="note story-chapter-button" onclick="ch4Start()"><strong>前往第四章</strong></button>')}};
 const ch4OldEnding=ch3Ending;ch3Ending=function(){ch4OldEnding();if(CH3.done){const el=document.querySelector('.story-ending');if(el&&!el.querySelector('[onclick="ch4Start()"]'))el.insertAdjacentHTML('beforeend','<button class="choice" onclick="ch4Start()">进入第四章</button>')}};
@@ -140,3 +127,52 @@ const ch4PreviousUnlockMedia=gameUnlock;
 gameUnlock=function(k){if(k==='youtube'||k==='spotify')return true;return ch4PreviousUnlockMedia(k)};
 const ch4PreviousOpenMedia=openApp;
 openApp=function(k){if(k==='youtube'||k==='spotify'){mediaEggApp(k);return}return ch4PreviousOpenMedia(k)};
+
+/* Single Notes list renderer for chapters 1–4. Chapter content stays in its original module. */
+function storyNotesChapter(){
+ if(typeof ch4Is==='function'&&ch4Is())return 4;
+ if(typeof CH3!=='undefined'&&CH3.active&&game.stage==='chapter3')return 3;
+ if(game.chapter2)return 2;
+ return 1;
+}
+function storyNotesRows(){
+ const current=storyNotesChapter();
+ const row=(title,fn)=>'<div class="note" onclick="'+fn+'"><strong>'+escapeHtml(title)+'</strong></div>';
+ let html='';
+ html+=row('第一章','gameReadNote()');
+ if(current===1){
+  if(game.xExited)html+=row('新的线索','gameReadPhoneNote()');
+  if(game.chapterEnd)html+=row('第一章已结束','gameReadEnding()');
+ }
+ if(current>=2){
+  html+=row('第二章','ch2ReadInitialNote()');
+  if(current===2){
+   if(CH2.igNote)html+=row('新线索 · 以前的评论','ch2ReadIGNote()');
+   if(CH2.photosNote)html+=row('新线索 · 以前的照片','ch2ReadPhotoNote()');
+   if(CH2.done)html+=row('第二章已结束','ch2Ending()');
+  }
+ }
+ if(current>=3){
+  html+=row('第三章','ch3Note(-1)');
+  if(current===3){
+   CH3.notes.forEach((n,i)=>{if(n.title!=='第三章结束')html+=row('新线索'+(i+1),'ch3Note('+i+')')});
+   if(CH3.done)html+=row('第三章已结束','ch3Ending()');
+  }
+ }
+ if(current>=4){
+  html+=row('第四章','ch4ReadNote(0)');
+  let count=0;
+  CH4.notes.forEach((n,i)=>{
+   if(i===0||n.title==='已解锁的新应用')return;
+   if(n.title!=='通话记录')count++;
+   html+=row(n.title==='通话记录'?'通话记录':'新线索'+count,'ch4ReadNote('+i+')');
+  });
+  if(CH4.done)html+=row('第四章已结束','ch4Ending()');
+ }
+ html+=row('跳转至其他章节','gameChapterMenu()');
+ return html;
+}
+gameNotes=function(){
+ activeApp='notes';gameClear('notes');
+ wrap('备忘录','<div class="content story-notes">'+storyNotesRows()+'</div>');
+};
