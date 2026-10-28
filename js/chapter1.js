@@ -32,7 +32,19 @@ const originalStoryShow=show;let storyUnlockedOnce=false;show=function(id){let p
 const oldHome=goHome;goHome=function(){gameExitX();oldHome();gameBadge()};
 const oldOpen=openApp;openApp=function(k){if(!gameUnlock(k)){gameLocked();return}if(k==='notes'){gameNotes();return}if(k==='kkt'){gameFriends();return}if(k==='x'){gameX();return}if(k==='phone'){gameCalls();return}oldOpen(k)};
 beginPhoneStory=function(){}; // remove the obsolete 120-second call
-function gameNotes(){activeApp='notes';gameClear('notes');let second=game.xExited;let end=game.chapterEnd;wrap('备忘录','<div class="content story-notes"><div class="note" onclick="gameReadNote()"><strong>第一章</strong></div>'+(second?'<div class="note" onclick="gameReadPhoneNote()"><strong>新的线索</strong></div>':'')+(end?'<div class="note" onclick="gameReadEnding()"><strong>第一章已结束</strong></div>':'')+'<div class="note" onclick="gameChapterMenu()"><strong>跳转至其他章节</strong></div></div>')}
+function gameNotes(){
+ activeApp='notes';gameClear('notes');
+ const chapter=game.chapter2?2:1;
+ const chapterOne='<div class="note" onclick="gameReadNote()"><strong>第一章</strong></div>';
+ const chapterTwo='<div class="note" onclick="gameStartChapter2FromMenu()"><strong>第二章</strong></div>';
+ // Only the current chapter shows contextual reminders; older chapters retain a single entry.
+ const currentExtras=chapter===1
+   +(game.xExited?'<div class="note" onclick="gameReadPhoneNote()"><strong>新的线索</strong></div>':'')
+   +(game.chapterEnd?'<div class="note" onclick="gameReadEnding()"><strong>第一章已结束</strong></div>':'')
+   :'';
+ const entries=chapter===1?chapterOne+currentExtras+(game.chapterEnd?chapterTwo:''):chapterTwo+chapterOne;
+ wrap('备忘录','<div class="content story-notes">'+entries+'<div class="note" onclick="gameChapterMenu()"><strong>跳转至其他章节</strong></div></div>');
+}
 function gameChapterMenu(){
  activeApp='notes';
  const chapter=game.chapter2?2:1;
