@@ -71,7 +71,7 @@ const ch5OldUnlock=gameUnlock;gameUnlock=function(k){if(ch5Is()){if(['youtube','
 const ch5OldOpen=openApp;openApp=function(k){if(ch5Is()){if(k==='kkt')return ch5Friends();if(k==='notes'){setTimeout(ch5TryBirthdayReminder,1100);return ch5Notes()}if(k==='calendar')return ch5Calendar();if(k==='photos')return CH5.calendarSeen?ch5Photos():ch5OldAlbum()}return ch5OldOpen(k)};
 const ch5OldFriends=gameFriends;gameFriends=function(){if(ch5Is())return ch5Friends();return ch5OldFriends()};
 const ch5OldChat=gameChat;gameChat=function(id){if(ch5Is()&&id==='hyeongjun')return ch5Room();return ch5OldChat(id)};
-function ch5TryBirthdayReminder(){if(!ch5Is()||CH5.phase!=='birthday'||CH5.unreadReminder||phoneRoomOpen('hyeongjun'))return;CH5.unreadReminder=true;ch5Save();phoneBanner('calendar','日历','11月30日 · 宋亨俊生日','ch5-birthday')}
+function ch5TryBirthdayReminder(){if(!ch5Is()||CH5.phase!=='birthday'||CH5.unreadReminder)return;CH5.unreadReminder=true;ch5Save();/* Calendar event remains inside the app; no artificial notification banner. */}
 const ch5OldHome=goHome;goHome=function(){const r=ch5OldHome();if(ch5Is())setTimeout(ch5TryBirthdayReminder,1100);return r};
 const ch5OldAlbum=igAlbum;
 const ch5OldPhoneOpen=phoneOpenRoom;phoneOpenRoom=function(id){if(ch5Is()){if(id==='ch5-birthday')return ch5Birthday();if(typeof id==='string'&&id.startsWith('ch5-note-'))return ch5Note(id.slice(9));if(id==='hyeongjun')return ch5Room();if(id==='notes')return ch5Notes()}return ch5OldPhoneOpen(id)};
