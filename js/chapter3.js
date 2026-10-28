@@ -166,27 +166,7 @@ function ch3Unblock(i){
  ch3IGRefresh();
 }
 function ch3Ending(){activeApp='notes';wrap('第三章已结束','<div class="content story-prose story-ending"><h2>第三章 · 所有人都知道</h2><p>宋亨俊同意解除拉黑，但还没有原谅你。</p><p>第四章的后续剧情将继续展开。</p><button class="choice" onclick="gameNotes()">返回备忘录</button></div>')}
-const ch3OldNotes=gameNotes;
-gameNotes=function(){
- activeApp='notes';gameClear('notes');
- const row=(title,fn)=>'<div class="note" onclick="'+fn+'"><strong>'+escapeHtml(title)+'</strong></div>';
- let html=row('第一章','gameReadNote()');
- if(!game.chapter2&&!CH3.active&&game.xExited)html+=row('新线索','gameReadPhoneNote()');
- if(!game.chapter2&&!CH3.active&&game.chapterEnd)html+=row('第一章已结束','gameReadEnding()');
- if(game.chapter2){
-  html+=row('第二章','ch2ReadInitialNote()');
-  if(!CH3.active&&CH2.igNote)html+=row('新线索1','ch2ReadIGNote()');
-  if(!CH3.active&&CH2.photosNote)html+=row('新线索2','ch2ReadPhotoNote()');
-  if(!CH3.active&&CH2.done)html+=row('第二章已结束','ch2Ending()');
- }
- if(CH3.active&&game.stage==='chapter3'){
-  html+=row('第三章','ch3Note(-1)');
-  CH3.notes.filter(n=>n.title!=='第三章结束').forEach((n,i)=>{const idx=CH3.notes.indexOf(n);html+=row('新线索'+(i+1),'ch3Note('+idx+')')});
-  if(CH3.done)html+=row('第三章已结束','ch3Ending()');
- }
- html+=row('跳转至其他章节','gameChapterMenu()');
- wrap('备忘录','<div class="content story-notes">'+html+'</div>');
-};
+// Notes list is rendered centrally after all chapter scripts load.
 const ch3OldFriends=gameFriends;gameFriends=function(){if(CH3.active&&game.stage==='chapter3')return ch3Friends();return ch3OldFriends()};
 const ch3OldIGChat=igChat;igChat=function(id){if(CH3.active&&game.stage==='chapter3')ch3Tick();ch3OldIGChat(id);if(CH3.active&&game.stage==='chapter3'&&id==='hyeongjun'){const form=document.querySelector('.ig-compose');if(CH3.reply!==0&&form){form.outerHTML='<div class="ch3-ig-send">'+ch3Choices()+'</div>'};const sc=$('ig-scroll');if(sc)sc.scrollTop=sc.scrollHeight;const own=[...document.querySelectorAll('.ig-chat .ig-bubble.mine')];if(own.length){const last=own.at(-1);if(last&&CH3.reply===0&&!CH3.igQueue?.length&&!document.querySelector('.ch3-read'))last.insertAdjacentHTML('afterend','<div class="ch3-read">'+(CH3.seen?'已查看':'已发送')+'</div>')}}};
 const ch3OldSend=igSend;igSend=function(e,id){const text=$('ig-message')?.value?.trim();ch3OldSend(e,id);if(CH3.active&&game.stage==='chapter3'&&text)ch3OnSend(id,text);else if(ch2Active()&&id==='hyeongjun'&&text&&['dm','ig','photos'].includes(CH2.phase)){ch2IGSend(id,text);igChat(id)}};
