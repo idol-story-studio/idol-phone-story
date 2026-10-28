@@ -122,7 +122,7 @@ function ch3IGPump(){
  const item=CH3.igQueue[0];
  const deliver=()=>{if(!CH3.active){ch3IGBusy=false;return}if(item.from==='me'&&!phonePlayerCanAutoReply('hyeongjun','ig')){ch3IGBusy=false;setTimeout(ch3IGPump,500);return}CH3.igQueue.shift();ch3Save();
   (igChats.hyeongjun??=[]).push({from:item.from,text:item.text,time:'刚刚',ch3Auto:true});
-  igSave();ch3IGRefresh();ch3IGBusy=false;
+  igSave();if(item.from==='them')phoneReceiveDM('ig','hyeongjun',item.text);ch3IGRefresh();ch3IGBusy=false;
   if(CH3.igQueue.length)ch3IGPump();
   else{
    const after=CH3.igQueueAfter;CH3.igQueueAfter=null;
