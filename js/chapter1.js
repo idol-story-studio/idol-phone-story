@@ -39,7 +39,7 @@ function gameNotes(){
  const chapterTwo='<div class="note" onclick="gameStartChapter2FromMenu()"><strong>第二章</strong></div>';
  // Only the current chapter shows contextual reminders; older chapters retain a single entry.
  const currentExtras=chapter===1
-   +(game.xExited?'<div class="note" onclick="gameReadPhoneNote()"><strong>新的线索</strong></div>':'')
+   ?(game.xExited?'<div class="note" onclick="gameReadPhoneNote()"><strong>新的线索</strong></div>':'')
    +(game.chapterEnd?'<div class="note" onclick="gameReadEnding()"><strong>第一章已结束</strong></div>':'')
    :'';
  const entries=chapter===1?chapterOne+currentExtras+(game.chapterEnd?chapterTwo:''):chapterTwo+chapterOne;
