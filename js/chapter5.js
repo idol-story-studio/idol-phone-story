@@ -26,7 +26,7 @@ function ch5Is(){return CH5.active&&game.stage==='chapter5'}
 function ch5Save(){try{localStorage.setItem(CH5_KEY,JSON.stringify(CH5))}catch(e){}}
 function ch5Time(n){const x=n??CH5.clock;return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(Math.floor(x%60)).padStart(2,'0')}
 function ch5AddNote(id,title,text,dest){if(CH5.notes.some(n=>n.id===id))return;CH5.notes.push({id,title,text,dest});ch5Save();phoneReceiveNote(title,'ch5-note-'+id)}
-function ch5Start(){if(!CH4.done){gameLocked();return}if(CH5.active&&game.stage==='chapter5'){ch5Notes();return}Object.assign(CH5,{active:true,done:false,phase:'morning',messages:[],notes:[],choice:null,branchA:null,branchB:null,branchC:null,calendarSeen:false,photoSeen:false,captionSeen:false,searchUnlocked:false,historySeen:false,reflectionSeen:false,eveningStarted:false,unreadReminder:false,clock:618,session:CH5.session+1,queue:null,queueIndex:0,queueAfter:null});game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;ch5Save();ch5Friends();ch5Queue([['them','起床了吗'],['them','头还疼不疼']],'a')}
+function ch5Start(){if(!CH4.done){gameLocked();return}if(CH5.active&&game.stage==='chapter5'){ch5Notes();return}Object.assign(CH5,{active:true,done:false,phase:'morning',messages:[],notes:[],choice:null,branchA:null,branchB:null,branchC:null,calendarSeen:false,photoSeen:false,captionSeen:false,searchUnlocked:false,historySeen:false,reflectionSeen:false,eveningStarted:false,unreadReminder:false,clock:618,session:CH5.session+1,queue:null,queueIndex:0,queueAfter:null});game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;ch5Save();ch5Queue([['them','起床了吗'],['them','头还疼不疼']],'a');ch5IntroNote()}
 function ch5Push(who,text){if(!ch5Is())return;CH5.messages.push({who,text,time:ch5Time(),id:'ch5-'+CH5.messages.length});CH5.clock+=text.length>18?0.75:0.35;ch5Save();if(phoneRoomOpen('hyeongjun'))ch5Room(true);else if(who==='them'){phoneReceiveMessage('hyeongjun',text);if(activeApp==='kkt'&&document.querySelector('.ch5-friends'))ch5Friends()}}
 let ch5QueueTimer=null;
 function ch5Queue(lines,after){CH5.queue=lines;CH5.queueIndex=0;CH5.queueAfter=after;ch5Save();ch5ResumeQueue(true)}
@@ -73,6 +73,18 @@ function ch5TryBirthdayReminder(){if(!ch5Is()||CH5.phase!=='birthday'||CH5.unrea
 const ch5OldHome=goHome;goHome=function(){const r=ch5OldHome();if(ch5Is())setTimeout(ch5TryBirthdayReminder,1100);return r};
 const ch5OldAlbum=igAlbum;
 const ch5OldPhoneOpen=phoneOpenRoom;phoneOpenRoom=function(id){if(ch5Is()){if(id==='ch5-birthday')return ch5Birthday();if(typeof id==='string'&&id.startsWith('ch5-note-'))return ch5Note(id.slice(9));if(id==='hyeongjun')return ch5Room();if(id==='notes')return ch5Notes()}return ch5OldPhoneOpen(id)};
-const ch5OldMenu=gameChapterMenu;gameChapterMenu=function(){ch5OldMenu();if(!CH4.done||CH5.active)return;const el=$('appbody')?.querySelector('.story-notes');if(el&&!el.querySelector('[onclick="ch5Start()"]'))el.insertAdjacentHTML('beforeend','<button class="note story-chapter-button" onclick="ch5Start()"><strong>前往第五章</strong></button>')};
+const ch5OldMenu=gameChapterMenu;
+gameChapterMenu=function(){
+ if(!CH4.done){return ch5OldMenu()}
+ activeApp='notes';
+ const available=[
+ ['第一章','gameJumpChapter(1)'],
+ ['第二章','gameJumpChapter(2)'],
+ ['第三章','ch3Start()'],
+ ['第四章','ch4Start()'],
+ ['第五章',CH5.active?"ch5Notes()":"ch5Start()"]
+ ];
+ wrap('跳转至其他章节','<div class="content story-notes"><p class="story-chapter-hint">选择已经解锁的章节。已开始的第五章将继续现有进度。</p>'+available.map(([name,action])=>'<button class="note story-chapter-button" onclick="'+action+'"><strong>前往'+name+'</strong></button>').join('')+'</div>');
+};
 const ch5OldEnd=ch4Ending;ch4Ending=function(){ch5OldEnd();if(CH4.done){const el=document.querySelector('.story-ending');if(el&&!el.querySelector('[onclick="ch5Start()"]'))el.insertAdjacentHTML('beforeend','<button class="choice" onclick="ch5Start()">进入第五章</button>')}};
 try{const saved=JSON.parse(localStorage.getItem(CH5_KEY)||'null');if(saved&&saved.active){Object.assign(CH5,saved);game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;setTimeout(()=>ch5ResumeQueue(true),1200)}}catch(e){}
