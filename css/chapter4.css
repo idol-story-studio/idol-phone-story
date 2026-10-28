@@ -17,3 +17,9 @@
 .ch4-baemin{padding:22px 15px;background:#25c5ac;color:white;font-weight:900;font-size:24px;border-radius:18px;margin:12px 0}
 .ch4-baemin small{display:block;font-size:13px;font-weight:500}
 .ch4-delivery-tabs{display:flex;justify-content:space-around;padding:16px 0;background:white;border-radius:14px;font-size:13px}
+
+/* Portrait chat attachment: constrain the photo and its parent bubble together. */
+.ch4-photo-line{max-width:100%;min-width:0;display:flex;justify-content:flex-start;clear:both}
+.ch4-photo-line .ch4-photo-bubble{box-sizing:border-box;display:block;width:min(184px,58vw);max-width:100%;min-width:0;height:auto;overflow:hidden;padding:3px!important;border-radius:14px}
+.ch4-photo-button{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:3/4;overflow:hidden;border:0;padding:0;margin:0;border-radius:11px;background:#eee;cursor:pointer}
+.ch4-photo-button img{display:block;width:100%;height:100%;object-fit:cover;max-width:100%}
