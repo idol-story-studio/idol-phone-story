@@ -186,7 +186,7 @@ gameNotes=function(){
 };
 const ch3OldFriends=gameFriends;gameFriends=function(){if(CH3.active)return ch3Friends();return ch3OldFriends()};
 const ch3OldIGChat=igChat;igChat=function(id){if(CH3.active)ch3Tick();ch3OldIGChat(id);if(CH3.active&&id==='hyeongjun'){const form=document.querySelector('.ig-compose');if(CH3.reply!==0&&form){form.outerHTML='<div class="ch3-ig-send">'+ch3Choices()+'</div>'};const sc=$('ig-scroll');if(sc)sc.scrollTop=sc.scrollHeight;const own=[...document.querySelectorAll('.ig-chat .ig-bubble.mine')];if(own.length){const last=own.at(-1);if(last&&CH3.reply===0&&!CH3.igQueue?.length&&!document.querySelector('.ch3-read'))last.insertAdjacentHTML('afterend','<div class="ch3-read">'+(CH3.seen?'已查看':'已发送')+'</div>')}}};
-const ch3OldSend=igSend;igSend=function(e,id){const text=$('ig-message')?.value?.trim();ch3OldSend(e,id);if(CH3.active&&text)ch3OnSend(id,text);else if(ch2Active()&&id==='hyeongjun'&&CH2.phase==='dm'&&!CH2.dmSent){ch2IGSend(id,text);igChat(id)}};
+const ch3OldSend=igSend;igSend=function(e,id){const text=$('ig-message')?.value?.trim();ch3OldSend(e,id);if(CH3.active&&text)ch3OnSend(id,text);else if(ch2Active()&&id==='hyeongjun'&&text&&['dm','ig','photos'].includes(CH2.phase)){ch2IGSend(id,text);igChat(id)}};
 const ch3OldFile=ch2File;ch2File=function(){return ch3OldFile()};
 const ch3OldOpen=openApp;openApp=function(k){if(k==='files'){if(gameUnlock('files'))return ch3Files();gameLocked();return}return ch3OldOpen(k)};
 const ch3OldUnlock=gameUnlock;gameUnlock=function(k){if(['msg','calendar','map','settings','youtube','spotify','camera'].includes(k))return false;if(k==='files')return CH3.active&&['file','serim','wonjin','woobin','apology','complete'].includes(CH3.stage);return ch3OldUnlock(k)};
