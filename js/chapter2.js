@@ -52,10 +52,21 @@ function ch2IGSend(id,text){
 function ch2AlbumSeen(i){if(!ch2Active()||CH2.phase!=='photos')return;if([0,1,2].includes(i)){CH2.photosSeen.add(i);if(CH2.photosSeen.size>=2){CH2.phase='woobin';ch2Timer(()=>{CH2.woobinStep=1;ch2Sequence('woobin',[['them','敏熙啊'],['them','你现在怎么样了？'],['them','元进说你今天给亨俊打电话了？']],()=>{CH2.woobinStep=2;ch2RefreshChat('woobin')})},2000)}}}
 function ch2Notes(){return (!CH2.igNote?'<div class="note" onclick="ch2ReadInitialNote()"><strong>第二章 · 新线索</strong></div>':'')+(CH2.igNote?'<div class="note" onclick="ch2ReadIGNote()"><strong>新线索 · 以前的评论</strong></div>':'')+(CH2.photosNote?'<div class="note" onclick="ch2ReadPhotoNote()"><strong>新线索 · 以前的照片</strong></div>':'')+(CH2.done?'<div class="note" onclick="ch2Ending()"><strong>第二章已结束</strong></div>':'')}
 function ch2ReadPhotoNote(){if(CH2.phase==='ig'&&CH2.photosNote)CH2.phase='photos';activeApp='notes';wrap('以前的照片','<div class="content story-prose"><p>以前的我和亨俊好像留下了很多共同回忆。那些照片会不会让我想起些什么？去相册看看吧。</p><button class="choice" onclick="openApp(\'photos\')">前往相册</button></div>')}
-function ch2Friends(){activeApp='kkt';wrap('KakaoTalk','<div class="content">'+[['hyeongjun','宋亨俊'],['wonjin','咸元进'],['woobin','徐宇瑸'],['serim','朴世琳']].map(([id,name])=>'<div class="item" onclick="'+(id==='woobin'||id==='serim'?'ch2Chat(\''+id+'\')':'gameChat(\''+id+'\')')+'"><div class="avatar">'+name.slice(0,1)+'</div><div class="itemmain"><div class="itemtitle">'+name+'</div><div class="itemsub">'+escapeHtml(CH2.messages[id]?.at(-1)?.[1]||'历史对话')+'</div></div>'+(CH2.unread[id]?'<span class="story-contact-unread">'+CH2.unread[id]+'</span>':'')+'</div>').join('')+'</div>')}
+function ch2Friends(){
+ activeApp='kkt';
+ const entries=[['hyeongjun','宋亨俊'],['wonjin','咸元进']];
+ if(CH2.messages.woobin.length||CH2.woobinStep>0)entries.push(['woobin','徐宇瑸']);
+ if(CH2.messages.serim.length||CH2.serimStep>0)entries.push(['serim','朴世琳']);
+ wrap('KakaoTalk','<div class="content">'+entries.map(([id,name])=>{
+  const isNew=id==='woobin'||id==='serim';
+  const history=isNew?CH2.messages[id]:null;
+  const preview=isNew?(history?.at(-1)?.[1]||'新消息'):id==='hyeongjun'?(game.chatBlocked?'消息未能送达':CH1.morning.at(-1)):game.wonjinReplyDelivered?'去ig碰碰运气吧，说不定还能私信他':'历史对话';
+  return '<div class="item" onclick="'+(isNew?'ch2Chat(\''+id+'\')':'gameChat(\''+id+'\')')+'"><div class="avatar">'+name.slice(0,1)+'</div><div class="itemmain"><div class="itemtitle">'+name+'</div><div class="itemsub">'+escapeHtml(preview)+'</div></div>'+(isNew&&CH2.unread[id]?'<span class="story-contact-unread">'+CH2.unread[id]+'</span>':'')+'</div>';
+ }).join('')+'</div>');
+}
 function ch2RefreshChat(id){const node=$('ch2-chat');if(node&&node.dataset.id===id&&activeApp==='kkt')ch2Chat(id)}
 function ch2Choices(options,callback){return '<div class="story-options">'+options.map((v,i)=>'<button class="story-option" onclick="'+callback+'('+i+')">'+escapeHtml(v)+'</button>').join('')+'</div>'}
-function ch2Chat(id){if(!ch2Active())return;activeApp='kkt';CH2.unread[id]=0;game.unread.kkt=CH2.unread.woobin+CH2.unread.serim;gameBadge();const name=id==='woobin'?'徐宇瑸':'朴世琳';const messages=CH2.messages[id];const rows=messages.map(([who,t],i)=>who==='file'?'<div class="ch2-attachment" onclick="ch2File()"><strong>▤ '+escapeHtml(t)+'</strong><small>朴世琳发送的文件 · 点击预览</small></div>':gameBubble(who==='me',t,'刚刚',false,false,i===0||messages[i-1][0]!==who)).join('');let action='';if(id==='woobin'){
+function ch2Chat(id){if(!ch2Active()||!['woobin','serim'].includes(id)||!CH2.messages[id]?.length)return;activeApp='kkt';CH2.unread[id]=0;game.unread.kkt=CH2.unread.woobin+CH2.unread.serim;gameBadge();const name=id==='woobin'?'徐宇瑸':'朴世琳';const messages=CH2.messages[id];const rows=messages.map(([who,t],i)=>who==='file'?'<div class="ch2-attachment" onclick="ch2File()"><strong>▤ '+escapeHtml(t)+'</strong><small>朴世琳发送的文件 · 点击预览</small></div>':gameBubble(who==='me',t,'刚刚',false,false,i===0||messages[i-1][0]!==who)).join('');let action='';if(id==='woobin'){
  if(CH2.phase==='woobin'&&CH2.woobinStep===2)action=ch2Choices(['哥，我有件事想跟你说。','哥，我现在真的有点不知道该怎么办。'],'ch2WoobinChoice');
  if(CH2.phase==='woobin'&&CH2.woobinStep===3)action=ch2Choices(['我好像失忆了。'],'ch2Confess');
  if(CH2.phase==='woobin'&&CH2.woobinStep===4)action=ch2Choices(['好，但是先不要告诉外面的人。','可以，哥你帮我说吧。'],'ch2Consent');
