@@ -134,3 +134,9 @@ function gameNavigateBack(){
 }
 const ch4NavOldHome=goHome;
 goHome=function(){CH4_NAV.stack=[];CH4_NAV.app=null;CH4_NAV.view=null;return ch4NavOldHome()};
+
+/* Global media Easter eggs are available in every chapter, regardless of story gates. */
+const ch4PreviousUnlockMedia=gameUnlock;
+gameUnlock=function(k){if(k==='youtube'||k==='spotify')return true;return ch4PreviousUnlockMedia(k)};
+const ch4PreviousOpenMedia=openApp;
+openApp=function(k){if(k==='youtube'||k==='spotify'){mediaEggApp(k);return}return ch4PreviousOpenMedia(k)};
