@@ -119,8 +119,8 @@ let ch3IGBusy=false;
 function ch3IGPump(){
  if(ch3IGBusy||!CH3.active||!CH3.igQueue?.length)return;
  ch3IGBusy=true;
- const item=CH3.igQueue.shift();ch3Save();
- setTimeout(()=>{
+ const item=CH3.igQueue[0];
+ const deliver=()=>{if(!CH3.active){ch3IGBusy=false;return}if(item.from==='me'&&!phonePlayerCanAutoReply('hyeongjun','ig')){ch3IGBusy=false;return}CH3.igQueue.shift();ch3Save();
   (igChats.hyeongjun??=[]).push({from:item.from,text:item.text,time:'刚刚',ch3Auto:true});
   igSave();ch3IGRefresh();ch3IGBusy=false;
   if(CH3.igQueue.length)ch3IGPump();
@@ -130,7 +130,7 @@ function ch3IGPump(){
    if(after==='emotion'){CH3.reply=2;ch3Save();ch3IGRefresh()}
    if(after==='unblock'){CH3.reply=3;CH3.done=true;game.chatBlocked=false;ch3Save();ch3Next('complete','第三章结束','亨俊答应恢复联系，但他还在生气。可以前往下一章。');ch3IGRefresh()}
   }
- },item.from==='them'?2300:1300);
+ };if(item.from==='me'&&!phonePlayerCanAutoReply('hyeongjun','ig')){ch3IGBusy=false;return}setTimeout(deliver,phoneMessageDelay(item.text));
 }
 function ch3Tick(){
  if(!CH3.active)return;
