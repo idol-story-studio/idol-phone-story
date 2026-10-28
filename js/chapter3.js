@@ -14,7 +14,19 @@ function ch3Save(){localStorage.setItem(CH3_KEY,JSON.stringify(CH3))}
 function ch3Notice(title,text){if(CH3.notes.some(n=>n.title===title))return;CH3.notes.push({title,text});ch3Save();if(activeApp!=='notes')gameNotify('notes','有新的线索');}
 function ch3KktNotice(name){if(activeApp='kkt'&&current==='appview'&&document.querySelector('#ch2-chat[data-id="'+(name==='朴世琳'?'serim':name==='咸元进'?'wonjin':'woobin')+'"]'))return;gameShowBanner('kkt',name+'发来了一条新消息')}
 function ch3Start(){if(CH3.active&&!CH3.done&&game.stage==='chapter3'){ch3Friends();return}CH3=ch3Default();CH3.active=true;CH3.stage='group';CH3.igStart=(igChats.hyeongjun||[]).length;ch3Save();game.stage='chapter3';game.chapter2=true;game.chatBlocked=true;gameNotes();setTimeout(()=>ch3KktNotice('CRAVITY 🐾'),1300)}
-function ch3Note(i){if(i===-1){activeApp='notes';wrap('第三章','<div class="content story-prose"><h2>所有人都知道</h2><p>有些事似乎藏在过去的聊天和工作记录里。</p><button class="choice" onclick="gameNotes()">返回备忘录</button></div>');return}let n=CH3.notes[i];if(!n)return;activeApp='notes';wrap(n.title,'<div class="content story-prose"><p>'+escapeHtml(n.text)+'</p><button class="choice" onclick="'+(n.title==='群聊'?'openApp(\\\'kkt\\\')':n.title==='工作文件'?'openApp(\\\'files\\\')':n.title==='道歉'?'openApp(\\\'ig\\\')':'gameNotes()')+'">'+(n.title==='群聊'?'前往 KakaoTalk':n.title==='工作文件'?'前往文件':n.title==='道歉'?'前往 Instagram':'返回备忘录')+'</button></div>')}
+function ch3NoteDestination(title){
+ if(title==='群聊')return ch3Group();
+ if(title==='工作文件')return ch3Files();
+ if(title==='道歉')return instagram('chat','hyeongjun');
+ return gameNotes();
+}
+function ch3Note(i){
+ if(i===-1){activeApp='notes';wrap('第三章','<div class="content story-prose"><h2>所有人都知道</h2><p>有些事似乎藏在过去的聊天和工作记录里。</p><button class="choice" onclick="gameNotes()">返回备忘录</button></div>');return}
+ const n=CH3.notes[i];if(!n)return;
+ const label=n.title==='群聊'?'前往 KakaoTalk':n.title==='工作文件'?'前往文件':n.title==='道歉'?'前往 Instagram':'返回备忘录';
+ activeApp='notes';
+ wrap(n.title,'<div class="content story-prose"><p>'+escapeHtml(n.text)+'</p><button class="choice" onclick="ch3NoteDestination(\''+n.title+'\')">'+label+'</button></div>');
+}
 function ch3Notes(){if(!CH3.active)return '';return '<div class="note" onclick="ch3Note(-1)"><strong>第三章</strong></div>'+CH3.notes.map((n,i)=>'<div class="note" onclick="ch3Note('+i+')"><strong>新线索 · '+escapeHtml(n.title)+'</strong></div>').join('')}
 function ch3Next(stage,title,text){CH3.stage=stage;ch3Save();if(title)ch3Notice(title,text)}
 const CH3_EAR_HISTORY=[
