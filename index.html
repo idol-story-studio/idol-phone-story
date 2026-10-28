@@ -69,8 +69,8 @@ notes:`<svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#fff"
 camera:`<svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#d8d9dd"/><rect x="10" y="20" width="44" height="30" rx="7" fill="#fff"/><circle cx="32" cy="35" r="12" fill="#9fa3aa"/><circle cx="32" cy="35" r="8" fill="#444c5d"/></svg>`,
 generic:(emoji,bg)=>`<svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="${bg}"/><text x="32" y="43" font-size="32" text-anchor="middle">${emoji}</text></svg>`
 };
-const apps=[["KakaoTalk","kkt"],["Instagram","ig"],["X","x"],["相册","photos"],["备忘录","notes"],["文件","files"],["日历","calendar"],["地图","map"],["设置","settings"],["YouTube","youtube"],["Spotify","spotify"],["相机","camera"],["电话","phone"]];
-function icon(k){return icons[k]||({calendar:icons.generic("31","#fff"),map:icons.generic("🗺️","#b8e3f6"),settings:icons.generic("⚙️","#a5a6ad"),youtube:icons.generic("▶","#fa2222"),spotify:icons.generic("≋","#18c85e")}[k]||icons.generic("✦","#888"))}
+const apps=[["KakaoTalk","kkt"],["Instagram","ig"],["X","x"],["相册","photos"],["备忘录","notes"],["文件","files"],["日历","calendar"],["地图","map"],["设置","settings"],["YouTube","youtube"],["Spotify","spotify"],["相机","camera"],["电话","phone"],["外卖民族","delivery"]];
+function icon(k){return icons[k]||({calendar:icons.generic("31","#fff"),map:icons.generic("🗺️","#b8e3f6"),settings:icons.generic("⚙️","#a5a6ad"),youtube:icons.generic("▶","#fa2222"),spotify:icons.generic("≋","#18c85e"),delivery:icons.generic("배","#28c5ac")}[k]||icons.generic("✦","#888"))}
 function appBtn(name,key,dock=false){return `<button class="app" onclick="openApp('${key}')"><span class="appicon">${icon(key)}</span>${dock?"":`<span>${name}</span>`}</button>`}
 $("apps").innerHTML=apps.slice(0,8).map(a=>appBtn(...a)).join("");$("apps2").innerHTML=apps.slice(8).map(a=>appBtn(...a)).join("");$("dock").innerHTML=[["电话","phone"],["KakaoTalk","kkt"],["信息","msg"],["相机","camera"]].map(a=>appBtn(...a,true)).join("");
 function goHome(){activeApp=null;stopRing();callSession++;$("call").classList.remove("show");clearInterval(callTimer);show("home")}
@@ -120,4 +120,5 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 <script src="js/instagram.js"></script>
 <script src="js/chapter1.js"></script>
 <script src="js/chapter2.js"></script>
-<script src="js/chapter3.js"></script></body></html>
+<script src="js/chapter3.js"></script>
+<script src="js/chapter4.js"></script></body></html>
