@@ -1,6 +1,6 @@
 /* Global phone contracts — load after all chapter modules.
    New chapters must call phoneReceiveMessage / phoneReceiveNote, and use phoneMessageDelay. */
-const PHONE_RULES_VERSION=1;
+const PHONE_RULES_VERSION=2;
 const PHONE_NAMES={hyeongjun:'宋亨俊',wonjin:'咸元进',woobin:'徐宇瑸',serim:'朴世琳',group:'CRAVITY 🐾'};
 const PHONE_UNREAD_KEY='idol_phone_unread_v1';
 const phoneUnread=(()=>{try{return JSON.parse(localStorage.getItem(PHONE_UNREAD_KEY))||{}}catch(e){return {}}})();
@@ -9,7 +9,7 @@ const phoneRoomOpen=id=>activeApp==='kkt'&&current==='appview'&&(
   document.querySelector('#ch2-chat[data-id="'+id+'"]')||
   (id==='hyeongjun'&&document.querySelector('.story-ch1-chat'))||
   (id==='wonjin'&&document.querySelector('.story-wonjin-chat')));
-function phoneMessageDelay(nextText,first=false){const n=String(nextText||'').length;return first?850:Math.min(7200,850+n*115)}
+function phoneMessageDelay(nextText,first=false){const n=Array.from(String(nextText||'')).length;return Math.min(8500,(first?1100:900)+n*125)}
 function phoneTimeAt(base,index,step=2){const t=base+index*step;return String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
 function phoneSaveUnread(){try{localStorage.setItem(PHONE_UNREAD_KEY,JSON.stringify(phoneCounts))}catch(e){}}
 function phoneCount(id){return Math.max(0,Number(phoneCounts[id])||0)}
@@ -46,6 +46,10 @@ function phoneBanner(app,title,message,target){
 }
 gameShowBanner=function(app,message,target){if(app==='kkt'){const id=target||(/CRAVITY|群聊/.test(message)?'group':/徐宇瑸/.test(message)?'woobin':/朴世琳/.test(message)?'serim':/咸元进/.test(message)?'wonjin':'hyeongjun');phoneBanner(app,PHONE_NAMES[id]||'KakaoTalk',message,id)}else phoneBanner('notes','备忘录',message,'notes')};
 gameBadge=phoneUpdateBadges;
+gameSyncKktUnread=function(){phoneUpdateBadges()};
+gameContactBadge=function(id){const n=phoneCount(id);return n?'<span class="story-contact-unread">'+n+'</span>':''};
+gameNotifyContact=function(id){phoneReceiveMessage(id,'发来了一条新消息')};
+gameNotify=function(app,msg){if(app==='notes')phoneReceiveNote(msg);else if(app==='kkt')phoneReceiveMessage(/咸元进/.test(msg)?'wonjin':/朴世琳/.test(msg)?'serim':/徐宇瑸/.test(msg)?'woobin':'hyeongjun',msg);else{game.unread[app]=(game.unread[app]||0)+1;phoneUpdateBadges();phoneBanner(app,app,msg,app)}};
 gameClear=function(app){if(app==='notes')phoneSetCount('notes',0);else if(app==='kkt')phoneUpdateBadges();else{game.unread[app]=0;phoneUpdateBadges()}};
 storyOpenNotification=function(i){const n=storyNotifications[i];if(!n)return;storyCloseNotificationCenter();phoneOpenRoom(n.target|| (n.app==='notes'?'notes':'hyeongjun'))};
 const phoneOldRefreshNC=storyRefreshNotificationCenter;
@@ -64,6 +68,10 @@ const phoneOldCh4Group=ch4Group;
 ch4Group=function(quiet){phoneReadRoom('group');return phoneOldCh4Group(quiet)};
 const phoneOldGameChat=gameChat;
 gameChat=function(id){phoneReadRoom(id);return phoneOldGameChat(id)};
+const phoneOldGameWonjinChat=gameWonjinChat;
+gameWonjinChat=function(){phoneReadRoom('wonjin');return phoneOldGameWonjinChat()};
 const phoneOldOpenApp=openApp;
 openApp=function(k){if(k!=='youtube'&&k!=='spotify'&&!gameUnlock(k)){gameLocked();return}return phoneOldOpenApp(k)};
 phoneUpdateBadges();
+
+/* Chapters must use phoneReceiveMessage/phoneReceiveNote once per real incoming item; never call both gameNotify and gameShowBanner for the same item. */
