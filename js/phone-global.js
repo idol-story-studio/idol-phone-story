@@ -18,7 +18,7 @@ function phoneCount(id){return Math.max(0,Number(phoneCounts[id])||0)}
 function phoneSetCount(id,n){phoneCounts[id]=Math.max(0,Number(n)||0);phoneSaveUnread();phoneUpdateBadges()}
 function phoneReadRoom(id){phoneSetCount(id,0)}
 function phoneReceiveMessage(id,message){if(phoneRoomOpen(id))return;phoneSetCount(id,phoneCount(id)+1);phoneBanner('kkt',PHONE_NAMES[id]||'新消息',String(message||'发来一条新消息'),id)}
-function phoneReceiveNote(title){if(activeApp==='notes'&&current==='appview')return;phoneSetCount('notes',phoneCount('notes')+1);phoneBanner('notes','备忘录',title||'有新的内容','notes')}
+function phoneReceiveNote(title,target='notes'){if(activeApp==='notes'&&current==='appview')return;phoneSetCount('notes',phoneCount('notes')+1);phoneBanner('notes','备忘录',title||'有新的内容',target)}
 function phoneUpdateBadges(){
  const total=Object.keys(PHONE_NAMES).reduce((n,k)=>n+phoneCount(k),0);
  game.unread.kkt=total;game.unread.notes=phoneCount('notes');
@@ -43,7 +43,7 @@ function phoneBanner(app,title,message,target){
  if(typeof ding==='function')ding();
  if(current==='lock'||current==='pass'){gameLockBanner(app,item.message);return}
  const t=$('toast');t.className='toast story-notification';
- t.innerHTML='<div class="story-notification-icon">'+(app==='kkt'?'TALK':'▤')+'</div><div class="story-notification-text"><div class="story-notification-app">'+(app==='kkt'?'KakaoTalk':'备忘录')+' <span>现在</span></div><div class="story-notification-body">'+escapeHtml(item.message)+'</div></div>';
+ t.innerHTML='<div class="story-notification-icon">'+(app==='kkt'?'TALK':app==='calendar'?'31':'▤')+'</div><div class="story-notification-text"><div class="story-notification-app">'+(app==='kkt'?'KakaoTalk':app==='calendar'?'日历':'备忘录')+' <span>现在</span></div><div class="story-notification-body">'+escapeHtml(item.message)+'</div></div>';
  t.style.display='flex';t.onclick=()=>{clearTimeout(toastTimer);t.style.display='none';phoneOpenRoom(target||'notes')};clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.display='none',8000)
 }
 gameShowBanner=function(app,message,target){if(app==='kkt'){const id=target||(/CRAVITY|群聊/.test(message)?'group':/徐宇瑸/.test(message)?'woobin':/朴世琳/.test(message)?'serim':/咸元进/.test(message)?'wonjin':'hyeongjun');phoneBanner(app,PHONE_NAMES[id]||'KakaoTalk',message,id)}else phoneBanner('notes','备忘录',message,'notes')};
