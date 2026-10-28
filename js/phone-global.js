@@ -76,6 +76,19 @@ const phoneOldGameWonjinChat=gameWonjinChat;
 gameWonjinChat=function(){phoneReadRoom('wonjin');return phoneOldGameWonjinChat()};
 const phoneOldOpenApp=openApp;
 openApp=function(k){if(k!=='youtube'&&k!=='spotify'&&!gameUnlock(k)){gameLocked();return}return phoneOldOpenApp(k)};
+// The opening Notes reminder is part of the first chapter's initial phone state.
+// Keep the lock-screen notification and the app badge in sync, without replaying
+// the alert on later chapter visits or overwriting saved progress.
+if(game.stage==='intro'&&!game.notesRead){
+ if(phoneCount('notes')<1)phoneSetCount('notes',1);
+ if(current==='lock'||current==='pass'){
+  setTimeout(()=>{
+   if(game.stage==='intro'&&!game.notesRead&&(current==='lock'||current==='pass')){
+    gameLockBanner('notes','备忘录有新的内容');
+   }
+  },350);
+ }
+}
 phoneUpdateBadges();
 
 /* Chapters must use phoneReceiveMessage/phoneReceiveNote once per real incoming item; never call both gameNotify and gameShowBanner for the same item. */
