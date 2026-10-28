@@ -28,7 +28,7 @@ function ch4Next(){if(!ch4Is())return;
  else if(CH4.step===4){ch4Pending('coffee')}
  else if(CH4.step===5){CH4.step=6;ch4Save();setTimeout(()=>ch4Batch([['them','到公司了吗'],['them','世琳哥刚刚在找人']],()=>ch4Pending('arrived')),5000)}
  else if(CH4.step===7){if(!CH4.calendarViewed)return;CH4.step=8;ch4Save();setTimeout(()=>ch4Batch([['them','我先走了'],['them','廷谟哥找我有点事'],['them','练习室的灯你记得关']],()=>ch4Pending('wait')),6500)}
- else if(CH4.step===9){CH4.step=10;ch4Save();setTimeout(()=>ch4Batch([['them','你看'],['them','又来了']],()=>ch4Pending('ask')),1800)}
+ else if(CH4.step===9){CH4.step=10;ch4Save();setTimeout(()=>ch4Batch([['them','我先忙了']],()=>{CH4.step=11;ch4Save();ch4AddNote('新线索3','先不发消息了。\n去外卖民族翻翻以前的订单吧。','delivery');ch4Next()}),1800)}
  else if(CH4.step===11){if(!CH4.deliveryViewed)return;CH4.step=12;ch4Save();setTimeout(()=>{ch4Line('recalled','消息已删除');ch4Pending('recall')},6500)}
  else if(CH4.step===13){CH4.step=14;ch4Save();setTimeout(()=>ch4Batch([['them','[蒸面包照片]'],['them','之前你说想吃的那个'],['them','刚才路过看见了']],()=>ch4Pending('bread')),4500)}
  else if(CH4.step===15){CH4.step=16;CH4.clockMinute=Math.max(CH4.clockMinute,22*60+40);ch4Save();setTimeout(ch4Incoming,30000)}
@@ -38,7 +38,11 @@ function ch4Choice(i){const key=CH4.pending;if(!ch4Is()||!key||!CH4_OPTIONS[key]
  if(key==='intro')ch4Batch([i===0?['them','两点啊']:i===1?['them','我下午也在']:['them','那你定了再说'],i===0?['them','我应该也在']:i===1?['them','应该在练习室']:['them','世琳哥在问到的人数'],['them','到了再说吧']],()=>{CH4.step=2;ch4Save();ch4Next()});
  if(key==='coffee')ch4Batch(i===1?[['them','吃了'],['them','你呢'],['me','我也吃了'],['them','那就行']]:i===2?[['them','我没说我要喝'],['them','只是顺路帮他买'],['me','哦哦 我还以为你也买了'],['them','没有']]:[['them','吃了'],['them','你先管好你自己吧'],['me','我就是随便问问'],['them','……'],['them','头还疼吗'],['me','好多了'],['them','嗯']],()=>{CH4.step=5;ch4Save();ch4Next()});
  if(key==='arrived')ch4Batch(i===0?[['them','嗯'],['them','我还在练习室'],['them','你刚出院 别练太久'],['them','别拖累明天的安排']]:i===1?[['them','嗯'],['them','还要练一会'],['them','你找我有事？'],['me','没有 就问问'],['them','哦'],['them','你自己也别练太久']]:[['them','我还在练习室'],['them','等下就走'],['me','好'],['them','世琳哥刚才找你'],['them','记得回一下']],()=>{CH4.step=7;ch4Save();ch4AddNote('新线索2','今天的练习安排好像还在日历里。\n去日历看看吧。','calendar');ch4Next()});
- if(key==='wait')ch4Batch(i===2?[['them','嗯'],['them','练习室记得锁门'],['me','知道了'],['them','别太晚']]:i===0?[['them','你又没说在等我'],['me','我以为你会知道'],['them','我怎么会知道'],['them','下次有事直接说'],['me','这也没必要特地说吧'],['them','你看'],['them','就是这样']]:[['them','你也没说要一起回去'],['me','我以为你还在公司'],['them','我刚说了要走'],['them','算了']],()=>{CH4.step=9;ch4Save();if(i===0){CH4.step=10;ch4Save();ch4Pending('ask')}else ch4Next()});
+ if(key==='wait')ch4Batch(
+  i===2?[['them','嗯'],['them','练习室记得锁门'],['me','知道了'],['them','别太晚']]:
+  i===0?[['them','你又没说在等我'],['me','我以为你会知道'],['them','你不说我怎么知道'],['me','这也没必要特地说吧'],['them','……你每次都这么觉得']]:
+  [['them','你也没说要一起走啊'],['me','我以为你还在公司'],['them','我是在啊'],['them','可你又没来找我'],['me','哦……']],
+  ()=>{CH4.step=9;ch4Save();ch4Next()});
  if(key==='ask')ch4Batch(i===0?[['them','就是你刚才那句'],['them','算了'],['them','我先忙了']]:i===1?[['them','没什么'],['them','现在说也没用'],['them','我先忙了']]:[['them','嗯'],['them','我先忙了']],()=>{CH4.step=11;ch4Save();ch4AddNote('新线索3','先不发消息了。\n去外卖民族翻翻以前的订单吧。','delivery');ch4Next()});
  if(key==='recall')ch4Batch(i===0?[['them','发错了'],['them','没事']]:i===1?[['them','手滑'],['them','不用管']]:[['them','看见就看见了'],['them','没什么']],()=>{CH4.step=13;ch4Save();ch4Next()});
  if(key==='bread')ch4Batch(i===0?[['them','只是记得你提过'],['them','刚好路过'],['them','明天带去公司']]:i===1?[['them','顺路看到的'],['them','别想太多'],['them','明天拿给你']]:[['them','不用谢'],['them','又不是特地买的'],['them','明天带去公司']],()=>{CH4.step=15;ch4Save();ch4Next()});
