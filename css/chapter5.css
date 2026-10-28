@@ -21,3 +21,12 @@
 .ch5-note{box-sizing:border-box;overflow-wrap:anywhere}
 .ch5-note p{white-space:pre-line;line-height:1.9;margin:0 0 22px}
 .ch5-note .choice{display:block;width:100%;box-sizing:border-box;margin-top:18px}
+
+/* Photos date lookup is an in-app control, not a scripted shortcut. */
+.ch5-date-filter{display:block;width:calc(100% - 24px);margin:12px;padding:12px 15px;border:0;border-radius:11px;background:#f0f0f4;color:#575760;text-align:left;font-size:14px}
+.ch5-date-search{padding:22px 18px;box-sizing:border-box}
+.ch5-date-search label{display:block;font-size:13px;color:#777;margin:12px 0 7px}
+.ch5-date-search input{display:block;width:100%;box-sizing:border-box;padding:13px;border:1px solid #d9d9df;border-radius:11px;background:#fff;font-size:16px;color:#222}
+.ch5-date-search .choice{margin:15px 0}
+.ch5-date-search #ch5-date-results{margin-top:20px}
+.ch5-photo-detail .ig-album-caption p{white-space:pre-line}
