@@ -82,3 +82,7 @@ phoneUpdateBadges();
 
 const phoneOriginalIGChat=igChat;
 igChat=function(id){phoneReadRoom(id,'ig');return phoneOriginalIGChat(id)};
+
+/* Show the exact per-conversation unread count in the Instagram inbox, without adding fictitious messages. */
+const phoneIGBase=igBase;
+igBase=function(header,content,bottom){const r=phoneIGBase(header,content,bottom);if(igScreen==='inbox'||igScreen==='dm'||igScreen==='messages'){const n=phoneCount('ig:hyeongjun');if(n){const rows=document.querySelectorAll('.ig-dm-row,.ig-message-row,.ig-inbox-row,.ig-dm-item,.ig-chat-list .item');rows.forEach(row=>{if((row.textContent||'').includes('亨俊')&&!row.querySelector('.story-contact-unread'))row.insertAdjacentHTML('beforeend',gameContactBadge('hyeongjun','ig'))})}}return r};
