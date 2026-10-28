@@ -171,13 +171,13 @@ gameNotes=function(){
  activeApp='notes';gameClear('notes');
  const row=(title,fn)=>'<div class="note" onclick="'+fn+'"><strong>'+escapeHtml(title)+'</strong></div>';
  let html=row('第一章','gameReadNote()');
- if(game.xExited)html+=row('新线索','gameReadPhoneNote()');
- if(game.chapterEnd)html+=row('第一章已结束','gameReadEnding()');
+ if(!game.chapter2&&!CH3.active&&game.xExited)html+=row('新线索','gameReadPhoneNote()');
+ if(!game.chapter2&&!CH3.active&&game.chapterEnd)html+=row('第一章已结束','gameReadEnding()');
  if(game.chapter2){
   html+=row('第二章','ch2ReadInitialNote()');
-  if(CH2.igNote)html+=row('新线索1','ch2ReadIGNote()');
-  if(CH2.photosNote)html+=row('新线索2','ch2ReadPhotoNote()');
-  if(CH2.done)html+=row('第二章已结束','ch2Ending()');
+  if(!CH3.active&&CH2.igNote)html+=row('新线索1','ch2ReadIGNote()');
+  if(!CH3.active&&CH2.photosNote)html+=row('新线索2','ch2ReadPhotoNote()');
+  if(!CH3.active&&CH2.done)html+=row('第二章已结束','ch2Ending()');
  }
  if(CH3.active&&game.stage==='chapter3'){
   html+=row('第三章','ch3Note(-1)');
@@ -192,7 +192,7 @@ const ch3OldIGChat=igChat;igChat=function(id){if(CH3.active&&game.stage==='chapt
 const ch3OldSend=igSend;igSend=function(e,id){const text=$('ig-message')?.value?.trim();ch3OldSend(e,id);if(CH3.active&&game.stage==='chapter3'&&text)ch3OnSend(id,text);else if(ch2Active()&&id==='hyeongjun'&&text&&['dm','ig','photos'].includes(CH2.phase)){ch2IGSend(id,text);igChat(id)}};
 const ch3OldFile=ch2File;ch2File=function(){return ch3OldFile()};
 const ch3OldOpen=openApp;openApp=function(k){if(k==='files'){if(gameUnlock('files'))return ch3Files();gameLocked();return}return ch3OldOpen(k)};
-const ch3OldUnlock=gameUnlock;gameUnlock=function(k){if(['msg','calendar','map','settings','youtube','spotify','camera'].includes(k))return false;if(k==='files')return CH3.active&&['file','serim','wonjin','woobin','apology','complete'].includes(CH3.stage);return ch3OldUnlock(k)};
+const ch3OldUnlock=gameUnlock;gameUnlock=function(k){if(k==='youtube'||k==='spotify')return true;if(['msg','calendar','map','settings','camera'].includes(k))return false;if(k==='files')return CH3.active&&['file','serim','wonjin','woobin','apology','complete'].includes(CH3.stage);return ch3OldUnlock(k)};
 const ch3OldMenu=gameChapterMenu;gameChapterMenu=function(){activeApp='notes';const chapter=game.stage==='chapter3'?3:(ch2Active()?2:1);const names={1:'一',2:'二',3:'三'};const destinations=[1,2,3].filter(n=>n!==chapter);wrap('跳转至其他章节','<div class="content story-notes"><p class="story-chapter-hint">选择已开放章节，方便检查剧情与页面。</p>'+destinations.map(n=>'<button class="note story-chapter-button" onclick="'+(n===3?'ch3Start()':'gameJumpChapter('+n+')')+'"><strong>前往第'+names[n]+'章</strong></button>').join('')+'</div>')};
 const ch3OldJump=gameJumpChapter;gameJumpChapter=function(n){if(n===1||n===2){CH3.active=false;ch3Save()}return ch3OldJump(n)};
 const ch3OldEnding=ch2Ending;ch2Ending=function(){ch3OldEnding();const el=document.querySelector('.story-ending');if(el&&!el.querySelector('[onclick="ch3Start()"]'))el.insertAdjacentHTML('beforeend','<button class="choice" onclick="ch3Start()">进入第三章</button>')};
