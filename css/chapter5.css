@@ -15,3 +15,9 @@
 .ch5-history .chatbody{position:relative!important;top:auto!important;bottom:auto!important;flex:1 1 auto;height:auto!important;min-height:0;overflow-y:auto}
 .ch5-history .story-send{position:relative!important;bottom:auto!important;display:flex;flex-direction:column;gap:4px;padding:8px}
 .ch5-muted{color:#888;font-size:12px}
+
+/* Notes: reuse the established story list and prose presentation */
+.story-notes .note{width:100%;box-sizing:border-box}
+.ch5-note{box-sizing:border-box;overflow-wrap:anywhere}
+.ch5-note p{white-space:pre-line;line-height:1.9;margin:0 0 22px}
+.ch5-note .choice{display:block;width:100%;box-sizing:border-box;margin-top:18px}
