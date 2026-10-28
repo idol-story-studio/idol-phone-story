@@ -18,7 +18,7 @@ function ch4Save(){try{localStorage.setItem(CH4_KEY,JSON.stringify(CH4))}catch(e
 function ch4Is(){return CH4.active&&game.stage==='chapter4'}
 function ch4Notify(kind,who){if(!ch4Is())return;const currentRoom=activeApp==='kkt'&&document.querySelector(kind==='group'?'#ch2-chat[data-id="group"]':'#ch2-chat[data-id="hyeongjun"]');if(!currentRoom)gameShowBanner('kkt',who+'发来新消息')}
 function ch4AddNote(title,text,dest){if(CH4.notes.some(n=>n.title===title))return;CH4.notes.push({title,text,dest});ch4Save();if(activeApp!=='notes'&&!CH4.pending&&![1,3,6,8,10,12,14].includes(CH4.step))gameNotify('notes','备忘录有新的内容')}
-function ch4Start(){if(!CH3.done){gameLocked();return}if(CH4.active&&!CH4.done&&game.stage==='chapter4'){ch4Notes();return}Object.assign(CH4,{active:true,step:0,lines:[],group:[],notes:[],pending:null,callState:'',done:false,callLog:false,groupSeen:false,clockMinute:13*60+20,noteQueue:[],calendarViewed:false,deliveryViewed:false,session:(CH4.session||0)+1});game.stage='chapter4';game.chatBlocked=false;ch4Save();ch4AddNote('第四章','亨俊已经解除拉黑了。\n不知道该怎么开口。先看看有没有消息吧。','kkt');ch4AddNote('已解锁的新应用','日历（含待办）和外卖民族现在可以打开了。\n有空可以翻翻以前的记录。','apps');ch4Notes();setTimeout(()=>ch4Next(),1600)}
+function ch4Start(){if(!CH3.done){gameLocked();return}if(CH4.active&&!CH4.done&&game.stage==='chapter4'){ch4Notes();return}Object.assign(CH4,{active:true,step:0,lines:[],group:[],notes:[],pending:null,callState:'',done:false,callLog:false,groupSeen:false,clockMinute:13*60+20,noteQueue:[],calendarViewed:false,deliveryViewed:false,session:(CH4.session||0)+1});game.stage='chapter4';game.chapter2=true;game.chatBlocked=false;ch4Save();ch4AddNote('第四章','亨俊已经解除拉黑了。\n不知道该怎么开口。先看看有没有消息吧。','kkt');ch4Notes();setTimeout(()=>ch4Next(),1600)}
 function ch4Line(from,text){if(!ch4Is())return;CH4.lines.push({from,text,time:ch4Time(from==='me'?1:2)});ch4Save();if(document.querySelector('#ch2-chat[data-id="hyeongjun"]'))ch4Room(true);else if(from==='them')ch4Notify('private','宋亨俊')}
 function ch4Batch(items,done){const token=CH4.session;let i=0;function next(){if(!ch4Is()||token!==CH4.session)return;if(i>=items.length){if(done)done();return}const [from,text]=items[i++];ch4Line(from,text);setTimeout(next,from==='them'?1500:900)}next()}
 function ch4GroupPush(){if(!ch4Is())return;const token=CH4.session;let i=CH4.group.length;function next(){if(!ch4Is()||token!==CH4.session||CH4.step!==3)return;if(i>=CH4_GROUP.length){CH4.step=4;ch4Save();ch4AddNote('新线索1','亨俊帮元进哥买咖啡。\n他不会又空腹喝冰美式吧……\n去私聊问问他有没有吃早饭。','private');if(document.querySelector('#ch2-chat[data-id="group"]'))ch4Group(true);return}CH4.group.push([...CH4_GROUP[i++],ch4Time(i%4===0?2:1)]);ch4Save();if(document.querySelector('#ch2-chat[data-id="group"]'))ch4Group(true);else if(i===1)ch4Notify('group','CRAVITY 群聊');setTimeout(next,1100+Math.min(1000,CH4_GROUP[i-1][1].length*65))}next()}
@@ -53,7 +53,7 @@ function ch4Group(quiet=false){if(!ch4Is())return;CH4.groupSeen=true;if(CH4.step
 function ch4SearchOpen(id){const q=prompt('搜索聊天记录');if(!q)return;const data=id==='group'?CH4.group.map(([n,t])=>n+'：'+t):CH4.lines.map(m=>m.text);const hits=data.filter(t=>t.includes(q));activeApp='kkt';wrap('搜索结果','<div class="content">'+(hits.length?hits.map(t=>'<div class="note">'+escapeHtml(t)+'</div>').join(''):'<p>没有找到相关记录</p>')+'<button class="choice" onclick="'+(id==='group'?'ch4Group()':'ch4Room()')+'">返回聊天</button></div>')}
 function ch4BreadPhoto(){activeApp='photos';wrap('照片','<div class="content" style="text-align:center;padding:12px;background:#111;color:#fff"><img src="assets/ch4_steamed_bread.jpg" alt="蒸面包照片" style="max-width:100%;max-height:75vh;object-fit:contain" onerror="this.alt=\'照片加载失败\'"><p>蒸面包</p><button class="choice" onclick="ch4Room()">返回聊天</button></div>')}
 function ch4Friends(){if(!ch4Is())return;activeApp='kkt';const entries=[['hyeongjun','宋亨俊',CH4.lines.at(-1)?.text||'已恢复联系','ch4Room()'],['group','CRAVITY 🐾',CH4.group.at(-1)?.[1]||'历史消息','ch4Group()'],['wonjin','咸元进','历史聊天',"ch2Chat('wonjin')"],['woobin','徐宇瑸','历史聊天',"ch2Chat('woobin')"],['serim','朴世琳','历史聊天',"ch2Chat('serim')"]];wrap('KakaoTalk','<div class="content">'+entries.map(([id,name,preview,fn])=>'<div class="item" onclick="'+fn+'"><div class="avatar">'+name[0]+'</div><div class="itemmain"><div class="itemtitle">'+name+'</div><div class="itemsub">'+escapeHtml(preview)+'</div></div></div>').join('')+'</div>')}
-function ch4Notes(){if(!ch4Is())return ch4OldNotes();activeApp='notes';gameClear('notes');const row=(title,fn)=>'<div class="note" onclick="'+fn+'"><strong>'+escapeHtml(title)+'</strong></div>';let html=row('第一章','gameReadNote()');if(game.xExited)html+=row('新线索','gameReadPhoneNote()');if(game.chapterEnd)html+=row('第一章已结束','gameReadEnding()');if(game.chapter2){html+=row('第二章','ch2ReadInitialNote()');if(CH2.igNote)html+=row('新线索1','ch2ReadIGNote()');if(CH2.photosNote)html+=row('新线索2','ch2ReadPhotoNote()');if(CH2.done)html+=row('第二章已结束','ch2Ending()')}html+=row('第三章','ch3Note(-1)');CH3.notes.filter(n=>n.title!=='第三章结束').forEach((n,i)=>html+=row('新线索'+(i+1),'ch3Note('+CH3.notes.indexOf(n)+')'));if(CH3.done)html+=row('第三章已结束','ch3Ending()');html+=row('第四章','ch4ReadNote(0)');CH4.notes.slice(1).forEach((n,i)=>html+=row(n.title==='已解锁的新应用'?'已解锁的新应用':n.title==='通话记录'?'通话记录':'新线索'+(i+1),'ch4ReadNote('+(i+1)+')'));if(CH4.done)html+=row('第四章已结束','ch4Ending()');html+=row('跳转至其他章节','gameChapterMenu()');wrap('备忘录','<div class="content story-notes">'+html+'</div>')}
+function ch4Notes(){if(!ch4Is())return ch4OldNotes();activeApp='notes';gameClear('notes');const row=(title,fn)=>'<div class="note" onclick="'+fn+'"><strong>'+escapeHtml(title)+'</strong></div>';let html=row('第一章','gameReadNote()');if(game.xExited)html+=row('新线索','gameReadPhoneNote()');if(game.chapterEnd)html+=row('第一章已结束','gameReadEnding()');if(game.chapter2){html+=row('第二章','ch2ReadInitialNote()');if(CH2.igNote)html+=row('新线索1','ch2ReadIGNote()');if(CH2.photosNote)html+=row('新线索2','ch2ReadPhotoNote()');if(CH2.done)html+=row('第二章已结束','ch2Ending()')}html+=row('第三章','ch3Note(-1)');CH3.notes.filter(n=>n.title!=='第三章结束').forEach((n,i)=>html+=row('新线索'+(i+1),'ch3Note('+CH3.notes.indexOf(n)+')'));if(CH3.done)html+=row('第三章已结束','ch3Ending()');html+=row('第四章','ch4ReadNote(0)');CH4.notes.filter((n,i)=>i>0&&n.title!=='已解锁的新应用').forEach((n,i)=>html+=row(n.title==='通话记录'?'通话记录':'新线索'+(CH4.notes.slice(1).filter(x=>x.title!=='已解锁的新应用'&&x.title!=='通话记录').indexOf(n)+1),'ch4ReadNote('+(i+1)+')'));if(CH4.done)html+=row('第四章已结束','ch4Ending()');html+=row('跳转至其他章节','gameChapterMenu()');wrap('备忘录','<div class="content story-notes">'+html+'</div>')}
 function ch4ReadNote(i){const n=CH4.notes[i];if(!n)return ch4Notes();activeApp='notes';let dest='';if(n.dest==='private')dest='<button class="choice" onclick="ch4Room()">前往宋亨俊的 KakaoTalk 私聊</button>';else if(n.dest==='kkt')dest='<button class="choice" onclick="ch4Friends()">前往 KakaoTalk</button>';else if(n.dest==='delivery')dest='<button class="choice" onclick="ch4Delivery()">前往外卖民族</button>';else if(n.dest==='calendar')dest='<button class="choice" onclick="ch4Calendar()">前往日历（可选）</button>';else if(n.dest==='apps')dest='<button class="choice" onclick="ch4Calendar()">前往日历（可选）</button><button class="choice" onclick="ch4Delivery()">前往外卖民族（可选）</button>';wrap(n.title,'<div class="content story-prose"><p>'+escapeHtml(n.text)+'</p>'+dest+'<button class="choice" onclick="ch4Notes()">返回备忘录</button></div>')}
 function ch4Ending(){activeApp='notes';wrap('第四章已结束','<div class="content story-prose story-ending"><h2>第四章 · 还在生气吗？</h2><p>还是没有和好。\n但他刚刚打电话来了。</p><p>回忆进度：4/10</p><button class="choice" onclick="ch4Notes()">返回备忘录</button></div>')}
 
@@ -75,8 +75,8 @@ function ch4Answer(){stopRing();CH4.callState='connected';ch4Save();$('answer').
 function ch4EndCall(){stopRing();clearInterval(callTimer);callSession++;$('call').classList.remove('show');const missed=CH4.callState==='ringing';CH4.callState='ended';CH4.callLog=true;CH4.done=true;CH4.step=17;ch4Save();ch4AddNote('通话记录',missed?'亨俊刚刚打过电话。我没接到。':'刚才亨俊打电话问我头还疼不疼。','phone');gameNotify('notes','第四章已结束');oldHome()}
 function ch4Calls(){activeApp='phone';wrap('最近通话','<div class="content"><div class="item" onclick="ch4Incoming()"><div class="itemmain"><strong>宋亨俊</strong><div class="itemsub">今天 · 语音通话</div></div></div></div>')}
 
-const ch4OldUnlock=gameUnlock;gameUnlock=function(k){if(ch4Is()&&['calendar','delivery','phone','kkt','notes'].includes(k))return true;return ch4OldUnlock(k)};
-const ch4OldOpen=openApp;openApp=function(k){if(ch4Is()){if(k==='calendar')return ch4Calendar();if(k==='delivery')return ch4Delivery();if(k==='notes')return ch4Notes();if(k==='phone')return ch4Calls();if(k==='kkt')return ch4Friends()}return ch4OldOpen(k)};
+const ch4OldUnlock=gameUnlock;gameUnlock=function(k){if(ch4Is()&&['calendar','delivery','phone','kkt','notes','ig','photos','x','files'].includes(k))return true;return ch4OldUnlock(k)};
+const ch4OldOpen=openApp;openApp=function(k){if(ch4Is()){if(k==='ig'){game.chapter2=true;return ch4OldOpen(k)}if(k==='calendar')return ch4Calendar();if(k==='delivery')return ch4Delivery();if(k==='notes')return ch4Notes();if(k==='phone')return ch4Calls();if(k==='kkt')return ch4Friends()}return ch4OldOpen(k)};
 const ch4OldChat=gameChat;gameChat=function(id){if(ch4Is()&&id==='hyeongjun')return ch4Room();if(ch4Is()&&id==='group')return ch4Group();return ch4OldChat(id)};
 const ch4OldNotes=gameNotes;gameNotes=function(){if(ch4Is())return ch4Notes();return ch4OldNotes()};
 const ch4OldFriends=gameFriends;gameFriends=function(){if(ch4Is())return ch4Friends();return ch4OldFriends()};
@@ -84,4 +84,40 @@ const ch4OldMenu=gameChapterMenu;gameChapterMenu=function(){if(ch4Is()){activeAp
 const ch4OldEnding=ch3Ending;ch3Ending=function(){ch4OldEnding();if(CH3.done){const el=document.querySelector('.story-ending');if(el&&!el.querySelector('[onclick="ch4Start()"]'))el.insertAdjacentHTML('beforeend','<button class="choice" onclick="ch4Start()">进入第四章</button>')}};
 const ch4OldAnswer=answerCall;answerCall=function(){if(game.callType==='ch4')return ch4Answer();return ch4OldAnswer()};
 const ch4OldEnd=endCall;endCall=function(){if(game.callType==='ch4'){game.callType=null;return ch4EndCall()}return ch4OldEnd()};
-try{const saved=JSON.parse(localStorage.getItem(CH4_KEY)||'null');if(saved&&saved.active){Object.assign(CH4,saved);if(!CH4.clockMinute)CH4.clockMinute=13*60+20;if(game.stage==='chapter4'){game.chatBlocked=false;if(CH4.callState==='ringing'||CH4.callState==='connected')CH4.callState='';}}}catch(e){}
+try{const saved=JSON.parse(localStorage.getItem(CH4_KEY)||'null');if(saved&&saved.active){Object.assign(CH4,saved);if(!CH4.clockMinute)CH4.clockMinute=13*60+20;if(game.stage==='chapter4'){game.chapter2=true;game.chatBlocked=false;if(CH4.callState==='ringing'||CH4.callState==='connected')CH4.callState='';}}}catch(e){}
+
+
+/* Hierarchical app navigation. Preserve the current rendered page when a child opens;
+   refreshes of the same screen do not create extra history entries. */
+const CH4_NAV={stack:[],app:null,view:null,restoring:false};
+const ch4NavWrap=wrap;
+wrap=function(title,body,extra){
+ const app=activeApp||null;
+ const currentView=String(title)+'|'+(app||'');
+ if(CH4_NAV.app!==app){CH4_NAV.stack=[];CH4_NAV.view=null;CH4_NAV.app=app}
+ else if(!CH4_NAV.restoring&&CH4_NAV.view!==currentView&&current==='appview'){
+  const el=$('appbody');
+  if(el&&CH4_NAV.view)CH4_NAV.stack.push({html:el.innerHTML,app:CH4_NAV.app,view:CH4_NAV.view,scroll:el.scrollTop});
+ }
+ ch4NavWrap(title,body,extra);
+ CH4_NAV.view=currentView;
+ const back=$('appbody')?.querySelector('.apphead .back');
+ if(back){back.setAttribute('onclick','gameNavigateBack()');back.textContent='‹ 返回'}
+};
+function gameNavigateBack(){
+ if(CH4_NAV.stack.length){
+  const last=CH4_NAV.stack.pop();
+  CH4_NAV.restoring=true;
+  activeApp=last.app;
+  CH4_NAV.app=last.app;
+  CH4_NAV.view=last.view;
+  $('appbody').innerHTML=last.html;
+  $('appbody').scrollTop=last.scroll||0;
+  CH4_NAV.restoring=false;
+  return;
+ }
+ CH4_NAV.stack=[];CH4_NAV.view=null;CH4_NAV.app=null;
+ goHome();
+}
+const ch4NavOldHome=goHome;
+goHome=function(){CH4_NAV.stack=[];CH4_NAV.app=null;CH4_NAV.view=null;return ch4NavOldHome()};
