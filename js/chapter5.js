@@ -93,4 +93,4 @@ gameChapterMenu=function(){
  wrap('跳转至其他章节','<div class="content story-notes"><p class="story-chapter-hint">选择已经解锁的章节。已开始的第五章将继续现有进度。</p>'+available.map(([name,action])=>'<button class="note story-chapter-button" onclick="'+action+'"><strong>前往'+name+'</strong></button>').join('')+'</div>');
 };
 const ch5OldEnd=ch4Ending;ch4Ending=function(){ch5OldEnd();if(CH4.done){const el=document.querySelector('.story-ending');if(el&&!el.querySelector('[onclick="ch5Start()"]'))el.insertAdjacentHTML('beforeend','<button class="choice" onclick="ch5Start()">进入第五章</button>')}};
-try{const saved=JSON.parse(localStorage.getItem(CH5_KEY)||'null');if(saved&&saved.active){Object.assign(CH5,saved);if(localStorage.getItem('idol_current_chapter_v1')==='5'){game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;setTimeout(()=>ch5ResumeQueue(true),1200)}}}catch(e){}
+try{const saved=JSON.parse(localStorage.getItem(CH5_KEY)||'null');if(saved&&saved.active){Object.assign(CH5,saved);/* Active chapter is restored by chapter-navigation.js after all modules load. */}}catch(e){}
