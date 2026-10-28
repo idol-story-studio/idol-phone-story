@@ -38,9 +38,9 @@ const CH3_HISTORY=[
 ['朴世琳','九点半是工作人员集合，我们十点到就行。'],
 ['宋亨俊','收到～'],
 ['宋亨俊','对了，有人看见我的充电线吗？'],
-['姜敏熙','在我包里，你昨天落在练习室了。'],
+['具廷谟','在我包里，你昨天落在练习室了。'],
 ['宋亨俊','难怪找不到ㅋㅋ 明天记得带来。'],
-['姜敏熙','知道啦。'],
+['具廷谟','知道啦。'],
 ['徐宇瑸','谁要喝咖啡？我明天顺路买。'],
 ['咸元进','我要冰美式！'],
 ['宋亨俊','我也要，谢谢哥。'],
@@ -86,17 +86,68 @@ function ch3AskWonjin(i){
  ch3PlayConversation('wonjin');
 }
 function ch3RenderConversation(id,fromStart=false){const name=id==='serim'?'朴世琳':id==='wonjin'?'咸元进':'徐宇瑸';const lines=CH3_LINES[id]||[];const count=CH3[id+'Count']??lines.length;const rows=lines.slice(0,count).map(([who,t],i)=>gameBubble(who==='me',t,'刚刚',false,false,i===0||lines[i-1][0]!==who)).join('');ch3ChatShell(name,id,rows,fromStart,!!CH3[id+'Finished'])}
-function ch3PlayConversation(id){const lines=CH3_LINES[id];function next(){if(!CH3.active||!CH3[id])return;const index=CH3[id+'Count']||0;if(index>=lines.length){if(CH3[id+'Finished'])return;CH3[id+'Finished']=true;ch3Save();if(document.querySelector('#ch2-chat[data-id="'+id+'"]'))ch3RenderConversation(id,false);if(id==='serim')ch3Next('wonjin');if(id==='wonjin'){ch3Next('woobin');setTimeout(()=>ch3KktNotice('徐宇瑸'),2400)}if(id==='woobin')ch3Next('apology','道歉','或许应该去 Instagram，认真向亨俊道个歉。');return}CH3[id+'Count']=index+1;ch3Save();if(document.querySelector('#ch2-chat[data-id="'+id+'"]'))ch3RenderConversation(id,false);setTimeout(next,Math.min(2200,1000+lines[index][1].length*24))}setTimeout(next,650)}
+function ch3PlayConversation(id){const lines=CH3_LINES[id];function next(){if(!CH3.active||!CH3[id])return;const index=CH3[id+'Count']||0;if(index>=lines.length){if(CH3[id+'Finished'])return;CH3[id+'Finished']=true;ch3Save();if(document.querySelector('#ch2-chat[data-id="'+id+'"]'))ch3RenderConversation(id,false);if(id==='serim')ch3Next('wonjin');if(id==='wonjin'){ch3Next('woobin');setTimeout(()=>ch3KktNotice('徐宇瑸'),9500)}if(id==='woobin')ch3Next('apology','道歉','或许应该去 Instagram，认真向亨俊道个歉。');return}CH3[id+'Count']=index+1;ch3Save();if(document.querySelector('#ch2-chat[data-id="'+id+'"]'))ch3RenderConversation(id,false);setTimeout(next,Math.min(2200,1000+lines[index][1].length*24))}setTimeout(next,650)}
 function ch3OnSend(id,text){if(!CH3.active||id!=='hyeongjun'||CH3.done)return;const msgs=(igChats.hyeongjun||[]).slice(CH3.igStart).filter(m=>m.from==='me'&&!m.ch3Auto);const all=msgs.map(m=>m.text).join(' ');const apology=/(对不起|抱歉|不好意思|我错了|是我的错|道歉)/.test(all);const cause=/(耳夹|耳饰|耳朵|弄疼|弄痛|拉疼|扯疼)/.test(all);const negative=/(不想道歉|不会道歉|凭什么道歉|不是我的错|不需要道歉)/.test(all);CH3.seenAt=Date.now()+7000;CH3.seen=false;if(CH3.stage==='apology'&&CH3.woobinFinished&&apology&&cause&&!negative&&!CH3.replyAt)CH3.replyAt=Date.now()+13000;ch3Save();setTimeout(ch3Tick,7200);if(CH3.replyAt)setTimeout(ch3Tick,13200)}
-function ch3Tick(){if(!CH3.active)return;let now=Date.now(),changed=false;if(CH3.seenAt&&now>=CH3.seenAt&&!CH3.seen){CH3.seen=true;changed=true}if(CH3.replyAt&&now>=CH3.replyAt&&!CH3.reply){CH3.reply=1;changed=true;(igChats.hyeongjun??=[]).push(...CH3_REPLY.map(([from,text])=>({from,text,time:'刚刚',ch3Auto:true})));igSave()}if(changed){ch3Save();if(activeApp==='ig'&&igScreen==='chat'&&igTarget==='hyeongjun')igChat('hyeongjun')}}
-function ch3Choices(){if(!CH3.reply)return '';if(CH3.reply===1)return '<div class="story-options">'+['我知道，我不是想用失忆当借口。','对不起，我知道你现在还是很难过。','我不记得那些话了，但我知道我伤害了你。'].map((t,i)=>'<button class="story-option" onclick="ch3Emotion('+i+')">'+escapeHtml(t)+'</button>').join('')+'</div>';if(CH3.reply===2)return '<div class="story-options">'+['亨俊啊，你能不能先把我从黑名单里放出来？','我知道你还在生气，但能不能先让我联系到你？','可以先解除 KakaoTalk 和电话的拉黑吗？我不会一直烦你的。'].map((t,i)=>'<button class="story-option" onclick="ch3Unblock('+i+')">'+escapeHtml(t)+'</button>').join('')+'</div>';return '<div class="story-end">当前对话已结束</div>'}
-function ch3AddIG(lines){(igChats.hyeongjun??=[]).push(...lines.map(([from,text])=>({from,text,time:'刚刚',ch3Auto:true})));igSave();igChat('hyeongjun')}
-function ch3Emotion(i){if(CH3.reply!==1)return;CH3.choice=i;CH3.reply=2;ch3Save();const t=['我知道，我不是想用失忆当借口。','对不起，我知道你现在还是很难过。','我不记得那些话了，但我知道我伤害了你。'][i];const answer=['我知道你不是那个意思','我不是想让你一直道歉，只是有些事还没办法当作没发生','至少你现在知道了'][i];ch3AddIG([['me',t],['them',answer],['me','我会慢慢想起来的'],['them','你现在身体怎么样'],['me','好多了，偶尔还有点头疼'],['them','医生怎么说'],['me','还要观察'],['them','那就好好休息，别总盯着手机'],['me','可是我现在好多事情都不知道'],['them','不知道就慢慢来，又没人催你']])}
-function ch3Unblock(i){if(CH3.reply!==2)return;CH3.unblock=i;CH3.reply=3;ch3Save();const text=['亨俊啊，你能不能先把我从黑名单里放出来？','我知道你还在生气，但能不能先让我联系到你？','可以先解除 KakaoTalk 和电话的拉黑吗？我不会一直烦你的。'][i];const answer=['你现在才想起来问这个啊','你现在不是也能联系到我吗','谁说你会烦我了'][i];ch3AddIG([['me',text],['them',answer],['me','我只是希望有事的时候能找到你'],['them','……'],['them','知道了'],['me','真的？'],['them','嗯'],['them','但我还在生气'],['me','我知道'],['them','你最好是真的知道']]);setTimeout(()=>{CH3.done=true;game.chatBlocked=false;ch3Save();ch3Next('complete','第三章结束','亨俊答应恢复联系，但他还在生气。可以前往下一章。')},7500)}
+function ch3IGRefresh(){if(activeApp==='ig'&&igScreen==='chat'&&igTarget==='hyeongjun')igChat('hyeongjun')}
+function ch3QueueIG(lines,after){
+ CH3.igQueue=(CH3.igQueue||[]).concat(lines.map(([from,text])=>({from,text})));
+ if(after)CH3.igQueueAfter=after;
+ ch3Save();ch3IGPump();
+}
+let ch3IGBusy=false;
+function ch3IGPump(){
+ if(ch3IGBusy||!CH3.active||!CH3.igQueue?.length)return;
+ ch3IGBusy=true;
+ const item=CH3.igQueue.shift();ch3Save();
+ setTimeout(()=>{
+  (igChats.hyeongjun??=[]).push({from:item.from,text:item.text,time:'刚刚',ch3Auto:true});
+  igSave();ch3IGRefresh();ch3IGBusy=false;
+  if(CH3.igQueue.length)ch3IGPump();
+  else{
+   const after=CH3.igQueueAfter;CH3.igQueueAfter=null;
+   if(after==='first'){CH3.reply=1;ch3Save();ch3IGRefresh()}
+   if(after==='emotion'){CH3.reply=2;ch3Save();ch3IGRefresh()}
+   if(after==='unblock'){CH3.reply=3;CH3.done=true;game.chatBlocked=false;ch3Save();ch3Next('complete','第三章结束','亨俊答应恢复联系，但他还在生气。可以前往下一章。');ch3IGRefresh()}
+  }
+ },item.from==='them'?2300:1300);
+}
+function ch3Tick(){
+ if(!CH3.active)return;
+ const now=Date.now();let changed=false;
+ if(CH3.seenAt&&now>=CH3.seenAt&&!CH3.seen){CH3.seen=true;changed=true}
+ if(CH3.replyAt&&now>=CH3.replyAt&&!CH3.reply&&!CH3.igQueue?.length){
+  CH3.reply=-1;changed=true;ch3QueueIG(CH3_REPLY,'first');
+ }
+ if(changed){ch3Save();ch3IGRefresh()}
+ if(CH3.igQueue?.length)ch3IGPump();
+}
+function ch3Choices(){
+ if(CH3.reply===1)return ch2Choices(['我知道，我不是想用失忆当借口。','对不起，我知道你现在还是很难过。','我不记得那些话了，但我知道我伤害了你。'],'ch3Emotion');
+ if(CH3.reply===2)return ch2Choices(['亨俊啊，你能不能先把我从黑名单里放出来？','我知道你还在生气，但能不能先让我联系到你？','可以先解除 KakaoTalk 和电话的拉黑吗？我不会一直烦你的。'],'ch3Unblock');
+ if(CH3.reply===3&&CH3.done)return '<div class="story-end">当前对话已结束</div>';
+ return '';
+}
+function ch3AddIG(lines,after){ch3QueueIG(lines,after)}
+function ch3Emotion(i){
+ if(CH3.reply!==1)return;
+ CH3.choice=i;CH3.reply=-2;ch3Save();
+ const t=['我知道，我不是想用失忆当借口。','对不起，我知道你现在还是很难过。','我不记得那些话了，但我知道我伤害了你。'][i];
+ const answer=['我知道你不是那个意思','我不是想让你一直道歉，只是有些事还没办法当作没发生','至少你现在知道了'][i];
+ ch3AddIG([['me',t],['them',answer],['me','我会慢慢想起来的'],['them','你现在身体怎么样'],['me','好多了，偶尔还有点头疼'],['them','医生怎么说'],['me','还要观察'],['them','那就好好休息，别总盯着手机'],['me','可是我现在好多事情都不知道'],['them','不知道就慢慢来，又没人催你']],'emotion');
+ ch3IGRefresh();
+}
+function ch3Unblock(i){
+ if(CH3.reply!==2)return;
+ CH3.unblock=i;CH3.reply=-3;ch3Save();
+ const text=['亨俊啊，你能不能先把我从黑名单里放出来？','我知道你还在生气，但能不能先让我联系到你？','可以先解除 KakaoTalk 和电话的拉黑吗？我不会一直烦你的。'][i];
+ const answer=['你现在才想起来问这个啊','你现在不是也能联系到我吗','谁说你会烦我了'][i];
+ ch3AddIG([['me',text],['them',answer],['me','我只是希望有事的时候能找到你'],['them','……'],['them','知道了'],['me','真的？'],['them','嗯'],['them','但我还在生气'],['me','我知道'],['them','你最好是真的知道']],'unblock');
+ ch3IGRefresh();
+}
 function ch3Ending(){activeApp='notes';wrap('第三章已结束','<div class="content story-prose story-ending"><h2>第三章 · 所有人都知道</h2><p>宋亨俊同意解除拉黑，但还没有原谅你。</p><p>第四章的后续剧情将继续展开。</p><button class="choice" onclick="gameNotes()">返回备忘录</button></div>')}
 const ch3OldNotes=gameNotes;gameNotes=function(){ch3OldNotes();if(CH3.active&&game.stage==='chapter3'){const el=document.querySelector('.story-notes');if(el){const jump=el.querySelector('[onclick="gameChapterMenu()"]');if(jump)jump.insertAdjacentHTML('beforebegin',ch3Notes())}}};
 const ch3OldFriends=gameFriends;gameFriends=function(){if(CH3.active)return ch3Friends();return ch3OldFriends()};
-const ch3OldIGChat=igChat;igChat=function(id){if(CH3.active)ch3Tick();ch3OldIGChat(id);if(CH3.active&&id==='hyeongjun'){const form=document.querySelector('.ig-compose');if(CH3.reply&&form)form.outerHTML=ch3Choices();const sc=$('ig-scroll');if(sc)sc.scrollTop=sc.scrollHeight;const own=[...document.querySelectorAll('.ig-chat .ig-bubble.mine')];if(own.length&&CH3.seen){const last=own.at(-1);if(last&&!document.querySelector('.ch3-read'))last.insertAdjacentHTML('afterend','<div class="ch3-read">已查看</div>')}}};
+const ch3OldIGChat=igChat;igChat=function(id){if(CH3.active)ch3Tick();ch3OldIGChat(id);if(CH3.active&&id==='hyeongjun'){const form=document.querySelector('.ig-compose');if(CH3.reply!==0&&form){form.outerHTML='<div class="story-send ch3-ig-send">'+ch3Choices()+'</div>'};const sc=$('ig-scroll');if(sc)sc.scrollTop=sc.scrollHeight;const own=[...document.querySelectorAll('.ig-chat .ig-bubble.mine')];if(own.length){const last=own.at(-1);if(last&&!document.querySelector('.ch3-read'))last.insertAdjacentHTML('afterend','<div class="ch3-read">'+(CH3.seen?'已查看':'已发送')+'</div>')}}};
 const ch3OldSend=igSend;igSend=function(e,id){const text=$('ig-message')?.value?.trim();ch3OldSend(e,id);if(CH3.active&&text)ch3OnSend(id,text);else if(ch2Active()&&id==='hyeongjun'&&CH2.phase==='dm'&&!CH2.dmSent){ch2IGSend(id,text);igChat(id)}};
 const ch3OldFile=ch2File;ch2File=function(){return ch3OldFile()};
 const ch3OldOpen=openApp;openApp=function(k){if(k==='files'){if(gameUnlock('files'))return ch3Files();gameLocked();return}return ch3OldOpen(k)};
@@ -104,7 +155,7 @@ const ch3OldUnlock=gameUnlock;gameUnlock=function(k){if(['msg','calendar','map',
 const ch3OldMenu=gameChapterMenu;gameChapterMenu=function(){activeApp='notes';const chapter=game.stage==='chapter3'?3:(ch2Active()?2:1);const names={1:'一',2:'二',3:'三'};const destinations=[1,2,3].filter(n=>n!==chapter);wrap('跳转至其他章节','<div class="content story-notes"><p class="story-chapter-hint">选择已开放章节，方便检查剧情与页面。</p>'+destinations.map(n=>'<button class="note story-chapter-button" onclick="'+(n===3?'ch3Start()':'gameJumpChapter('+n+')')+'"><strong>前往第'+names[n]+'章</strong></button>').join('')+'</div>')};
 const ch3OldJump=gameJumpChapter;gameJumpChapter=function(n){if(n===1||n===2){CH3.active=false;ch3Save()}return ch3OldJump(n)};
 const ch3OldEnding=ch2Ending;ch2Ending=function(){ch3OldEnding();const el=document.querySelector('.story-ending');if(el&&!el.querySelector('[onclick="ch3Start()"]'))el.insertAdjacentHTML('beforeend','<button class="choice" onclick="ch3Start()">进入第三章</button>')};
-if(CH3.active&&game.stage==='chapter3'){game.chapter2=true;game.chatBlocked=!CH3.done;setTimeout(ch3Tick,1000)}
+if(CH3.active&&game.stage==='chapter3'){game.chapter2=true;game.chatBlocked=!CH3.done;setTimeout(ch3Tick,1000);setTimeout(ch3IGPump,1500)}
 
 /* Chapter 3 navigation: leaving search results triggers the next memo, not the search itself. */
 const ch3PreviousGroup=ch3Group;ch3Group=function(){if(CH3.searchPending&&CH3.stage==='search'){CH3.searchPending=false;ch3Next('file','工作文件','耳夹？我好像在世琳哥发来的文件里见到过，去文件夹里看看吧。')}return ch3PreviousGroup()};
