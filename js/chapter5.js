@@ -23,10 +23,10 @@ const CH5_C=[
 const CH5_REFLECTION='想起来几年前亨俊去济州岛的那次，我其实也想去。\n\n但那时候觉得他们都安排好了，突然说要跟着去好像很奇怪，所以一直没开口。\n\n后来看他们发的照片，我又有点不开心。\n\n亨俊当时也问过我，想去为什么不直接告诉他。\n\n原来这种事情不止发生了一次。\n\n……难怪他会那么生气。';
 function ch5Is(){return CH5.active&&game.stage==='chapter5'}
 function ch5Save(){try{localStorage.setItem(CH5_KEY,JSON.stringify(CH5))}catch(e){}}
-function ch5Time(n){const x=n??CH5.clock;return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(x%60).padStart(2,'0')}
+function ch5Time(n){const x=n??CH5.clock;return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(Math.floor(x%60)).padStart(2,'0')}
 function ch5AddNote(id,title,text,dest){if(CH5.notes.some(n=>n.id===id))return;CH5.notes.push({id,title,text,dest});ch5Save();phoneReceiveNote(title,'ch5-note-'+id)}
 function ch5Start(){if(!CH4.done){gameLocked();return}if(CH5.active&&game.stage==='chapter5'){ch5Notes();return}Object.assign(CH5,{active:true,done:false,phase:'morning',messages:[],notes:[],choice:null,branchA:null,branchB:null,branchC:null,calendarSeen:false,photoSeen:false,captionSeen:false,searchUnlocked:false,historySeen:false,reflectionSeen:false,eveningStarted:false,unreadReminder:false,clock:618,session:CH5.session+1,queue:null,queueIndex:0,queueAfter:null});game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;ch5Save();ch5Friends();ch5Queue([['them','起床了吗'],['them','头还疼不疼']],'a')}
-function ch5Push(who,text){if(!ch5Is())return;CH5.messages.push({who,text,time:ch5Time(),id:'ch5-'+CH5.messages.length});CH5.clock+=text.length>18?2:1;ch5Save();if(phoneRoomOpen('hyeongjun'))ch5Room(true);else if(who==='them'){phoneReceiveMessage('hyeongjun',text);if(activeApp==='kkt'&&document.querySelector('.ch5-friends'))ch5Friends()}}
+function ch5Push(who,text){if(!ch5Is())return;CH5.messages.push({who,text,time:ch5Time(),id:'ch5-'+CH5.messages.length});CH5.clock+=text.length>18?0.75:0.35;ch5Save();if(phoneRoomOpen('hyeongjun'))ch5Room(true);else if(who==='them'){phoneReceiveMessage('hyeongjun',text);if(activeApp==='kkt'&&document.querySelector('.ch5-friends'))ch5Friends()}}
 let ch5QueueTimer=null;
 function ch5Queue(lines,after){CH5.queue=lines;CH5.queueIndex=0;CH5.queueAfter=after;ch5Save();ch5ResumeQueue(true)}
 function ch5QueueFinish(after){if(['a','b','c'].includes(after))ch5Prompt(after);else if(after==='birthday'){CH5.phase='birthday';ch5Save();setTimeout(ch5TryBirthdayReminder,3000)}else if(after==='complete'){CH5.done=true;CH5.phase='complete';ch5Save();ch5AddNote('end','第五章已结束','今天和亨俊聊了不少。\n\n原来有些事，直接说出来也没有那么难。\n\n明天见。',null);if(phoneRoomOpen('hyeongjun'))ch5Room(true)}}
