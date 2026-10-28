@@ -64,3 +64,13 @@ else if(storySavedChapter==='4'&&CH4.active){game.stage='chapter4';game.chapter2
 else if(storySavedChapter==='5'&&CH5.active){game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;setTimeout(()=>ch5ResumeQueue(true),1200)}
 // A legacy fifth-chapter save without an explicit current-chapter selection is
 // historical progress, not permission to force the player back into chapter five.
+
+// Record ordinary chapter transitions as well as test-menu jumps.
+const storyOriginalCh2Start=ch2Start;
+ch2Start=function(){storyChapterSet(2);return storyOriginalCh2Start()};
+const storyOriginalCh3Start=ch3Start;
+ch3Start=function(){storyChapterSet(3);return storyOriginalCh3Start()};
+const storyOriginalCh4Start=ch4Start;
+ch4Start=function(){storyChapterSet(4);return storyOriginalCh4Start()};
+const storyOriginalCh5Start=ch5Start;
+ch5Start=function(){storyChapterSet(5);return storyOriginalCh5Start()};
