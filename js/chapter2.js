@@ -1,6 +1,6 @@
 /* Chapter 2 — 我们不是一直很好吗？ Fictional interactive story. */
 const CH2={
- phase:'ig',postSeen:false,commentSeen:false,igCommentIds:new Set(),igNote:false,igNoteRead:false,dmRead:false,dmScrollReady:false,dmSent:false,photosNote:false,photosSeen:new Set(),woobinStep:0,serimStep:0,fileSeen:false,earringSeen:false,woobinFinal:0,done:false,chatFinished:{woobin:false,serim:false},unread:{woobin:0,serim:0},messages:{woobin:[],serim:[]},timers:[],session:0
+ phase:'dm',dmSeen:false,dmSeenAt:0,postSeen:false,commentSeen:false,igCommentIds:new Set(),igNote:false,igNoteRead:false,dmRead:false,dmScrollReady:false,dmSent:false,photosNote:false,photosSeen:new Set(),woobinStep:0,serimStep:0,fileSeen:false,earringSeen:false,woobinFinal:0,done:false,chatFinished:{woobin:false,serim:false},unread:{woobin:0,serim:0},messages:{woobin:[],serim:[]},timers:[],session:0
 };
 const CH2_DM=[
  ['them','姜敏熙'],['them','我的黑色外套呢'],['me','不知道啊'],['them','你再说一遍？'],['me','在我这里ㅋㅋ'],['them','我就知道'],['me','那怎么办'],['them','明天穿过来'],['me','不要'],['them','为什么？'],['me','因为有你的味道'],['them','……'],['them','你真是疯了'],['them','这种话别在外面说'],['me','所以这里可以说？'],['them','你真的很烦ㅋㅋㅋ'],
@@ -15,27 +15,33 @@ function ch2Timer(fn,ms){const session=CH2.session;const id=setTimeout(()=>{if(s
 function ch2Notify(id){const node=$('ch2-chat');if(activeApp==='kkt'&&current==='appview'&&node&&node.dataset.id===id){ch2Chat(id);return}CH2.unread[id]=(CH2.unread[id]||0)+1;game.unread.kkt=CH2.unread.woobin+CH2.unread.serim;gameBadge();gameShowBanner('kkt',(id==='woobin'?'徐宇瑸':'朴世琳')+'发来了一条新消息')}
 function ch2Append(id,who,text,delay){ch2Timer(()=>{CH2.messages[id].push([who,text]);if(who==='them')ch2Notify(id);else if(activeApp==='kkt'&&$('ch2-chat')&&$('ch2-chat').dataset.id===id)ch2Chat(id)},delay)}
 function ch2Sequence(id,lines,after){let delay=0;lines.forEach((t,i)=>{delay+=i===0?700:1900+Math.min(t.length*30,1100);ch2Append(id,t[0],t[1],delay)});if(after)ch2Timer(after,delay+1800)}
-function ch2Start(){CH2.session++;CH2.phase='ig';CH2.postSeen=false;CH2.commentSeen=false;CH2.igCommentIds=new Set();CH2.igNote=false;CH2.igNoteRead=false;CH2.dmRead=false;CH2.dmScrollReady=false;CH2.dmSent=false;CH2.photosNote=false;CH2.photosSeen=new Set();CH2.woobinStep=0;CH2.serimStep=0;CH2.fileSeen=false;CH2.earringSeen=false;CH2.woobinFinal=0;CH2.done=false;CH2.chatFinished={woobin:false,serim:false};CH2.messages={woobin:[],serim:[]};CH2.unread={woobin:0,serim:0};const existing=igChats.hyeongjun||[];const oldChapter2=existing.filter(m=>m.ch2Script);const earlier=existing.filter(m=>!m.ch2Script);igChats.hyeongjun=[...CH2_DM.map(([from,text],i)=>({from,text,time:i===0?'几周前':i===16?'两周前':'',ch2Script:true})),...earlier];igSave();game.chapter2=true;game.stage='chapter2';game.chapterEnd=true;game.phoneNoteRead=true;game.xExited=true;game.chatBlocked=true;game.callDone=true;game.unread.notes=0;gameBadge();activeApp='notes';wrap('第二章','<div class="content story-prose"><h2>我们不是一直很好吗？</h2><p>新线索：去看看 Instagram 以前发布的帖子和评论吧，也许能发现什么。</p><button class="choice" onclick="ch2OpenInstagram()">打开 Instagram</button></div>')}
-function ch2OpenInstagram(){instagram('profile')}
+function ch2Start(){CH2.session++;CH2.phase='dm';CH2.dmSeen=false;CH2.dmSeenAt=0;CH2.postSeen=false;CH2.commentSeen=false;CH2.igCommentIds=new Set();CH2.igNote=false;CH2.igNoteRead=false;CH2.dmRead=false;CH2.dmScrollReady=false;CH2.dmSent=false;CH2.photosNote=false;CH2.photosSeen=new Set();CH2.woobinStep=0;CH2.serimStep=0;CH2.fileSeen=false;CH2.earringSeen=false;CH2.woobinFinal=0;CH2.done=false;CH2.chatFinished={woobin:false,serim:false};CH2.messages={woobin:[],serim:[]};CH2.unread={woobin:0,serim:0};const existing=igChats.hyeongjun||[];const oldChapter2=existing.filter(m=>m.ch2Script);const earlier=existing.filter(m=>!m.ch2Script);igChats.hyeongjun=[...CH2_DM.map(([from,text],i)=>({from,text,time:i===0?'几周前':i===16?'两周前':'',ch2Script:true})),...earlier];igSave();game.chapter2=true;game.stage='chapter2';game.chapterEnd=true;game.phoneNoteRead=true;game.xExited=true;game.chatBlocked=true;game.callDone=true;game.unread.notes=0;gameBadge();activeApp='notes';ch2ReadInitialNote()}
+function ch2OpenInstagram(){instagram('chat','hyeongjun')}
 function ch2SeePost(i){if(!ch2Active()||CH2.phase!=='ig')return;CH2.postSeen=true}
 function ch2SeeComments(i){
  if(!ch2Active()||CH2.phase!=='ig')return;
  CH2.igCommentIds.add(i);
- if(CH2.igCommentIds.size>=3&&!CH2.igNote){
-  CH2.igNote=true;
-  ch2Timer(()=>gameNotify('notes','有新的内容'),800);
+ if(CH2.igCommentIds.size>=3&&!CH2.photosNote){
+  CH2.photosNote=true;
+  ch2Timer(()=>gameNotify('notes','有新的线索'),800);
  }
 }
-function ch2ReadInitialNote(){activeApp='notes';wrap('第二章 · 新线索','<div class="content story-prose"><p>去看看 Instagram 以前发布的帖子和评论吧，也许能发现什么。</p><button class="choice" onclick="gameNotes()">返回备忘录</button></div>')}
+function ch2ReadInitialNote(){activeApp='notes';wrap('第二章 · 新线索','<div class="content story-prose"><p>亨俊在 KakaoTalk 上不肯理我……或许 Instagram 还能联系到他。先给他发一条私信吧。</p><button class="choice" onclick="ch2OpenInstagram()">前往宋亨俊的 Instagram 私信</button></div>')}
 function ch2ReadIGNote(){
- CH2.igNoteRead=true;CH2.commentSeen=true;CH2.phase='dm';
- activeApp='notes';wrap('新线索','<div class="content story-prose"><h2>以前的评论</h2><p>试试给亨俊的 Instagram 发条私信吧。</p><button class="choice" onclick="gameNotes()">返回备忘录</button></div>');
+ CH2.igNoteRead=true;
+ activeApp='notes';wrap('新线索1','<div class="content story-prose"><p>亨俊已经看过消息了，却还是没有回复。也许他现在还不想跟我说话……先去看看最近的 Instagram 吧，说不定能找到一点以前的线索。</p><button class="choice" onclick="instagram(\'profile\',\'minhee\')">前往姜敏熙的 Instagram 主页</button></div>');
 }
-function ch2IGChat(id){if(!ch2Active()||id!=='hyeongjun'||CH2.phase==='ig')return;CH2.dmRead=true}
-function ch2IGSend(id,text){if(!ch2Active()||id!=='hyeongjun'||CH2.phase!=='dm'||CH2.dmSent)return false;CH2.dmSent=true;CH2.phase='photos';CH2.photosNote=true;ch2Timer(()=>{gameNotify('notes','有新的内容')},2000);return true}
+function ch2IGChat(id){if(!ch2Active()||id!=='hyeongjun')return;CH2.dmRead=true}
+function ch2IGSend(id,text){
+ if(!ch2Active()||id!=='hyeongjun'||CH2.phase!=='dm'||CH2.dmSent)return false;
+ CH2.dmSent=true;CH2.dmSeen=false;CH2.dmSeenAt=Date.now()+1800;
+ ch2Timer(()=>{CH2.dmSeen=true;if(activeApp==='ig'&&igScreen==='chat'&&igTarget==='hyeongjun')igChat('hyeongjun')},1800);
+ ch2Timer(()=>{if(CH2.phase==='dm'){CH2.phase='ig';CH2.igNote=true;gameNotify('notes','有新的线索')}},3000);
+ return true;
+}
 function ch2AlbumSeen(i){if(!ch2Active()||CH2.phase!=='photos')return;if([0,1,2].includes(i)){CH2.photosSeen.add(i);if(CH2.photosSeen.size>=2){CH2.phase='woobin';ch2Timer(()=>{CH2.woobinStep=1;ch2Sequence('woobin',[['them','敏熙啊'],['them','你现在怎么样了？'],['them','元进说你今天给亨俊打电话了？']],()=>{CH2.woobinStep=2;ch2RefreshChat('woobin')})},2000)}}}
 function ch2Notes(){return (!CH2.igNote?'<div class="note" onclick="ch2ReadInitialNote()"><strong>第二章 · 新线索</strong></div>':'')+(CH2.igNote?'<div class="note" onclick="ch2ReadIGNote()"><strong>新线索 · 以前的评论</strong></div>':'')+(CH2.photosNote?'<div class="note" onclick="ch2ReadPhotoNote()"><strong>新线索 · 以前的照片</strong></div>':'')+(CH2.done?'<div class="note" onclick="ch2Ending()"><strong>第二章已结束</strong></div>':'')}
-function ch2ReadPhotoNote(){activeApp='notes';wrap('以前的照片','<div class="content story-prose"><p>我和亨俊好像有很多共同的回忆，去看看相册说不定能回想起什么。</p><button class="choice" onclick="gameNotes()">返回备忘录</button></div>')}
+function ch2ReadPhotoNote(){if(CH2.phase==='ig'&&CH2.photosNote)CH2.phase='photos';activeApp='notes';wrap('以前的照片','<div class="content story-prose"><p>以前的我和亨俊好像留下了很多共同回忆。那些照片会不会让我想起些什么？去相册看看吧。</p><button class="choice" onclick="openApp(\'photos\')">前往相册</button></div>')}
 function ch2Friends(){activeApp='kkt';wrap('KakaoTalk','<div class="content">'+[['hyeongjun','宋亨俊'],['wonjin','咸元进'],['woobin','徐宇瑸'],['serim','朴世琳']].map(([id,name])=>'<div class="item" onclick="'+(id==='woobin'||id==='serim'?'ch2Chat(\''+id+'\')':'gameChat(\''+id+'\')')+'"><div class="avatar">'+name.slice(0,1)+'</div><div class="itemmain"><div class="itemtitle">'+name+'</div><div class="itemsub">'+escapeHtml(CH2.messages[id]?.at(-1)?.[1]||'历史对话')+'</div></div>'+(CH2.unread[id]?'<span class="story-contact-unread">'+CH2.unread[id]+'</span>':'')+'</div>').join('')+'</div>')}
 function ch2RefreshChat(id){const node=$('ch2-chat');if(node&&node.dataset.id===id&&activeApp==='kkt')ch2Chat(id)}
 function ch2Choices(options,callback){return '<div class="story-options">'+options.map((v,i)=>'<button class="story-option" onclick="'+callback+'('+i+')">'+escapeHtml(v)+'</button>').join('')+'</div>'}
@@ -71,11 +77,11 @@ const ch2OldFriends=gameFriends;gameFriends=function(){if(ch2Active())return ch2
 const ch2OldChat=gameChat;gameChat=function(id){if(ch2Active()&&(id==='woobin'||id==='serim'))return ch2Chat(id);return ch2OldChat(id)};
 const ch2OldPost=igPost;igPost=function(i,back){ch2SeePost(i);return ch2OldPost(i,back)};
 const ch2OldComments=igComments;igComments=function(i){ch2SeeComments(i);return ch2OldComments(i)};
-const ch2OldIGChat=igChat;igChat=function(id){ch2IGChat(id);ch2OldIGChat(id);if(ch2Active()&&id==='hyeongjun'&&CH2.phase==='dm'&&!CH2.dmSent){const scroll=$('ig-scroll');if(scroll){scroll.scrollTop=0;scroll.addEventListener('scroll',ch2CheckDMScroll,{passive:true})}}};
+const ch2OldIGChat=igChat;igChat=function(id){ch2IGChat(id);ch2OldIGChat(id);if(ch2Active()&&id==='hyeongjun'&&CH2.dmSent&&CH2.phase!=='woobin'&&CH2.phase!=='serim'&&CH2.phase!=='final'&&CH2.phase!=='done'){const mine=document.querySelectorAll('.ig-chat .ig-bubble.mine');const last=mine[mine.length-1];if(last){const marker=document.createElement('div');marker.className='ch3-read';marker.textContent=CH2.dmSeen?'已查看':'已发送';last.insertAdjacentElement('afterend',marker)}}};
 function ch2CheckDMScroll(){if(!ch2Active()||CH2.phase!=='dm'||CH2.dmSent)return;const el=$('ig-scroll');if(el&&el.scrollTop+el.clientHeight>=el.scrollHeight-18)CH2.dmScrollReady=true}
 function ch2SendDM(i){/* 第二章现在使用 Instagram 原生自由输入框。 */}
 const ch2OldAlbumPhoto=igAlbumPhoto;igAlbumPhoto=function(i){ch2OldAlbumPhoto(i);ch2AlbumSeen(igAlbumIndex)};
-const ch2OldIGBase=igBase;igBase=function(header,content,bottom){ch2OldIGBase(header,content,bottom);if(ch2Active()&&CH2.phase==='dm'&&igScreen==='profile'){const inbox=document.querySelector('.ig-header button:last-child');if(inbox)inbox.classList.add('ch2-inbox-unread')}};
+const ch2OldIGBase=igBase;igBase=function(header,content,bottom){ch2OldIGBase(header,content,bottom);if(ch2Active()&&CH2.phase==='ig'&&igScreen==='profile'){const inbox=document.querySelector('.ig-header button:last-child');if(inbox)inbox.classList.add('ch2-inbox-unread')}};
 const ch2OldChapterMenu=gameChapterMenu;gameChapterMenu=function(){ch2OldChapterMenu()};
 const ch2OldStartFromMenu=gameStartChapter2FromMenu;gameStartChapter2FromMenu=function(){ch2Start()};
 
