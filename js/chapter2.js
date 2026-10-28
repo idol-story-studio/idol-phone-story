@@ -93,7 +93,7 @@ function ch2Ending(){wrap('第二章 · 完结','<div class="content story-prose
 /* Integrate without altering Chapter 1 dialogue or existing photo resources. */
 const ch2OldStart=gameStartChapter2;gameStartChapter2=function(){if(!game.chapterEnd)return;ch2Start()};
 const ch2OldJump=gameJumpChapter;gameJumpChapter=function(n){if(n===2){ch2Start();return}CH2.session++;ch2OldJump(n)};
-const ch2OldNotes=gameNotes;gameNotes=function(){ch2OldNotes();if(ch2Active()){const el=document.querySelector('.story-notes');if(el){const jump=el.querySelector('[onclick="gameChapterMenu()"]');if(jump)jump.insertAdjacentHTML('beforebegin',ch2Notes())}}};
+// Notes list is rendered centrally after all chapter scripts load.
 const ch2OldFriends=gameFriends;gameFriends=function(){if(ch2Active())return ch2Friends();return ch2OldFriends()};
 const ch2OldChat=gameChat;gameChat=function(id){if(ch2Active()&&(id==='woobin'||id==='serim'))return ch2Chat(id);return ch2OldChat(id)};
 const ch2OldPost=igPost;igPost=function(i,back){ch2SeePost(i);return ch2OldPost(i,back)};
