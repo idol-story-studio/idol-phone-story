@@ -41,7 +41,7 @@ function ch10After(after){
  if(after==='morningChoice')CH10.phase='morningChoice';
  if(after==='gift'){CH10.phase='gift';CH10.clock=625;ch10Push('them','不是有人念叨了好几次吗ㅋㅋ','gift')}
  if(after==='giftChoice')CH10.phase='giftChoice';
- if(after==='giftEnd'){CH10.phase='photoChat';CH10.clock=820;ch10Queue(ch10PhotoConversation(),'photoChoice')}
+ if(after==='giftEnd'){CH10.phase='photoChat';CH10.clock=820;ch10Queue(ch10PhotoConversation(),'photoReady')}
  if(after==='photoChoice')CH10.phase='photoChoice';
  if(after==='photoReady'){CH10.phase='photoWaiting';ch10Save();ch10PhotoTimer=setTimeout(()=>{ch10PhotoTimer=null;if(ch10Is()&&CH10.phase==='photoWaiting'){CH10.phase='photoReady';ch10AddNote('photo','新照片','PHOTOISM 有新的照片可以查看。',false);ch10PhotoNotice();ch10Save();if(phoneRoomOpen('hyeongjun'))ch10Room(true)}},12000)}
  if(after==='nightChoice')CH10.phase='nightChoice';
@@ -77,7 +77,7 @@ function ch10ChooseGift(i){
  ch10Queue([...replies,...ending],'giftEnd');
 }
 function ch10PhotoConversation(){
- return [['them','诶 你看到群里发的消息没'],['me','哪个'],['them','拿一位那天的照片啊'],['me','啊 看到了ㅋㅋ'],['me','你拿奖杯那张笑得好傻'],['them','你自己不也笑得眼睛都没了'],['me','那可是拿一位诶'],['them','ㅋㅋ 也是'],['me','对了'],['me','我们一起去拍个人生四格纪念一下吧'],['them','现在？'],['me','等练习结束啊ㅋㅋ'],['them','好啊'],['them','但是这次你别临时换四次动作'],['me','你上次明明也换了'],['them','行行行 都怪我ㅋㅋ'],['me','那说定了'],['them','嗯 说定了']];
+ return [['them','诶 你看到群里发的消息没'],['me','哪个'],['them','拿一位那天的照片啊'],['me','啊 看到了ㅋㅋ'],['me','你拿奖杯那张笑得好傻'],['them','你自己不也笑得眼睛都没了'],['me','那可是拿一位诶'],['them','ㅋㅋ 也是'],['me','对了'],['me','我们一起去拍个人生四格纪念一下吧'],['them','现在？'],['me','等练习结束啊ㅋㅋ'],['them','好啊'],['them','但是这次你别临时换四次动作'],['me','你上次明明也换了'],['them','行行行 都怪我ㅋㅋ'],['me','那说定了'],['them','嗯 说定了'],['me','拍完记得把电子版发我'],['them','知道啦'],['them','到时候一起挑']];
 }
 function ch10Invite(){
  if(!ch10Is()||CH10.phase!=='photoInvite')return;
@@ -100,7 +100,7 @@ function ch10PhotoImage(){
 }
 function ch10Photoism(){
  if(!ch10Is())return;activeApp='photoism';
- wrap('PHOTOISM','<div class="ch10-photo-app"><div class="ch10-photo-brand">PHOTOISM</div><h2>我的照片</h2><button class="ch10-photo-record" onclick="ch10PhotoDetail()"><span class="ch10-record-thumb">▧</span><span><strong>获奖纪念照 · 四图拼贴</strong><small>领取时间 · 第2日 17:20</small><small>图片标示日期 · 2025.06.21</small></span><b>›</b></button><p class="ch10-muted">这里展示游戏内收藏的纪念照片，并非真实 PHOTOISM 云端订单。</p></div>');
+ wrap('PHOTOISM','<div class="ch10-photo-app"><div class="ch10-photo-brand">PHOTOISM</div><h2>我的照片</h2>'+(CH10.photoNotice?'<button class="ch10-photo-record" onclick="ch10PhotoDetail()"><span class="ch10-record-thumb">▧</span><span><strong>获奖纪念照 · 四图拼贴</strong><small>领取时间 · 第2日 17:20</small><small>图片标示日期 · 2025.06.21</small></span><b>›</b></button><p class="ch10-muted">这里展示游戏内收藏的纪念照片，并非真实 PHOTOISM 云端订单。</p>':'<p class="ch10-muted">暂无新照片，稍后再来看看。</p>')+'</div>');
 }
 function ch10PhotoDetail(){
  if(!ch10Is()||!CH10.photoNotice)return ch10Photoism();activeApp='photoism';CH10.photoViewed=true;ch10Save();
@@ -150,7 +150,7 @@ function ch10Room(quiet=false){
  if(p==='giftChoice')opts=ch10Options(['谢啦 宝宝','下次我也给你买','其实我想跟你一起吃'],'ch10ChooseGift');
  if(p==='photoInvite')opts='';
  if(p==='photoWaiting')opts='<div class="story-end">照片整理中，稍后会收到 PHOTOISM 提醒</div>';
- if(p==='photoReady')opts='<button class="story-option" onclick="ch10Photoism()">查看 PHOTOISM 新照片</button>';
+ if(p==='photoReady')opts='';
  if(p==='nightChoice')opts=ch10Options(['下次拿奖还要一起拍','那下次不带奖杯拍','这张我想一直留着'],'ch10ChooseNight');
  if(p==='homeReady')opts='<button class="story-option" onclick="ch10BeginHome()">查看下班后的消息</button>';
  if(p==='homeChoice')opts=ch10Options(['不行吗','因为想见你','那你愿不愿意等我'],'ch10ChooseHome');
