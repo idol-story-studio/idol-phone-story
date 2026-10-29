@@ -9,6 +9,7 @@ let ch10PhotoTimer=null;
 let ch10AfternoonTimer=null;
 let ch10NightTimer=null;
 let ch10HomeTimer=null;
+let ch10BackgroundReady=false;
 function ch10Is(){return CH10.active&&game.stage==='chapter10'}
 function ch10Save(){try{localStorage.setItem(CH10_KEY,JSON.stringify(CH10))}catch(e){}}
 function ch10Time(){const t=Math.floor(CH10.clock);return String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
@@ -104,18 +105,17 @@ function ch10BeginNight(){
 function ch10WaitForHome(){
  if(ch10HomeTimer||!ch10Is()||CH10.phase!=='homeWaiting')return;
  const token=CH10.session;
- const poll=()=>{
+ const started=Date.now();
+ const check=()=>{
   ch10HomeTimer=null;
   if(!ch10Is()||CH10.session!==token||CH10.phase!=='homeWaiting')return;
-  if(phoneRoomOpen('hyeongjun')){ch10HomeTimer=setTimeout(poll,2000);return}
-  ch10HomeTimer=setTimeout(()=>{
-   ch10HomeTimer=null;
-   if(!ch10Is()||CH10.session!==token||CH10.phase!=='homeWaiting')return;
-   if(phoneRoomOpen('hyeongjun'))return ch10WaitForHome();
-   ch10BeginHome();
-  },6000);
+  // Prefer a few seconds of free exploration, but never deadlock if the player stays in chat.
+  if((!phoneRoomOpen('hyeongjun')&&Date.now()-started>=4500)||Date.now()-started>=18000){
+   ch10BeginHome();return;
+  }
+  ch10HomeTimer=setTimeout(check,1000);
  };
- ch10HomeTimer=setTimeout(poll,1500);
+ ch10HomeTimer=setTimeout(check,1000);
 }
 function ch10ChooseNight(i){
  if(CH10.phase!=='nightChoice')return;
@@ -125,7 +125,7 @@ function ch10ChooseNight(i){
   [['me','下次还想跟你一起拍'],['them','好啊'],['them','下次换个背景']],
   [['me','想把这张设成壁纸'],['them','可以啊ㅋㅋ'],['them','我也留一张']]
  ];
- ch10Queue([...branches[i],['me','那说好了'],['them','嗯'],['them','早点睡 明天还要忙'],['me','你也早点睡'],['me','晚安 宝宝'],['them','ㅋㅋ 怎么又突然叫这个'],['me','不喜欢吗'],['them','喜欢'],['them','只跟我这么叫就好'],['me','知道啦'],['them','晚安 ♡']],'nightEnd');
+ ch10Queue([...branches[i],['me','那说好了'],['them','嗯'],['them','早点睡 明天还要忙'],['me','你也早点睡'],['me','晚安 宝宝'],['them','ㅋㅋ 怎么又突然叫这个'],['me','不喜欢吗'],['them','喜欢'],['them','别在外面这么叫就好'],['me','知道啦'],['them','晚安 ♡']],'nightEnd');
 }
 function ch10BeginHome(){
  if(!ch10Is()||CH10.phase!=='homeReady')return;CH10.phase='homeChat';CH10.day=3;CH10.clock=1217;ch10Save();
@@ -160,7 +160,7 @@ function ch10Room(quiet=false){
  
  if(p==='homeChoice')opts=ch10Options(['你现在在哪儿','我想见你','可以等我一下吗'],'ch10ChooseHome');
  if(CH10.done)opts='<div class="story-end">当前对话已结束</div>';
- wrap('宋亨俊','<div id="ch2-chat" data-id="hyeongjun" class="ch3-kkt ch5-chat ch9-chat ch10-chat"><div class="chatbody" id="chatbody">'+ch10OldHistory()+'<div class="story-date">第十章 · 以后都告诉你</div>'+rows+'</div><div class="story-send">'+opts+'</div></div>');
+ wrap('宋亨俊','<div id="ch2-chat" data-id="hyeongjun" class="ch3-kkt ch5-chat ch9-chat ch10-chat"'+(CH10.done?' style="--ch10-wallpaper:url('+CH10_PHOTO+')"':'')+'><div class="chatbody" id="chatbody">'+ch10OldHistory()+'<div class="story-date">第十章 · 以后都告诉你</div>'+rows+'</div><div class="story-send">'+opts+'</div></div>');
  const el=document.getElementById('chatbody');if(el)el.scrollTop=el.scrollHeight;
 }
 function ch10Friends(){
@@ -172,7 +172,7 @@ function ch10Friends(){
 function ch10Notes(){
  if(!ch10Is())return;activeApp='notes';phoneReadRoom('notes');
  const old=[['第一章','gameReadNote()'],['第二章','ch2ReadInitialNote()'],['第三章','ch3Note(-1)'],['第四章','ch4ReadNote(0)'],['第五章','ch5IntroNote()'],['第六章','ch6Note("intro")'],['第七章','ch7Note("intro")'],['第八章','ch8Note("intro")'],['第九章','ch9Note("intro")']];
- const rows=old.map(([t,fn])=>'<div class="note" onclick=\''+fn+'\'><strong>'+t+'</strong></div>').join('');
+ const rows='';
  const mine=CH10.notes.map(n=>'<div class="note" onclick="ch10Note(\''+n.id+'\')"><strong>'+escapeHtml(n.title)+'</strong></div>').join('');
  wrap('备忘录','<div class="content story-notes">'+rows+mine+'<div class="note" onclick="gameChapterMenu()"><strong>跳转至其他章节</strong></div></div>');
 }
@@ -184,7 +184,7 @@ function ch10Note(id){
  wrap(n.title,'<div class="content story-prose ch7-note ch8-note"><h2>'+escapeHtml(n.title)+'</h2><p>'+escapeHtml(n.text)+'</p>'+(action||'<button class="choice" onclick="ch10Notes()">返回备忘录</button>')+'</div>');
 }
 /* Integrate only in chapter 10; do not mutate earlier chapters' KKT and Notes views. */
-const ch10PrevOpen=openApp;openApp=function(k){if(ch10Is()){if(k==='photoism')return ch10Photoism();if(k==='photos'&&CH10.photoSaved)return ch10Album();if(k==='kkt')return ch10Friends();if(k==='notes')return ch10Notes()}return ch10PrevOpen(k)};
+const ch10PrevOpen=openApp;openApp=function(k){if(ch10Is()){if(k==='photoism')return ch10Photoism();if(k==='photos'&&CH10.photoSaved)return ch10Album();if(k==='delivery')return ch4Delivery();if(k==='calendar')return ch4Calendar();if(k==='kakaot')return ch9Taxi();if(k==='kkt')return ch10Friends();if(k==='notes')return ch10Notes()}return ch10PrevOpen(k)};
 const ch10PrevUnlock=gameUnlock;gameUnlock=function(k){if(ch10Is())return ['kkt','notes','photos','calendar','ig','phone','delivery','files','x','youtube','spotify','map','melon','kakaot','photoism'].includes(k);return ch10PrevUnlock(k)};
 const ch10PrevChat=gameChat;gameChat=function(id){if(ch10Is()){if(id==='hyeongjun')return ch10Room();if(['group','woobin','manager','wonjin','serim'].includes(id))return ch7LegacyRoom(id);if(id==='ch8friend')return ch9Room('friend')}return ch10PrevChat(id)};
 const ch10PrevPhone=phoneOpenRoom;phoneOpenRoom=function(id){if(ch10Is()){if(id==='hyeongjun')return ch10Room();if(id==='notes')return ch10Notes();if(id==='photoism')return ch10Photoism();if(typeof id==='string'&&id.startsWith('ch10-note-'))return ch10Note(id.slice(10))}return ch10PrevPhone(id)};
