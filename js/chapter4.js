@@ -73,7 +73,7 @@ function ch4Order(i){activeApp='delivery';ch4ExploreGate('delivery');const o=CH4
 function ch4Incoming(){if(!ch4Is()||CH4.done||CH4.callState)return;CH4.callState='ringing';ch4Save();game.callType='ch4';callSession++;clearInterval(callTimer);$('call').classList.add('show');$('callerName').textContent='宋亨俊';if(typeof gameSetCallerAvatar==='function')gameSetCallerAvatar('宋亨俊');$('calltimer').textContent='电话 · 来电中…';$('callsub').textContent='来电';$('callmsg').textContent='';$('answer').style.display='block';$('pip').style.display='none';startRing()}
 const CH4_CALL=[['宋亨俊','喂'],['宋亨俊','怎么还没睡'],['姜敏熙','你怎么知道我没睡ㅋㅋ'],['宋亨俊','刚才看你KakaoTalk还在线'],['姜敏熙','啊ㅋㅋ'],['宋亨俊','今天头还疼吗'],['姜敏熙','好多了'],['宋亨俊','真的？'],['姜敏熙','嗯 真的'],['宋亨俊','那就好'],['宋亨俊','早点睡吧'],['姜敏熙','你也是'],['宋亨俊','嗯']];
 function ch4Answer(){stopRing();CH4.callState='connected';ch4Save();$('answer').style.display='none';$('pip').style.display='none';$('callsub').textContent='正在通话';const session=++callSession;callStart=Date.now();clearInterval(callTimer);callTimer=setInterval(()=>{let s=Math.floor((Date.now()-callStart)/1000);$('calltimer').textContent='通话中 · '+String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},500);CH4_CALL.filter(([who])=>who==='宋亨俊').forEach(([who,t],i,lines)=>setTimeout(()=>{if(callSession!==session)return;$('callmsg').textContent=who+'：'+t;if(i===lines.length-1){CH4.callState='finished';ch4Save();$('callsub').textContent='可以挂断'}},1000+i*2300))}
-function ch4EndCall(){stopRing();clearInterval(callTimer);callSession++;$('call').classList.remove('show');const missed=CH4.callState==='ringing';CH4.callState='ended';CH4.callLog=true;CH4.done=true;CH4.step=17;ch4Save();ch4AddNote('通话记录',missed?'亨俊刚刚打过电话。我没接到。':'刚才亨俊打电话问我头还疼不疼。','phone');gameNotify('notes','第四章已结束');oldHome()}
+function ch4EndCall(){stopRing();clearInterval(callTimer);callSession++;$('call').classList.remove('show');const missed=CH4.callState==='ringing';CH4.callState='ended';CH4.callLog=true;CH4.done=true;CH4.step=17;ch4Save();gameNotify('notes','第四章已结束');oldHome()}
 function ch4Calls(){activeApp='phone';wrap('最近通话','<div class="content"><div class="item" onclick="ch4Incoming()"><div class="itemmain"><strong>宋亨俊</strong><div class="itemsub">今天 · 语音通话</div></div></div></div>')}
 
 const ch4OldUnlock=gameUnlock;gameUnlock=function(k){if(ch4Is()&&['calendar','delivery','phone','kkt','notes','ig','photos','x','files'].includes(k))return true;return ch4OldUnlock(k)};
@@ -173,8 +173,9 @@ function storyNotesRows(){
   let count=0;
   CH4.notes.forEach((n,i)=>{
    if(i===0||n.title==='已解锁的新应用')return;
-   if(n.title!=='通话记录')count++;
-   html+=row(n.title==='通话记录'?'通话记录':'新线索'+count,'ch4ReadNote('+i+')');
+   if(n.title==='通话记录')return;
+   count++;
+   html+=row('新线索'+count,'ch4ReadNote('+i+')');
   });
   if(CH4.done)html+=row('第四章已结束','ch4Ending()');
  }
