@@ -124,7 +124,7 @@ function ch8RefreshHint(){const n=CH8.notes.find(x=>x.id==='hint');if(n&&n.text!
 function ch8Notes(){
  ch8RefreshHint();
  activeApp='notes';phoneReadRoom('notes');let html=['<div class="note" onclick="gameReadNote()"><strong>第一章</strong></div>','<div class="note" onclick="ch2ReadInitialNote()"><strong>第二章</strong></div>','<div class="note" onclick="ch3Note(-1)"><strong>第三章</strong></div>','<div class="note" onclick="ch4ReadNote(0)"><strong>第四章</strong></div>','<div class="note" onclick="ch5IntroNote()"><strong>第五章</strong></div>','<div class="note" onclick="ch6Note(\'intro\')"><strong>第六章</strong></div>','<div class="note" onclick="ch7Note(\'intro\')"><strong>第七章</strong></div>','<div class="note" onclick="ch8Note(\'intro\')"><strong>第八章</strong></div>'];
- for(const n of CH8.notes)html.push('<div class="note" onclick="ch8Note(\''+n.id+'\')"><strong>'+(n.id==='end'?'第八章已结束':'新线索1')+'</strong></div>');
+ let clueNumber=0;for(const n of CH8.notes){if(n.id==='intro')continue;html.push('<div class="note" onclick="ch8Note(\''+n.id+'\')"><strong>'+(n.id==='end'?'第八章已结束':'新线索'+(++clueNumber))+'</strong></div>')}
  html.push('<div class="note" onclick="gameChapterMenu()"><strong>跳转至其他章节</strong></div>');
  wrap('备忘录','<div class="content story-notes">'+html.join('')+'</div>');
 }
