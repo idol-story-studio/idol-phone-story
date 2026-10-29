@@ -11,8 +11,7 @@ function storyEndingView(n){
  activeApp='notes';phoneReadRoom('notes');
  const name=STORY_END_NAMES[n],next=STORY_END_NAMES[n+1],canNext=typeof STORY_CHAPTER_NAMES!=='undefined'&&n+1<STORY_CHAPTER_NAMES.length;
  const html='<div class="content story-prose story-ending"><h2>第'+name+'章已结束</h2><p>当前回忆进度：'+n+'/10</p><div class="story-progress"><span style="width:'+(n*10)+'%"></span></div>'+
- (canNext?'<button class="choice" onclick="storyEndingNext('+(n+1)+')">前往第'+next+'章</button>':'<p>后续章节尚未开放</p>')+
- '<button class="choice" onclick="storyEndingNotes()">返回备忘录</button></div>';
+ (canNext?'<button class="choice" onclick="storyEndingNext('+(n+1)+')">前往第'+next+'章</button>':'<button class="choice" onclick="storyEndingNotes()">返回备忘录</button>')+'</div>';
  wrap('第'+name+'章 · 完结',html)
 }
 function storyEndingNext(n){const f={2:()=>ch2Start(),3:()=>ch3Start(),4:()=>ch4Start(),5:()=>ch5Start(),6:()=>ch6Start(),7:()=>ch7Start(),8:()=>ch8Start()}[n];if(f)f()}
