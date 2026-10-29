@@ -25,7 +25,7 @@ function gameLockBanner(app,message){let lock=$('lock');let old=lock.querySelect
 function gameClear(app){game.unread[app]=0;gameBadge()}
 function gameSyncKktUnread(){game.unread.kkt=game.chatUnread.hyeongjun+game.chatUnread.wonjin;gameBadge()}
 function gameNotifyContact(id){game.chatUnread[id]++;gameSyncKktUnread();if(activeApp==='kkt'&&current==='appview')return;if(typeof ding==='function')ding();gameShowBanner('kkt',(id==='wonjin'?'咸元进':'宋亨俊')+'发来了一条新消息')}
-function gameUnlock(app){return app==='notes'||['photos','calendar','map','settings','youtube','spotify','camera','msg'].includes(app)||(app==='kkt'&&game.stage!=='intro')||(app==='x'&&['x','phone','wonjin','end','chapter2'].includes(game.stage))||(app==='phone'&&(['phone','wonjin','end','chapter2'].includes(game.stage)&&game.phoneNoteRead))||(app==='ig'&&(game.chapter2||game.wonjinReplyDelivered))}
+function gameUnlock(app){return app==='notes'||['photos','calendar','map','settings','youtube','spotify','camera','msg'].includes(app)||(app==='kkt'&&game.stage!=='intro')||(app==='x'&&['x','phone','wonjin','end','chapter2'].includes(game.stage))||(app==='phone'&&(['phone','wonjin','end','chapter2'].includes(game.stage)&&game.phoneNoteRead))||(app==='ig'&&game.chapter2)}
 function gameLocked(){let t=$('toast');t.className='toast';t.onclick=null;t.textContent='当前未开放该功能';t.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.display='none',2200)}
 function gameExitX(){if(activeApp==='x'&&game.stage==='x'&&game.xSeen.size===4){game.stage='phone';game.xExited=true;gameNotify('notes','新的线索');}}
 const originalStoryShow=show;let storyUnlockedOnce=false;show=function(id){let previous=current;originalStoryShow(id);if(id==='home'&&!storyUnlockedOnce&&(previous==='pass'||previous==='lock')){storyUnlockedOnce=true;setTimeout(()=>{if(game.stage==='intro'&&game.unread.notes>0&&current!=='lock'&&current!=='pass')gameShowBanner('notes','备忘录有新的内容')},1600)}};
@@ -40,8 +40,7 @@ function gameNotes(){
  // Only the current chapter shows contextual reminders; older chapters retain a single entry.
  const currentExtras=chapter===1
    ?(game.xExited?'<div class="note" onclick="gameReadPhoneNote()"><strong>新的线索</strong></div>':'')
-   +(game.wonjinReplyDelivered?'<div class="note" onclick="gameReadIGHint()"><strong>新线索 · Instagram</strong></div>':'')
-   +(game.chapterEnd?'<div class="note" onclick="gameReadEnding()"><strong>第一章已结束</strong></div>':'')
++(game.chapterEnd?'<div class="note" onclick="gameReadEnding()"><strong>第一章已结束</strong></div>':'')
    :'';
  const entries=chapter===1?chapterOne+currentExtras+(game.chapterEnd?chapterTwo:''):chapterTwo+chapterOne;
  wrap('备忘录','<div class="content story-notes">'+entries+'<div class="note" onclick="gameChapterMenu()"><strong>跳转至其他章节</strong></div></div>');
@@ -57,7 +56,6 @@ function gameJumpChapter(n){
  if(n===1){game.chapter2=false;game.chapterEnd=false;game.stage='intro';game.notesRead=false;game.kktRead=false;game.hyeongjunReadToEnd=false;game.replyDelayReady=false;clearTimeout(game.replyDelayTimer);game.replyDelayTimer=null;game.chatBlocked=false;game.sendingBlockedReply=false;game.callDone=false;game.callFinished=false;game.callType=null;game.xExited=false;game.xSeen=new Set();game.phoneNoteRead=false;game.wonjinMessage=false;game.wonjinReply=false;game.wonjinDelivered=0;game.wonjinReplyDelivered=false;game.wonjinChoiceReady=false;game.dials=0;game.chatUnread={hyeongjun:3,wonjin:0};game.unread={notes:1,kkt:0};gameSyncKktUnread();gameNotes();return}
 }
 function gameStartChapter2FromMenu(){activeApp='notes';wrap('第二章','<div class="content story-prose story-ending"><h2>第二章</h2><p>Instagram 已开放。</p><p>第二章剧情仍在制作中，可以先探索 Instagram。</p><button class="choice" onclick="openApp(\'ig\')">打开 Instagram</button></div>')}
-function gameReadIGHint(){activeApp='notes';wrap('新线索 · Instagram','<div class="content story-prose"><h2>新线索</h2><p>元进说，可以试试 Instagram。亨俊在 KakaoTalk 上不愿意理我，也许私信还有机会发出去。</p><button class="choice" onclick="openApp(\'ig\')">打开 Instagram</button><button class="choice" onclick="gameNotes()">返回备忘录</button></div>')}
 function gameReadPhoneNote(){activeApp='notes';game.phoneNoteRead=true;wrap('新的线索','<div class="content story-prose"><h2>新的线索</h2><p>昨天的我好像决定今天给亨俊打电话。通话记录里有那么多未接来电。他之前明明一直在找我。……现在再打过去，还会接吗？</p><button class="choice" onclick="gameNotes()">返回备忘录</button></div>')}
 function gameReadNote(){activeApp='notes';wrap('第一章','<div class="content story-prose"><h2>第一章</h2>'+CH1.intro.split('\n\n').map(t=>'<p>'+escapeHtml(t)+'</p>').join('')+'<button class="choice" onclick="gameFinishIntro()">已阅读，返回备忘录</button></div>')}
 function gameFinishIntro(){if(game.stage==='intro'){game.stage='kkt';game.chatUnread.hyeongjun=3;gameSyncKktUnread();setTimeout(()=>{if(game.stage==='kkt'&&!game.kktRead&&!(activeApp==='kkt'&&current==='appview'))gameShowBanner('kkt','宋亨俊发来了一条新消息')},1000)}gameNotes()}
@@ -149,7 +147,7 @@ function gameReplyWonjin(choice){
  [2500,5100,7700].forEach((delay,i)=>setTimeout(()=>{
   game.wonjinDelivered=4+i;if(i===2)game.wonjinReplyDelivered=true;
   if(activeApp==='kkt'&&document.getElementById('wonjin-chat'))gameWonjinChat();else gameNotifyContact('wonjin');
-  if(i===2){gameNotify('notes','新的线索 · Instagram');setTimeout(()=>{if(game.chapterEnd)return;game.chapterEnd=true;game.stage='end';gameNotify('notes','第一章已结束')},3000);}
+  if(i===2){game.chapterEnd=true;game.stage='end';gameNotify('notes','第一章已结束');}
  },delay));
 }
 /* Swipe down from the top edge to inspect recent notifications without losing the current app. */
