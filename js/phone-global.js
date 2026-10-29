@@ -27,6 +27,25 @@ function phoneUpdateBadges(){
  document.querySelectorAll('.app').forEach(btn=>{const key=(btn.getAttribute('onclick')||'').match(/openApp\('([^']+)'\)/)?.[1];if(!key)return;btn.querySelector('.story-badge')?.remove();const n=key==='kkt'?total:key==='ig'?game.unread.ig:key==='notes'?phoneCount('notes'):Math.max(0,game.unread[key]||0);if(n){const b=document.createElement('span');b.className='story-badge';b.textContent=n>99?'99+':String(n);btn.appendChild(b)}});
 }
 function phoneOpenRoom(id){
+  if(typeof ch9Is==='function'&&ch9Is()){
+    if(id==='ch8friend')return ch9Room('friend');
+    if(id==='ch9group')return ch9Room('group');
+    if(id==='hyeongjun')return ch9Room('hj');
+  }
+  if(typeof ch8Is==='function'&&ch8Is()){
+    if(id==='ch8friend')return ch8FriendRoom();
+    if(id==='hyeongjun')return ch8Room();
+  }
+  if(typeof ch7Is==='function'&&ch7Is()){
+    if(id==='hyeongjun')return ch7Room();
+    if(typeof ch7LegacyRoom==='function'&&['group','woobin','manager','wonjin','serim'].includes(id))return ch7LegacyRoom(id);
+  }
+  if(typeof ch6Is==='function'&&ch6Is()&&['hyeongjun','group','woobin','manager','wonjin'].includes(id))return ch6Room(id);
+  if(typeof ch5Is==='function'&&ch5Is()){
+    if(id==='hyeongjun')return ch5Room();
+    if(typeof ch5LegacyRoom==='function'&&['group','woobin','wonjin','serim'].includes(id))return ch5LegacyRoom(id);
+  }
+
   if(id==='photoism'&&typeof ch10Photoism==='function')return ch10Photoism();
   if(id==='melon'&&typeof melonOpen==='function')return melonOpen('home');
   if(id==='ch5-birthday'&&typeof ch4Calendar==='function')return ch4Calendar();
