@@ -34,8 +34,8 @@ function ch5QueueFinish(after){if(['a','b','c'].includes(after))ch5Prompt(after)
 function ch5ResumeQueue(first=false){if(!ch5Is()||!CH5.queue||ch5QueueTimer)return;const token=CH5.session;
 function tick(){ch5QueueTimer=null;if(!ch5Is()||token!==CH5.session||!CH5.queue)return;const i=CH5.queueIndex;if(i>=CH5.queue.length){const after=CH5.queueAfter;CH5.queue=null;CH5.queueAfter=null;ch5Save();ch5QueueFinish(after);return}
 const [who,text]=CH5.queue[i];if(who==='me'&&!phonePlayerCanAutoReply('hyeongjun')){ch5QueueTimer=setTimeout(tick,350);return}
-CH5.queueIndex=i+1;ch5Push(who,text);const next=CH5.queue?.[CH5.queueIndex]?.[1]||'';ch5QueueTimer=setTimeout(tick,phoneMessageDelay(next));}
-ch5QueueTimer=setTimeout(tick,phoneMessageDelay(CH5.queue[CH5.queueIndex]?.[1],first))}
+CH5.queueIndex=i+1;ch5Push(who,text);ch5QueueTimer=setTimeout(tick,phoneMessageDelay(text));}
+ch5QueueTimer=setTimeout(tick,phoneMessageDelay('',first))}
 function ch5Prompt(which){if(!ch5Is())return;CH5.choice=which;ch5Save();if(phoneRoomOpen('hyeongjun'))ch5Room(true)}
 function ch5Choose(i){if(!ch5Is()||!CH5.choice)return;const which=CH5.choice;const data=which==='a'?CH5_A:which==='b'?CH5_B:CH5_C;if(!data[i])return;CH5.choice=null;CH5['branch'+which.toUpperCase()]=i;ch5Save();const b=data[i];if(which==='a'){ch5Push('me',b.mine[0]);ch5Queue([...b.lines,
 ['them','今天来公司吗'],['me','应该会去'],['them','嗯'],['them','你最近别练太久'],['me','知道啦'],['them','知道就行'],['them','别到时候又不舒服'],['me','你怎么比经纪人还操心ㅋㅋ'],['them','谁操心了'],['them','就是提醒一下'],['me','哦哦ㅋㅋ'],['them','……'],['them','吃饭了吗']
