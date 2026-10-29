@@ -214,7 +214,7 @@ function storyNotesRows(){
  if(current>=4){
   html+=row('第四章','ch4ReadNote(0)');
   let count=0;
-  CH4.notes.forEach((n,i)=>{
+  if(current===4)CH4.notes.forEach((n,i)=>{
    if(i===0||n.title==='已解锁的新应用')return;
    if(n.title==='通话记录')return;
    count++;
