@@ -6,7 +6,7 @@ const CH8={active:false,done:false,phase:'',session:0,callIndex:0,callState:'non
 const CH8_CALL=[
 ['A','喂，敏熙？'],['me','嗯，怎么啦'],['A','你最近是不是特别忙啊'],['me','还好，怎么突然问这个ㅋㅋ'],['A','没什么，想叫你出来吃个饭'],['A','我们都多久没见了'],['me','是有一阵子了'],['A','我本来想让亨俊直接跟你说的'],['A','结果他说你们现在不住一起了'],['me','……嗯'],['A','我还以为你们一直住一起呢ㅋㅋ'],['A','所以就自己打给你了'],['A','那天有空吗？一起吃饭吧'],['me','好啊，我去'],['A','行，那我等下跟亨俊说一声'],['me','不用了，我自己跟他说'],['A','哦？行啊ㅋㅋ'],['A','那我把地址发你'],['me','好，发我就行'],['A','那到时候见'],['me','到时候见']];
 const CH8_LOCATION={id:'ch8_dinner_place',name:'Restaurant ON',ko:'레스토랑 온',area:'首尔 · 江南区清潭洞',address:'首尔特别市江南区宣陵路148街48号 美俊大厦3层',naverQuery:'레스토랑 온 서울 강남구 선릉로148길 48',sharedBy:'A',time:'19:20'};
-const CH8_HINT='A刚刚说，原本想让亨俊来通知我。\n\n他说我们已经不住一起了。\n\n……原来亨俊已经这样跟别人说过了。\n\n不过刚才我自己说了，会亲自跟亨俊讲。\n\n那就别再等了。\n\n去 KakaoTalk 找他吧。';
+const CH8_HINT='A把聚餐地点发来了。\\n\\n去 KakaoTalk 找亨俊，亲自问问他要不要一起去吧。';
 let ch8Timer=null,ch8MapTimer=null,ch8CallTimer=null;
 function ch8Is(){return CH8.active&&game.stage==='chapter8'}
 function ch8Save(){try{localStorage.setItem(CH8_KEY,JSON.stringify(CH8))}catch(e){}}
@@ -95,7 +95,7 @@ function ch8After(a){if(a==='intro1'||a==='intro2'){CH8.phase=a;ch8Save();ch8Aut
  if(a==='consider'){CH8.phase='waiting';ch8Save();setTimeout(()=>{if(ch8Is()&&CH8.phase==='waiting'){CH8.clock=20*60+2;ch8Queue('friend',[['A','对了，时间就按刚才说的那个吧'],['A','晚上七点半'],['A','我先到的话给你们占位置ㅋㅋ']],'friendConfirm')}},13000)}
  if(a==='friendConfirm'){ch8Queue('hj',[['them','那天应该可以'],['them','我会去的']],'finalReply')}
  if(a==='finalReply'){CH8.phase='finalReply';ch8Save();ch8AutoFinalReply()}
- if(a==='end'){CH8.done=true;CH8.phase='done';ch8Save();ch8NoteAdd('end','第八章已结束','今天A打电话约我们一起吃饭。\n\n听见他说亨俊告诉别人我们已经不住在一起的时候，我还是愣了一下。\n\n但这次没有让A替我传话。\n\n我自己告诉亨俊，我希望他能来。\n\n至少有些话，我终于肯自己说出口了。\n\n到时候见。');if(phoneRoomOpen('hyeongjun'))ch8Room(true)}
+ if(a==='end'){CH8.done=true;CH8.phase='done';ch8Save();ch8NoteAdd('end','第八章已结束','今天A打电话约我们一起吃饭。\n\n但这次没有让A替我传话。\n\n我自己告诉亨俊，我希望他能来。\n\n至少有些话，我终于肯自己说出口了。\n\n到时候见。');if(phoneRoomOpen('hyeongjun'))ch8Room(true)}
 }
 function ch8FriendChoice(i){
  if(!ch8Is()||CH8.phase!=='declineReply')return;
@@ -120,13 +120,15 @@ function ch8MapDetail(){
  ch8MapTick();
 }
 function ch8MapTick(){clearInterval(ch8MapTimer);ch8MapTimer=setInterval(()=>{if(!ch8Is()||CH8.memo){clearInterval(ch8MapTimer);return}if(!CH8.mapOpened||activeApp!=='map'||current!=='appview'||document.hidden)return;CH8.mapSeconds++;ch8Save();if(CH8.mapSeconds>=8){clearInterval(ch8MapTimer);CH8.memo=true;ch8Save();ch8NoteAdd('hint','第八章 · 新线索1',CH8_HINT)}},1000)}
+function ch8RefreshHint(){const n=CH8.notes.find(x=>x.id==='hint');if(n&&n.text!==CH8_HINT){n.text=CH8_HINT;ch8Save()}}
 function ch8Notes(){
+ ch8RefreshHint();
  activeApp='notes';phoneReadRoom('notes');let html=['<div class="note" onclick="gameReadNote()"><strong>第一章</strong></div>','<div class="note" onclick="ch2ReadInitialNote()"><strong>第二章</strong></div>','<div class="note" onclick="ch3Note(-1)"><strong>第三章</strong></div>','<div class="note" onclick="ch4ReadNote(0)"><strong>第四章</strong></div>','<div class="note" onclick="ch5IntroNote()"><strong>第五章</strong></div>','<div class="note" onclick="ch6Note(\'intro\')"><strong>第六章</strong></div>','<div class="note" onclick="ch7Note(\'intro\')"><strong>第七章</strong></div>','<div class="note" onclick="ch8Note(\'intro\')"><strong>第八章</strong></div>'];
  for(const n of CH8.notes)html.push('<div class="note" onclick="ch8Note(\''+n.id+'\')"><strong>'+(n.id==='end'?'第八章已结束':'新线索1')+'</strong></div>');
  html.push('<div class="note" onclick="gameChapterMenu()"><strong>跳转至其他章节</strong></div>');
  wrap('备忘录','<div class="content story-notes">'+html.join('')+'</div>');
 }
-function ch8Note(id){activeApp='notes';phoneReadRoom('notes');const n=id==='intro'?{title:'第八章',text:'今天本来没什么特别的安排。\n\n先看看手机吧。'}:CH8.notes.find(x=>x.id===id);if(!n)return ch8Notes();const action=id==='hint'?'<button class="choice" onclick="ch8Room()">前往宋亨俊的 KakaoTalk 私聊</button>':id==='end'?'<button class="choice" onclick="storyEndingView(8)">查看章节进度</button>':'';
+function ch8Note(id){ch8RefreshHint();activeApp='notes';phoneReadRoom('notes');const n=id==='intro'?{title:'第八章',text:'今天本来没什么特别的安排。\n\n先看看手机吧。'}:CH8.notes.find(x=>x.id===id);if(!n)return ch8Notes();const action=id==='hint'?'<button class="choice" onclick="ch8Room()">前往宋亨俊的 KakaoTalk 私聊</button>':id==='end'?'<button class="choice" onclick="storyEndingView(8)">查看章节进度</button>':'';
  wrap(n.title,'<div class="content story-prose ch7-note ch8-note"><h2>'+escapeHtml(n.title)+'</h2><p>'+escapeHtml(n.text)+'</p>'+action+'<button class="choice" onclick="ch8Notes()">返回备忘录</button></div>');
 }
 function ch8Friends(){
