@@ -1,0 +1,27 @@
+/* Chapter 10: scoped styles. Reuse global KKT bubbles and Notes list. */
+.ch10-chat .chatbody{bottom:155px}
+.ch10-chat .story-send{bottom:52px!important;z-index:25;max-height:42%;overflow:auto}
+.ch10-chat .story-option{display:block;width:100%;background:#fee500;border-radius:13px;padding:11px 13px;text-align:left;font-size:13px;color:#302800;margin:5px 0}
+.ch10-gift-wrap{max-width:235px}
+.ch10-gift-card{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #f1e4bb;border-radius:14px;padding:12px;width:100%;text-align:left;color:#333;box-shadow:0 2px 7px #0000000a}
+.ch10-gift-symbol{font-size:36px}.ch10-gift-card strong,.ch10-gift-card small,.ch10-gift-card em{display:block}
+.ch10-gift-card strong{font-size:14px}.ch10-gift-card small{font-size:11px;color:#666;line-height:1.6}.ch10-gift-card em{font-size:12px;font-style:normal;color:#9d7800;margin-top:5px}
+.ch10-gift-page,.ch10-photo-app,.ch10-photo-detail,.ch10-zoom{height:calc(100% - 110px);overflow:auto;padding:18px 20px 100px;background:#f7f7f9;color:#222}
+.ch10-back{display:block;background:transparent;color:#555;padding:8px 0 16px}
+.ch10-gift-hero{height:170px;border-radius:20px;background:#ffe6e9;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:64px;gap:3px}
+.ch10-gift-hero span{font-size:15px;font-weight:700}.ch10-gift-page h2{font-size:21px;margin:18px 0 5px}.ch10-gift-page p{font-size:13px}
+.ch10-gift-note{background:white;border-radius:16px;padding:18px;margin:20px 0}.ch10-gift-note p{line-height:1.7}
+.ch10-muted{font-size:12px;color:#858585;line-height:1.7}
+.ch10-primary,.ch10-secondary{display:block;width:100%;border-radius:12px;padding:13px;margin:10px 0;text-align:center;font-size:14px}
+.ch10-primary{background:#fee500;color:#251f00;font-weight:700}.ch10-secondary{background:#fff;color:#333;border:1px solid #ddd}
+.ch10-photo-brand{font-size:26px;font-weight:850;letter-spacing:2px;margin:14px 0 30px}.ch10-photo-app h2{font-size:18px}
+.ch10-photo-record{display:flex;gap:12px;align-items:center;width:100%;padding:15px;background:#fff;border-radius:15px;text-align:left}
+.ch10-record-thumb{font-size:36px;color:#777}.ch10-photo-record span:nth-child(2){flex:1}.ch10-photo-record strong,.ch10-photo-record small{display:block}.ch10-photo-record strong{font-size:13px}.ch10-photo-record small{font-size:11px;color:#888;margin-top:5px}
+.ch10-photo-image{width:100%;background:#ddd;display:flex;justify-content:center;align-items:center;border-radius:8px;overflow:hidden;min-height:240px}
+.ch10-photo-image img{display:block;width:100%;height:auto;object-fit:contain}
+.ch10-photo-missing{min-height:300px;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px;background:linear-gradient(145deg,#d8c1e2,#c2dff1);width:100%;color:#544168}
+.ch10-photo-missing span{font-size:13px}.ch10-photo-missing small{font-size:11px}
+.ch10-photo-caption{font-size:13px;color:#666}.ch10-zoom{background:#111;color:#fff}.ch10-zoom .ch10-photo-image{background:#111}
+.ch10-chat-photo{max-width:190px;border:0;background:#fff;padding:6px;border-radius:10px;text-align:center}.ch10-chat-photo .ch10-photo-image{min-height:90px}.ch10-chat-photo .ch10-photo-missing{min-height:130px}.ch10-chat-photo span{font-size:11px}
+.ch10-album .ch10-album-tile{width:145px;border:0;padding:0}.ch10-album .ch10-photo-image{min-height:140px}
+@media(max-height:700px){.ch10-chat .story-send{max-height:46%}}
