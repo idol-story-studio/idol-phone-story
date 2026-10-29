@@ -114,6 +114,27 @@ wrap=function(title,body,extra){
  if(back){back.setAttribute('onclick','gameNavigateBack()');back.textContent='‹ 返回'}
 };
 function gameNavigateBack(){
+ // Direct notification links may open a conversation without visiting its list.
+ // In that case Back must reconstruct the parent, not exit the app.
+ if(!CH4_NAV.stack.length&&current==='appview'){
+  const app=activeApp,body=$('appbody');
+  const title=body?.querySelector('.apphead span')?.textContent||'';
+  const isChat=!!body?.querySelector('#ch2-chat,#wonjin-chat,.ch3-kkt,.ch5-chat');
+  if(app==='kkt'&&(isChat||/宋亨俊|咸元进|徐宇瑸|朴世琳|经纪人|CRAVITY|今晚吃饭/.test(title))){
+   if(typeof ch10Is==='function'&&ch10Is())return ch10Friends();
+   if(typeof ch9Is==='function'&&ch9Is())return ch9Friends();
+   if(typeof ch8Is==='function'&&ch8Is())return ch8Friends();
+   if(typeof ch7Is==='function'&&ch7Is())return ch7Friends();
+   if(typeof ch6Is==='function'&&ch6Is())return ch6Friends();
+   if(typeof ch5Is==='function'&&ch5Is())return ch5Friends();
+   if(typeof ch4Is==='function'&&ch4Is())return ch4Friends();
+   if(typeof CH3!=='undefined'&&CH3.active&&game.stage==='chapter3')return ch3Friends();
+   if(typeof ch2Active==='function'&&ch2Active())return ch2Friends();
+   return gameFriends();
+  }
+  if(app==='notes'&&title!=='备忘录')return openApp('notes');
+  if(app==='ig'&&title!=='Instagram'&&typeof instagram==='function')return instagram();
+ }
  if(CH4_NAV.stack.length){
   const last=CH4_NAV.stack.pop();
   CH4_NAV.restoring=true;
