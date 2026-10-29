@@ -133,7 +133,7 @@ function ch9Dinner(){
  ch9Queue('group',[['them','我先走啦 明天一早还有事'],['them','你们两个慢慢回去 路上小心'],['me','你也是'],['them','下次记得请我吃饭ㅋㅋ']],'walk');
  },6500);
 }
-const ch9AfterGroup=ch9After;ch9After=function(a){ch9AfterGroup(a);if(a==='walk'){CH9.phase='walk';ch9Save();ch9Walk()}};
+const ch9AfterGroup=ch9After;ch9After=function(a){ch9AfterGroup(a);if(a==='walk'){CH9.phase='walkWaiting';ch9Save();const token=CH9.session;setTimeout(()=>{if(!ch9Is()||CH9.session!==token||CH9.phase!=='walkWaiting')return;CH9.phase='walk';ch9Save();ch9Push('hj','them','走吗？');},4000)}};
 /* The evening conversation uses the existing KakaoTalk room and bubble renderer.
  * All messages remain in CH9.hj and can be reopened like earlier chapters. */
 function ch9Walk(){
