@@ -19,21 +19,66 @@ function ch8Start(){
  game.stage='chapter8';game.chapter2=true;game.chatBlocked=false;try{localStorage.setItem('idol_current_chapter_v1','8')}catch(e){}
  ch8Save();ch8Notes();setTimeout(()=>{if(ch8Is()&&CH8.callState==='ringing')ch8CallPaint()},2500);
 }
+/* Reuse the exact global phone modal used by chapter one's Wonjin call. */
+let ch8DialogueTimer=null;
 function ch8CallPaint(){
- if(!ch8Is())return;document.getElementById('ch8-call')?.remove();
- const ringing=CH8.callState==='ringing',connected=CH8.callState==='connected';
- const line=CH8_CALL[Math.max(0,CH8.callIndex-1)];
- const el=document.createElement('div');el.id='ch8-call';el.className='ch8-call';
- el.innerHTML='<div class="ch8-call-top"><small>电话 · '+(ringing?'来电中':connected?'通话中':'通话结束')+'</small><h2>A</h2><div id="ch8-call-clock">'+(ringing?'语音通话':ch8FormatCall())+'</div></div><div class="ch8-call-caption">'+(ringing?'':connected&&line?escapeHtml((line[0]==='me'?'':line[0]+'：')+line[1]):'通话已结束')+'</div><div class="ch8-call-buttons">'+(ringing?'<button class="ch8-reject" onclick="ch8Reject()">拒接</button><button class="ch8-answer" onclick="ch8Answer()">接听</button>':connected?'<button class="ch8-reject" onclick="ch8Hangup()">挂断</button><button onclick="ch8CallNext()">下一句 ›</button>':'<button onclick="ch8Hangup()">完成</button>')+'</div>';
- document.getElementById('phone').appendChild(el);
+ if(!ch8Is())return;
+ document.getElementById('ch8-call')?.remove();
+ const modal=$('call');
+ modal.classList.add('show');
+ $('callerName').textContent='A';
+ if(typeof gameSetCallerAvatar==='function')gameSetCallerAvatar('A');
+ $('callsub').textContent=CH8.callState==='ringing'?'来电':CH8.callState==='connected'?'正在通话':'通话已结束';
+ $('calltimer').textContent=CH8.callState==='ringing'?'电话 · 来电中…':'通话中 · '+ch8FormatCall();
+ $('pip').style.display='none';
+ $('answer').style.display=CH8.callState==='ringing'?'block':'none';
+ $('callmsg').textContent=CH8.callIndex?ch8CallCaption(CH8_CALL[CH8.callIndex-1]):'';
+ if(CH8.callState==='ringing'&&typeof startRing==='function')startRing();
 }
+function ch8CallCaption(line){return (line[0]==='me'?'：':'A：')+line[1]}
 function ch8FormatCall(){let s=CH8.callSeconds;return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-function ch8Answer(){if(!ch8Is()||CH8.callState!=='ringing')return;CH8.callState='connected';ch8Save();ch8CallPaint();clearInterval(ch8CallTimer);ch8CallTimer=setInterval(()=>{if(!ch8Is()||CH8.callState!=='connected')return;CH8.callSeconds++;document.getElementById('ch8-call-clock').textContent=ch8FormatCall();ch8Save()},1000);ch8CallNext()}
-function ch8CallNext(){if(!ch8Is()||CH8.callState!=='connected')return;if(CH8.callIndex>=CH8_CALL.length){CH8.callState='finished';ch8Save();ch8CallPaint();return}CH8.callIndex++;ch8Save();ch8CallPaint()}
-function ch8Reject(){if(CH8.callState!=='ringing')return;CH8.callState='declined';CH8.callLog=true;ch8Save();document.getElementById('ch8-call')?.remove();ch8Queue('friend',[['A','刚给你打电话了'],['A','想约你和亨俊吃个饭，有空回我一下']],'declineReply')}
-function ch8Hangup(){if(!ch8Is())return;clearInterval(ch8CallTimer);const complete=CH8.callIndex>=CH8_CALL.length;CH8.callLog=true;CH8.callState='ended';ch8Save();document.getElementById('ch8-call')?.remove();if(complete){CH8.phase='friendLocation';ch8Save();ch8Queue('friend',[['A','这家！'],['A','我之前去过一次，还不错'],['A','别又找错地方ㅋㅋ'],['A','[地点]'],['A','我们到时候见～']],'locationReady')}
- else{CH8.phase='callFallback';ch8Save();ch8Queue('friend',[['A','刚刚没说完ㅋㅋ'],['A','我想约你和亨俊一起吃饭'],['A','他说你们现在不住一起了'],['A','那我先问你，你来吗？']],'declineReply')}
+function ch8Answer(){
+ if(!ch8Is()||CH8.callState!=='ringing')return;
+ if(typeof stopRing==='function')stopRing();
+ CH8.callState='connected';ch8Save();ch8CallPaint();
+ clearInterval(ch8CallTimer);
+ ch8CallTimer=setInterval(()=>{if(!ch8Is()||CH8.callState!=='connected')return;CH8.callSeconds++;$('calltimer').textContent='通话中 · '+ch8FormatCall();ch8Save()},1000);
+ ch8CallNext();
 }
+function ch8CallNext(){
+ if(!ch8Is()||CH8.callState!=='connected')return;
+ clearTimeout(ch8DialogueTimer);
+ if(CH8.callIndex>=CH8_CALL.length){CH8.callState='finished';$('callsub').textContent='通话结束后可挂断';ch8Save();return}
+ const line=CH8_CALL[CH8.callIndex++];
+ $('callmsg').textContent=ch8CallCaption(line);
+ ch8Save();
+ const length=Array.from(line[1]).length;
+ const delay=Math.max(1800,Math.min(4200,1300+length*115));
+ ch8DialogueTimer=setTimeout(ch8CallNext,delay);
+}
+function ch8Reject(){
+ if(!ch8Is()||CH8.callState!=='ringing')return;
+ if(typeof stopRing==='function')stopRing();
+ CH8.callState='declined';CH8.callLog=true;ch8Save();
+ $('call').classList.remove('show');
+ ch8Queue('friend',[['A','刚给你打电话了'],['A','想约你和亨俊吃个饭，有空回我一下']],'declineReply')
+}
+function ch8Hangup(){
+ if(!ch8Is()||CH8.callState==='ended'||CH8.callState==='declined')return;
+ if(CH8.callState==='ringing')return ch8Reject();
+ if(CH8.callState!=='finished')return;
+ clearInterval(ch8CallTimer);clearTimeout(ch8DialogueTimer);
+ if(typeof stopRing==='function')stopRing();
+ CH8.callLog=true;CH8.callState='ended';ch8Save();
+ $('call').classList.remove('show');
+ CH8.phase='friendLocation';ch8Save();
+ ch8Queue('friend',[['A','这家！'],['A','我之前去过一次，还不错'],['A','别又找错地方ㅋㅋ'],['A','[地点]'],['A','我们到时候见～']],'locationReady')
+}
+/* Chapter 1 replaces these globally; delegate back when chapter 8 is inactive. */
+const ch8PreviousAnswerCall=answerCall;
+answerCall=function(){if(ch8Is()&&CH8.callState==='ringing')return ch8Answer();return ch8PreviousAnswerCall.apply(this,arguments)};
+const ch8PreviousEndCall=endCall;
+endCall=function(){if(ch8Is()&&['ringing','connected','finished'].includes(CH8.callState))return ch8Hangup();return ch8PreviousEndCall.apply(this,arguments)};
 function ch8Push(room,who,text){
  if(!ch8Is())return;const list=room==='friend'?CH8.friend:CH8.hj;
  list.push({who,text,time:ch8Time(),id:'ch8-'+room+'-'+list.length});CH8.clock+=.45;ch8Save();
@@ -125,4 +170,4 @@ const ch8PrevNmOpen=nmOpen;nmOpen=function(){const r=ch8PrevNmOpen();if(ch8Is()&
 const ch8PrevNmSelect=nmSelect;nmSelect=function(id){const r=ch8PrevNmSelect(id);if(ch8Is()&&CH8.mapOpened&&!CH8.memo)ch8MapTick();return r};
 const ch8PrevCh7Note=ch7Note;ch7Note=function(id){const r=ch8PrevCh7Note(id);if(id==='end'&&CH7.done){const root=document.querySelector('.story-ending,.ch7-note');if(root&&!root.querySelector('[onclick="ch8Start()"]'))root.insertAdjacentHTML('beforeend','<button class="choice" onclick="ch8Start()">进入第八章</button>')}return r};
 try{const saved=JSON.parse(localStorage.getItem(CH8_KEY)||'null');if(saved?.active)Object.assign(CH8,saved)}catch(e){}
-window.addEventListener('load',()=>{if(localStorage.getItem('idol_current_chapter_v1')==='8'&&CH8.active){game.stage='chapter8';game.chapter2=true;game.chatBlocked=false;setTimeout(()=>{if(CH8.callState==='ringing'||CH8.callState==='connected')ch8CallPaint();ch8Resume();if(CH8.mapOpened&&!CH8.memo)ch8MapTick()},900)}});
+window.addEventListener('load',()=>{if(localStorage.getItem('idol_current_chapter_v1')==='8'&&CH8.active){game.stage='chapter8';game.chapter2=true;game.chatBlocked=false;setTimeout(()=>{if(CH8.callState==='connected'){CH8.callState='ringing';CH8.callIndex=0;ch8Save()}if(CH8.callState==='ringing')ch8CallPaint();ch8Resume();if(CH8.mapOpened&&!CH8.memo)ch8MapTick()},900)}});
