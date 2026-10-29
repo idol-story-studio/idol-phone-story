@@ -11,7 +11,7 @@ const phoneRoomOpen=id=>activeApp==='kkt'&&current==='appview'&&(
   (id==='wonjin'&&document.querySelector('.story-wonjin-chat')));
 function phonePlayerCanAutoReply(id,app='kkt'){if(app==='ig')return activeApp==='ig'&&typeof igScreen!=='undefined'&&igScreen==='chat'&&typeof igTarget!=='undefined'&&igTarget===id&&current==='appview';return !!phoneRoomOpen(id)}
 function phoneWaitForPlayerRoom(id,callback,app='kkt'){if(phonePlayerCanAutoReply(id,app)){callback();return}setTimeout(()=>phoneWaitForPlayerRoom(id,callback,app),350)}
-function phoneMessageDelay(nextText,first=false){const n=Array.from(String(nextText||'')).length;return Math.min(8500,(first?1100:900)+n*125)}
+function phoneMessageDelay(previousText,first=false){const n=Array.from(String(previousText||'')).length;return first?1100:Math.max(1300,Math.min(10000,950+n*165))}
 function phoneTimeAt(base,index,step=2){const t=base+index*step;return String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
 function phoneSaveUnread(){try{localStorage.setItem(PHONE_UNREAD_KEY,JSON.stringify(phoneCounts))}catch(e){}}
 function phoneCount(id){return Math.max(0,Number(phoneCounts[id])||0)}
