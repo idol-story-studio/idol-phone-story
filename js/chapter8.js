@@ -144,6 +144,8 @@ function ch8Room(quiet=false){
  const rows=CH8.hj.map((m,i)=>gameBubble(m.who==='me',m.text,m.time,false,false,i===0||CH8.hj[i-1].who!==m.who)).join('');
  let opts='';
  if(CH8.memo&&CH8.phase==='map'&&CH8.hj.length===0){setTimeout(ch8AutoStartChat,500)}
+ if(!quiet&&CH8.phase==='meetReply')ch8AutoMeetReply();
+ if(!quiet&&CH8.phase==='finalReply')ch8AutoFinalReply();
 
 
  if(CH8.phase==='type1'||CH8.phase==='type2'){const t=CH8.phase==='type1'?'我希望你可以来':'我有话想跟你说';opts='<div class="ch8-type"><label for="ch8-input">请输入：'+t+'</label><div class="ch8-input-row"><input id="ch8-input" autocomplete="off" placeholder="在这里输入这句话" value="'+escapeHtml(CH8.draft)+'" oninput="ch8Draft(this.value)" onkeydown="if(event.key===\'Enter\'&&!event.isComposing)ch8TypeSend()"><button id="ch8-send" onclick="ch8TypeSend()" '+(CH8.draft.trim()===t?'':'disabled')+'>发送</button></div><small id="ch8-error"></small></div>'}
@@ -153,8 +155,8 @@ function ch8Room(quiet=false){
  wrap('宋亨俊','<div id="ch2-chat" data-id="hyeongjun" class="ch3-kkt ch5-chat"><div class="chatbody" id="chatbody">'+hist4+'<div class="story-date">第五章</div>'+hist5+'<div class="story-date">第六章</div>'+hist6+'<div class="story-date">第七章</div>'+hist7+'<div class="story-date">第八章 · 今天</div>'+rows+'</div><div class="story-send">'+opts+'</div></div>');
  const el=$('chatbody');if(el)el.scrollTop=quiet||scroll==null?el.scrollHeight:scroll;
 }
-function ch8AutoStartChat(){if(ch8Is()&&CH8.memo&&CH8.phase==='map'&&!CH8.hj.length)ch8SendIntro(0)}
-function ch8AutoIntro(a){if(!ch8Is())return;setTimeout(()=>{if(!ch8Is()||CH8.phase!==a)return;ch8SendIntro(a==='intro1'?1:2)},1200)}
+function ch8AutoStartChat(){if(ch8Is()&&CH8.memo&&CH8.phase==='map'&&!CH8.hj.length&&phonePlayerCanAutoReply('hyeongjun'))ch8SendIntro(0)}
+function ch8AutoIntro(a){if(!ch8Is())return;setTimeout(()=>{if(!ch8Is()||CH8.phase!==a||!phonePlayerCanAutoReply('hyeongjun'))return;ch8SendIntro(a==='intro1'?1:2)},1200)}
 function ch8AutoMeetReply(){setTimeout(()=>{if(ch8Is()&&CH8.phase==='meetReply'&&phonePlayerCanAutoReply('hyeongjun'))ch8MeetReply()},1500)}
 function ch8AutoFinalReply(){setTimeout(()=>{if(ch8Is()&&CH8.phase==='finalReply'&&phonePlayerCanAutoReply('hyeongjun'))ch8FinalReply()},1400)}
 function ch8SendIntro(i){
