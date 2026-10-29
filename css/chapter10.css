@@ -25,3 +25,6 @@
 .ch10-chat-photo{max-width:190px;border:0;background:#fff;padding:6px;border-radius:10px;text-align:center}.ch10-chat-photo .ch10-photo-image{min-height:90px}.ch10-chat-photo .ch10-photo-missing{min-height:130px}.ch10-chat-photo span{font-size:11px}
 .ch10-album .ch10-album-tile{width:145px;border:0;padding:0}.ch10-album .ch10-photo-image{min-height:140px}
 @media(max-height:700px){.ch10-chat .story-send{max-height:46%}}
+
+/* 第十章通关彩蛋：重新进入宋亨俊私聊后显示人生四格背景。 */
+.ch10-chat[style*="--ch10-wallpaper"] .chatbody{background-image:linear-gradient(rgba(255,255,255,.60),rgba(255,255,255,.60)),var(--ch10-wallpaper);background-size:cover;background-position:center;background-attachment:local}
