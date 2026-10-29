@@ -45,7 +45,7 @@ function phoneBanner(app,title,message,target){
  if(typeof ding==='function')ding();
  if(current==='lock'||current==='pass'){gameLockBanner(app,item.message);return}
  const t=$('toast');t.className='toast story-notification';
- t.innerHTML='<div class="story-notification-icon">'+(app==='kkt'?'TALK':app==='ig'?'IG':app==='calendar'?'31':'▤')+'</div><div class="story-notification-text"><div class="story-notification-app">'+(app==='kkt'?'KakaoTalk':app==='ig'?'Instagram':app==='calendar'?'日历':'备忘录')+' <span>现在</span></div><div class="story-notification-body">'+escapeHtml(item.message)+'</div></div>';
+ t.innerHTML='<div class="story-notification-icon">'+(app==='kkt'?'TALK':app==='ig'?'IG':app==='photoism'?'PHOTO':app==='calendar'?'31':'▤')+'</div><div class="story-notification-text"><div class="story-notification-app">'+(app==='kkt'?'KakaoTalk':app==='ig'?'Instagram':app==='photoism'?'PHOTOISM':app==='calendar'?'日历':'备忘录')+' <span>现在</span></div><div class="story-notification-body">'+escapeHtml(item.message)+'</div></div>';
  t.style.display='flex';t.onclick=()=>{clearTimeout(toastTimer);t.style.display='none';phoneOpenRoom(target||'notes')};clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.display='none',8000)
 }
 gameShowBanner=function(app,message,target){if(app==='kkt'){const id=target||(/CRAVITY|群聊/.test(message)?'group':/徐宇瑸/.test(message)?'woobin':/朴世琳/.test(message)?'serim':/咸元进/.test(message)?'wonjin':'hyeongjun');phoneBanner(app,PHONE_NAMES[id]||'KakaoTalk',message,id)}else phoneBanner('notes','备忘录',message,'notes')};
