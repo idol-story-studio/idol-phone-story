@@ -58,9 +58,58 @@ function ch5Calendar(){activeApp='calendar';const events=typeof CH4_EVENTS!=='un
 function ch5CalendarDay(d){if(d===30)return ch5Birthday();activeApp='calendar';const events=typeof CH4_EVENTS!=='undefined'?CH4_EVENTS.filter(e=>e[0]==='11月'+d+'日'):[];wrap('11月'+d+'日','<div class="content ch4-explore">'+(events.length?events.map(e=>'<div class="note"><strong>'+escapeHtml(e[1])+'</strong><p>'+escapeHtml(e[2])+'</p></div>').join(''):'<p>暂无其他日程</p>')+'<button class="choice" onclick="ch5Calendar()">返回日历</button></div>')}
 function ch5Birthday(){if(!ch5Is())return;activeApp='calendar';if(CH5.phase!=='morning'&&!CH5.calendarSeen){CH5.calendarSeen=true;ch5Save();ch5AddNote('birthday','亨俊的生日','亨俊生日快到了。\n\n今年要送什么啊……\n\n去年好像也纠结了很久。\n\n记得去年生日还拍了照片，翻翻看吧。','photo')}wrap('11月30日','<div class="content ch4-explore"><h2>宋亨俊生日 🎂</h2><p>全天 · 每年重复</p><div class="note"><strong>提醒事项</strong><p>记得给亨俊买礼物。</p></div><button class="choice" onclick="ch5Calendar()">返回日历</button></div>')}
 function ch5Photos(){activeApp='photos';ch5OldAlbum();const scroll=document.querySelector('#appbody .ig-scroll');if(scroll&&!scroll.querySelector('.ch5-date-filter'))scroll.insertAdjacentHTML('afterbegin','<button class="ch5-date-filter" onclick="ch5DateSearch()">⌕ 按日期搜索</button>')}
-function ch5DateSearch(){activeApp='photos';igBase('<button class="ig-icon" onclick="ch5Photos()">‹</button><strong>按日期搜索</strong>','<div class="ig-scroll ch5-date-search"><p>输入拍摄日期</p><label for="ch5-date-input">日期（月/日）</label><input id="ch5-date-input" type="text" inputmode="numeric" autocomplete="off" placeholder="例如 11.30" maxlength="10" onkeydown="if(event.key===\'Enter\')ch5DateResults()"><button class="choice" onclick="ch5DateResults()">搜索</button><div id="ch5-date-results" aria-live="polite"></div></div>',false);$('ch5-date-input')?.focus()}
-function ch5DateResults(){const input=($('ch5-date-input')?.value||'').trim();const m=input.match(/^(?:(\d{4})[-/.])?(\d{1,2})[-/.](\d{1,2})$/);const result=$('ch5-date-results');if(!result)return;const ok=m&&Number(m[2])===11&&Number(m[3])===30&&(!m[1]||Number(m[1])===new Date().getFullYear()-1);if(!m){result.innerHTML='<p>请输入有效日期，例如 11.30。</p>';return}if(!ok){result.innerHTML='<p>该日期没有匹配的照片。</p>';return}if(!CH5.calendarSeen){result.innerHTML='<p>该日期暂无可查看的照片。</p>';return}result.innerHTML='<h3>11月30日 · 1张照片</h3><div class="ig-grid"><button class="ig-tile" onclick="ch5Photo()"><img src="'+CH5_PHOTO+'" alt="生日碰杯合照" style="width:100%;height:100%;object-fit:cover"></button></div>'}
-function ch5DateAlbum(){ch5DateSearch();const el=$('ch5-date-input');if(el){el.value='11.30';ch5DateResults()}}
+/* iOS-style vertical date wheels for the Photos date filter. */
+const CH5_PICKER_YEAR=new Date().getFullYear()-1;
+let ch5PickerDate={year:CH5_PICKER_YEAR,month:10,day:1};
+function ch5PickerDays(y,m){return new Date(y,m,0).getDate()}
+function ch5PickerColumn(type,values,selected){
+ return '<div class="ch5-wheel" data-wheel="'+type+'" role="listbox" aria-label="'+({year:'年份',month:'月份',day:'日期'}[type])+'"><div class="ch5-wheel-pad"></div>'+
+ values.map(v=>'<button type="button" class="ch5-wheel-item" data-value="'+v+'" role="option" aria-selected="'+(v===selected)+'">'+v+({year:'年',month:'月',day:'日'}[type])+'</button>').join('')+
+ '<div class="ch5-wheel-pad"></div></div>';
+}
+function ch5DateSearch(){
+ activeApp='photos';
+ const y=CH5_PICKER_YEAR;
+ ch5PickerDate={year:y,month:10,day:1};
+ const years=Array.from({length:8},(_,i)=>y-4+i);
+ const months=Array.from({length:12},(_,i)=>i+1);
+ const days=Array.from({length:31},(_,i)=>i+1);
+ igBase('<button class="ig-icon" onclick="ch5Photos()">‹</button><strong>选择日期</strong>',
+ '<div class="ig-scroll ch5-date-search"><p>上下滑动选择照片拍摄日期</p><div class="ch5-picker">'+
+ ch5PickerColumn('year',years,y)+ch5PickerColumn('month',months,10)+ch5PickerColumn('day',days,1)+
+ '<div class="ch5-picker-highlight"></div></div><button class="choice" onclick="ch5DateResults()">查看这一天的照片</button><div id="ch5-date-results" aria-live="polite"></div></div>',false);
+ document.querySelectorAll('.ch5-wheel').forEach(w=>{
+  const items=[...w.querySelectorAll('.ch5-wheel-item')];
+  const selected=ch5PickerDate[w.dataset.wheel];
+  const idx=items.findIndex(x=>Number(x.dataset.value)===selected);
+  w.scrollTop=idx*44;
+  let settle;
+  w.addEventListener('scroll',()=>{
+   clearTimeout(settle);
+   settle=setTimeout(()=>{
+    const index=Math.max(0,Math.min(items.length-1,Math.round(w.scrollTop/44)));
+    const value=Number(items[index].dataset.value);
+    ch5PickerDate[w.dataset.wheel]=value;
+    w.scrollTo({top:index*44,behavior:'smooth'});
+    items.forEach((el,i)=>el.setAttribute('aria-selected',String(i===index)));
+   },90);
+  },{passive:true});
+  items.forEach((item,i)=>item.addEventListener('click',()=>{
+   ch5PickerDate[w.dataset.wheel]=Number(item.dataset.value);
+   w.scrollTo({top:i*44,behavior:'smooth'});
+  }));
+ });
+}
+function ch5DateResults(){
+ const result=$('ch5-date-results');if(!result)return;
+ const {year,month,day}=ch5PickerDate;
+ if(day>ch5PickerDays(year,month)){result.innerHTML='<p>所选月份没有这一天。</p>';return}
+ if(year!==CH5_PICKER_YEAR||month!==11||day!==30||!CH5.calendarSeen){
+  result.innerHTML='<p>该日期暂无可查看的照片。</p>';return;
+ }
+ result.innerHTML='<h3>'+year+'年11月30日 · 1张照片</h3><div class="ig-grid"><button class="ig-tile" onclick="ch5Photo()"><img src="'+CH5_PHOTO+'" alt="生日碰杯合照" style="width:100%;height:100%;object-fit:cover"></button></div>';
+}
+function ch5DateAlbum(){ch5DateSearch();ch5PickerDate={year:CH5_PICKER_YEAR,month:11,day:30};document.querySelectorAll('.ch5-wheel').forEach(w=>{const items=[...w.querySelectorAll('.ch5-wheel-item')];const idx=items.findIndex(x=>Number(x.dataset.value)===ch5PickerDate[w.dataset.wheel]);if(idx>=0)w.scrollTop=idx*44});ch5DateResults()}
 function ch5OriginalPhotos(){return ch5Photos()}
 function ch5Photo(){if(!CH5.calendarSeen)return ch5DateSearch();activeApp='photos';CH5.photoSeen=true;ch5Save();igBase('<button class="ig-icon" onclick="ch5DateAlbum()">‹</button><strong>11月30日 · 海底捞</strong>','<div class="ig-scroll ch5-photo-detail"><img src="'+CH5_PHOTO+'" alt="宋亨俊和姜敏熙在海底捞碰杯" class="ch5-photo-full"><div class="ig-album-caption"><b>去年11月30日 · 海底捞</b><p>去年宋亨俊生日，九个人一起吃海底捞。</p><p>11.30 🎂\n今年也一起过生日了。\n明明是寿星，最后一直在给我夹菜ㅋㅋ\n说好了下次还要一起来。</p><button class="choice" onclick="ch5PhotoDetail()">查看照片备注</button></div></div>',false)}
 function ch5PhotoDetail(){if(!ch5Is()||!CH5.photoSeen)return;activeApp='photos';CH5.captionSeen=true;CH5.searchUnlocked=true;ch5Save();ch5AddNote('search','海底捞','亨俊前阵子是不是也说过要去海底捞？\n\n好像是和廷谟哥。\n\n当时我是不是有点不高兴……\n\n去聊天记录里搜一下吧。','search');igBase('<button class="ig-icon" onclick="ch5Photo()">‹</button><strong>照片备注</strong>','<div class="ig-scroll ch5-photo-detail"><img src="'+CH5_PHOTO+'" class="ch5-photo-full" alt="生日碰杯合照"><div class="ig-album-caption"><h3>近期补充备注</h3><p>亨俊前阵子是不是也说过要去海底捞？好像是和廷谟哥。当时我是不是有点不高兴……</p><button class="choice" onclick="ch5Note(\'search\')">查看备忘录</button></div></div>',false)}
