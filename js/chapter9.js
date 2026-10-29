@@ -2,13 +2,8 @@
 const CH9_KEY='idol_ch9_v1';
 PHONE_NAMES.ch9group='今晚吃饭 🍽';
 const CH9={active:false,done:false,phase:'',clock:1115,session:0,friend:[],hj:[],group:[],notes:[],queue:null,choiceA:null,entryChoice:null,arrived:false,reservationViewed:false,taxiState:'none',taxiType:'普通出租车',taxiStep:0,dinnerPart:0,walkChoice:null,talkChoice:null,listeningChoice:null,talkPart:0,homeChoice:null,homeInvite:null,history:[],endNotified:false};
-const CH9_OPEN='今天要和A、亨俊一起吃饭。\n\n昨天说得挺干脆，真到今天反而有点紧张。\n\nA发过地址了。先看看预约和怎么过去吧。';
+const CH9_OPEN='今天要和A、亨俊一起吃饭。\n\n昨天说得挺干脆，真到今天反而有点紧张。\n\n先看看A发来的消息。';
 const CH9_END='今天真的见到亨俊了。\n\n一开始还担心会很尴尬，结果A一直在说话，我们三个笑了好多次。\n\n后来只剩我们两个的时候，我终于把那些一直不敢说的话说了出来。\n\n亨俊也说了他的想法。\n\n没有一下子变回从前，也没有谁保证以后不会再吵架。\n\n但他说，下次还可以一起出去。\n\n我想，这已经很好了。';
-const CH9_DINNER=[
-[['A','你们终于来了 我差点以为我要一个人吃ㅋㅋ'],['宋亨俊','我可没迟到'],['姜敏熙','我也没有！'],['A','好好好 你们两个都很准时'],['A','先点菜吧 我饿了'],['宋亨俊','你不是说你下午吃过了吗'],['A','下午那点东西算什么饭啊ㅋㅋ'],['姜敏熙','你们先选 我看看'],['A','你们又要研究半天菜单是吧']],
-[['A','对了 上次你们说的那个拍摄后来怎么样了'],['姜敏熙','还好 就是那天结束得很晚'],['宋亨俊','他收工的时候还找不到自己的包'],['姜敏熙','我最后找到了好吧ㅋㅋ'],['A','你们俩怎么这种事都记得这么清楚'],['宋亨俊','因为找了二十分钟'],['姜敏熙','哪有二十分钟！'],['A','行行行 我信你们两个一半ㅋㅋ']],
-[['A','下次换个便宜点的地方吧'],['姜敏熙','明明是你选的ㅋㅋ'],['A','那是因为你们都说随便'],['宋亨俊','确实'],['A','别确实了 你们等我一下 我去结账'],['姜敏熙','我把我的转给你'],['A','不用 今天我请 下次你们请我就行'],['宋亨俊','那下次你别挑这么贵的'],['A','ㅋㅋㅋㅋ你们两个真的是']]
-];
 const CH9_TALK=[
 ['宋亨俊','你刚刚说想跟我聊聊'],['宋亨俊','怎么又不说话了ㅋㅋ'],
 ['姜敏熙','我后来想了很久'],['姜敏熙','济州岛那次也是 海底捞也是'],['姜敏熙','明明是我自己想去 却总觉得你应该会想到我'],
@@ -39,7 +34,7 @@ function ch9Queue(room,lines,after){CH9.queue={room,lines,index:0,after};ch9Save
 function ch9Resume(){if(!ch9Is()||!CH9.queue||ch9Timer)return;const token=CH9.session;function tick(){ch9Timer=null;if(!ch9Is()||token!==CH9.session||!CH9.queue)return;const q=CH9.queue;if(q.index>=q.lines.length){CH9.queue=null;ch9Save();ch9After(q.after);return}const m=q.lines[q.index++];ch9Push(q.room,m[0],m[1]);ch9Save();ch9Timer=setTimeout(tick,1250)}ch9Timer=setTimeout(tick,700)}
 function ch9After(after){
  if(after==='friendChoice')CH9.phase='friendChoice';
- if(after==='reservation'){CH9.phase='reservation';if(!CH9.reservationViewed)ch9NoteAdd('hint','今晚的安排','七点半，Restaurant ON。预约在 NAVER Map 里；过去的路可以看看 Kakao T。')}
+ if(after==='reservation'){CH9.phase='reservation';if(!CH9.reservationViewed)ch9NoteAdd('hint','今晚的安排','七点半，Restaurant ON。A说预约在 NAVER Map 里。')}
  if(after==='entry1')CH9.phase='entry1';
  if(after==='entry2')CH9.phase='entry2';
  if(after==='home1')CH9.phase='home1';
@@ -91,8 +86,8 @@ function ch9Notes(){
 function ch9Note(id){
  const n=CH9.notes.find(x=>x.id===id);if(!n)return ch9Notes();if(id==='end')return storyEndingView(9);
  activeApp='notes';phoneReadRoom('notes');
- const action=id==='intro'?'<button class="choice" onclick="ch9Room(\'friend\')">查看 A 的 KakaoTalk</button><button class="choice" onclick="ch9Reservation()">打开 NAVER 预约</button>':id==='hint'?'<button class="choice" onclick="ch9Reservation()">查看 NAVER 预约</button>':'';
- wrap(n.title,'<div class="content story-prose ch7-note ch8-note"><h2>'+escapeHtml(n.title)+'</h2><p>'+escapeHtml(n.text)+'</p>'+action+'<button class="choice" onclick="ch9Notes()">返回备忘录</button></div>');
+ const action=id==='intro'?'<button class="choice" onclick="ch9Room(\'friend\')">前往 A 的私聊</button>':id==='hint'?'<button class="choice" onclick="ch9Reservation()">查看 NAVER 预约</button>':'';
+ wrap(n.title,'<div class="content story-prose ch7-note ch8-note"><h2>'+escapeHtml(n.title)+'</h2><p>'+escapeHtml(n.text)+'</p>'+(action||'<button class="choice" onclick="ch9Notes()">返回备忘录</button>')+'</div>');
 }
 function ch9Reservation(){
  if(!ch9Is())return;activeApp='map';
@@ -100,7 +95,7 @@ function ch9Reservation(){
 }
 function ch9ReservationDetail(){
  if(!ch9Is())return;CH9.reservationViewed=true;ch9Save();activeApp='map';
- wrap('预约详情','<div class="nm-app ch9-naver"><div class="nm-body"><button class="nm-back" onclick="ch9Reservation()">‹ 预约 / 订单</button><div class="ch9-panel"><small>预约已确认 · 好友 A 分享</small><h2>Restaurant ON</h2><p>레스토랑 온</p><p>'+escapeHtml(CH8_LOCATION.address)+'</p><p>聚餐当天 · 19:30</p><p>人数：3人</p><p>预约人：A</p><p>建议 19:20 前到达</p><p class="nm-disclaimer">此为游戏内虚构预约。你不能修改或取消好友的预约。</p><button class="ch9-action" onclick="ch8ExternalMap()">查看地图位置</button><button class="ch9-action" onclick="ch9Taxi()">打开 Kakao T 规划出行</button></div></div></div>');
+ wrap('预约详情','<div class="nm-app ch9-naver"><div class="nm-body"><button class="nm-back" onclick="ch9Reservation()">‹ 预约 / 订单</button><div class="ch9-panel"><small>预约已确认 · 好友 A 分享</small><h2>Restaurant ON</h2><p>레스토랑 온</p><p>'+escapeHtml(CH8_LOCATION.address)+'</p><p>聚餐当天 · 19:30</p><p>人数：3人</p><p>预约人：A</p><p>建议 19:20 前到达</p><p class="nm-disclaimer">此为游戏内虚构预约。你不能修改或取消好友的预约。</p><button class="ch9-action" onclick="ch9Taxi()">前往 Kakao T</button></div></div></div>');
 }
 function ch9Taxi(){
  if(!ch9Is())return;activeApp='kakaot';const stage=CH9.taxiState;
@@ -123,10 +118,14 @@ function ch9ChooseEntry2(i){if(CH9.phase!=='entry2')return;CH9.enteredTogether=i
 const ch9OldAfter=ch9After;ch9After=function(a){ch9OldAfter(a);if(a==='dinnerReady'){CH9.phase='dinner';ch9Save();ch9Dinner()}};
 function ch9Dinner(){
  if(!ch9Is()||!CH9.arrived)return;
- activeApp='story';const n=CH9.dinnerPart;const text=n<3?CH9_DINNER[n]:[];
- wrap('聚餐 · 当晚片段','<div class="content ch9-scene"><div class="ch9-scene-time">'+(n===0?'19:30':n===1?'20:05':'20:55')+' · Restaurant ON</div><p class="ch9-scene-hint">以下是当晚发生的事，并非手机聊天或录音。</p>'+text.map(([who,line])=>'<p class="ch9-line"><strong>'+escapeHtml(who)+'</strong><span>'+escapeHtml(line)+'</span></p>').join('')+'<button class="ch9-action" onclick="ch9DinnerNext()">'+(n<2?'继续':'离开餐厅')+'</button></div>');
+ // The meal happens off-screen: no chat transcript, recap screen or artificial tap-through.
+ CH9.phase='dinner';CH9.dinnerPart=3;CH9.clock=21*60+2;ch9Save();
+ const token=CH9.session;
+ setTimeout(()=>{if(!ch9Is()||CH9.session!==token||CH9.phase!=='dinner')return;
+ CH9.phase='group';ch9Save();
+ ch9Queue('group',[['them','我先走啦 明天一早还有事'],['them','你们两个慢慢回去 路上小心'],['me','你也是'],['them','下次记得请我吃饭ㅋㅋ']],'walk');
+ },6500);
 }
-function ch9DinnerNext(){if(CH9.dinnerPart>=3)return;CH9.dinnerPart++;ch9Save();if(CH9.dinnerPart<3)return ch9Dinner();CH9.clock=21*60+2;CH9.phase='group';ch9Queue('group',[['them','我先撤了 明天一早还有事'],['them','今天挺开心的ㅋㅋ'],['them','你们回去路上小心'],['them','你也是'],['me','今天谢谢你啦'],['them','下次你们请客 我记住了'],['them','ㅋㅋ知道了']],'walk');ch9Room('group')}
 const ch9AfterGroup=ch9After;ch9After=function(a){ch9AfterGroup(a);if(a==='walk'){CH9.phase='walk';ch9Save();ch9Walk()}};
 function ch9Walk(){
  activeApp='story';wrap('餐厅外 · 当晚片段','<div class="content ch9-scene"><div class="ch9-scene-time">21:08 · 清潭洞</div><p>A先离开了。餐厅外只剩下你和亨俊。</p><p>你想再跟他待一会儿。</p>'+ch9Opts(['你现在急着回去吗','陪我走一会儿吧','我还不想这么快回去'],'ch9ChooseWalk')+'</div>');
