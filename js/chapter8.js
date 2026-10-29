@@ -129,7 +129,7 @@ function ch8Notes(){
  wrap('备忘录','<div class="content story-notes">'+html.join('')+'</div>');
 }
 function ch8Note(id){ch8RefreshHint();activeApp='notes';phoneReadRoom('notes');const n=id==='intro'?{title:'第八章',text:'今天本来没什么特别的安排。\n\n先看看手机吧。'}:CH8.notes.find(x=>x.id===id);if(!n)return ch8Notes();const action=id==='hint'?'<button class="choice" onclick="ch8Room()">前往宋亨俊的 KakaoTalk 私聊</button>':id==='end'?'<button class="choice" onclick="storyEndingView(8)">查看章节进度</button>':'';
- wrap(n.title,'<div class="content story-prose ch7-note ch8-note"><h2>'+escapeHtml(n.title)+'</h2><p>'+escapeHtml(n.text)+'</p>'+action+'<button class="choice" onclick="ch8Notes()">返回备忘录</button></div>');
+ wrap(n.title,'<div class="content story-prose ch7-note ch8-note"><h2>'+escapeHtml(n.title)+'</h2><p>'+escapeHtml(n.text)+'</p>'+(action||'<button class="choice" onclick="ch8Notes()">返回备忘录</button>')+'</div>');
 }
 function ch8Friends(){
  activeApp='kkt';const entries=[['ch8friend','A',CH8.friend.at(-1)?.text==='[地点]'?'[地点] Restaurant ON':CH8.friend.at(-1)?.text||'语音通话','ch8FriendRoom()'],['hyeongjun','宋亨俊',CH8.hj.at(-1)?.text||CH7.messages.at(-1)?.text||'历史消息','ch8Room()'],...['group','woobin','manager','wonjin','serim'].map(id=>[id,({group:'CRAVITY 🐾',woobin:'徐宇瑸',manager:'经纪人',wonjin:'咸元进',serim:'朴世琳'})[id],'历史消息',"ch7LegacyRoom('"+id+"')"])];
