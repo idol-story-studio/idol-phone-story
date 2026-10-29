@@ -142,7 +142,9 @@ function ch10OldHistory(){
  return prev+'<div class="story-date">第九章 · 聚餐当天</div>'+nine;
 }
 function ch10Room(quiet=false){
- if(!ch10Is())return;activeApp='kkt';phoneReadRoom('hyeongjun');
+ if(!ch10Is())return;
+ if(CH10.done&&!quiet&&!CH10.wallpaperUnlocked){CH10.wallpaperUnlocked=true;ch10Save()}
+ activeApp='kkt';phoneReadRoom('hyeongjun');
  const rows=CH10.messages.map((m,i)=>{
   
   if(m.type==='photo')return '<div class="bubbleline me"><button class="ch10-chat-photo" onclick="ch10PhotoDetail()">'+ch10PhotoImage()+'<span>获奖纪念照 · 查看</span></button></div>';
@@ -160,7 +162,7 @@ function ch10Room(quiet=false){
  
  if(p==='homeChoice')opts=ch10Options(['你现在在哪儿','我想见你','可以等我一下吗'],'ch10ChooseHome');
  if(CH10.done)opts='<div class="story-end">当前对话已结束</div>';
- wrap('宋亨俊','<div id="ch2-chat" data-id="hyeongjun" class="ch3-kkt ch5-chat ch9-chat ch10-chat"'+(CH10.done?' style="--ch10-wallpaper:url('+CH10_PHOTO+')"':'')+'><div class="chatbody" id="chatbody">'+ch10OldHistory()+'<div class="story-date">第十章 · 以后都告诉你</div>'+rows+'</div><div class="story-send">'+opts+'</div></div>');
+ wrap('宋亨俊','<div id="ch2-chat" data-id="hyeongjun" class="ch3-kkt ch5-chat ch9-chat ch10-chat"'+(CH10.wallpaperUnlocked?' style="--ch10-wallpaper:url('+CH10_PHOTO+')"':'')+'><div class="chatbody" id="chatbody">'+ch10OldHistory()+'<div class="story-date">第十章 · 以后都告诉你</div>'+rows+'</div><div class="story-send">'+opts+'</div></div>');
  const el=document.getElementById('chatbody');if(el)el.scrollTop=el.scrollHeight;
 }
 function ch10Friends(){
