@@ -29,8 +29,8 @@ function ch4Next(){if(!ch4Is())return;
  else if(CH4.step===4){ch4Pending('coffee')}
  else if(CH4.step===5){CH4.step=6;ch4Save();setTimeout(()=>ch4Batch([['them','到公司了吗'],['them','世琳哥刚刚在找人']],()=>ch4Pending('arrived'),true),9500)}
  else if(CH4.step===7){CH4.step=8;ch4Save();setTimeout(()=>ch4Batch([['them','我先走了'],['them','廷谟哥找我有点事'],['them','练习室的灯你记得关']],()=>ch4Pending('wait'),true),11000)}
- else if(CH4.step===9){CH4.step=10;ch4Save();setTimeout(()=>ch4Batch([['them','我先忙了']],()=>{CH4.step=11;ch4Save();ch4AddNote('新线索3','先不发消息了。\n去外卖民族翻翻以前的订单吧。','delivery');ch4Next()}),1800)}
- else if(CH4.step===11){CH4.step=12;ch4Save();setTimeout(()=>{ch4Line('recalled','消息已删除');ch4Pending('recall');if(!ch4RoomVisible())phoneReceiveMessage('hyeongjun','撤回了一条消息')},6500)}
+ else if(CH4.step===9){CH4.step=10;ch4Save();setTimeout(()=>ch4Batch([['them','我先忙了']],()=>{CH4.step=11;ch4Save();ch4AddNote('新线索3','先不发消息了。\n亨俊说他先忙了，我也先看看手机里别的东西吧。','none');ch4Next()}),1800)}
+ else if(CH4.step===11){ch4ScheduleRecall()}
  else if(CH4.step===13){CH4.step=14;ch4Save();setTimeout(()=>ch4Batch([['them','[蒸面包照片]'],['them','之前你说想吃的那个'],['them','刚才路过看见了']],()=>ch4Pending('bread')),4500)}
  else if(CH4.step===15){CH4.step=16;CH4.clockMinute=Math.max(CH4.clockMinute,22*60+40);ch4Save();setTimeout(ch4Incoming,30000)}
 }
@@ -44,7 +44,7 @@ function ch4Choice(i){const key=CH4.pending;if(!ch4Is()||!key||!CH4_OPTIONS[key]
   i===0?[['them','你又没说在等我'],['me','我以为你会知道'],['them','你不说我怎么知道'],['me','这也没必要特地说吧'],['them','……你每次都这么觉得']]:
   [['them','你也没说要一起走啊'],['me','我以为你还在公司'],['them','我是在啊'],['them','可你又没来找我'],['me','哦……']],
   ()=>{CH4.step=9;ch4Save();ch4Next()});
- if(key==='ask')ch4Batch(i===0?[['them','就是你刚才那句'],['them','算了'],['them','我先忙了']]:i===1?[['them','没什么'],['them','现在说也没用'],['them','我先忙了']]:[['them','嗯'],['them','我先忙了']],()=>{CH4.step=11;ch4Save();ch4AddNote('新线索3','先不发消息了。\n去外卖民族翻翻以前的订单吧。','delivery');ch4Next()});
+ if(key==='ask')ch4Batch(i===0?[['them','就是你刚才那句'],['them','算了'],['them','我先忙了']]:i===1?[['them','没什么'],['them','现在说也没用'],['them','我先忙了']]:[['them','嗯'],['them','我先忙了']],()=>{CH4.step=11;ch4Save();ch4AddNote('新线索3','先不发消息了。\n亨俊说他先忙了，我也先看看手机里别的东西吧。','none');ch4Next()});
  if(key==='recall')ch4Batch(i===0?[['them','发错了'],['them','没事']]:i===1?[['them','手滑'],['them','不用管']]:[['them','看见就看见了'],['them','没什么']],()=>{CH4.step=13;ch4Save();ch4Next()});
  if(key==='bread')ch4Batch(i===0?[['them','只是记得你提过'],['them','刚好路过'],['them','明天带去公司']]:i===1?[['them','顺路看到的'],['them','别想太多'],['them','明天拿给你']]:[['them','不用谢'],['them','又不是特地买的'],['them','明天带去公司']],()=>{CH4.step=15;ch4Save();ch4Next()});
 }
@@ -59,7 +59,7 @@ function ch4ReadNote(i){const n=CH4.notes[i];if(!n)return ch4Notes();activeApp='
 function ch4Ending(){activeApp='notes';wrap('第四章已结束','<div class="content story-prose story-ending"><h2>第四章 · 还在生气吗？</h2><p>还是没有和好。\n但他刚刚打电话来了。</p><p>当前回忆进度：4/10</p><div class="story-progress"><span style="width:40%"></span></div><button class="choice" onclick="ch4Notes()">返回备忘录</button></div>')}
 
 const CH4_EVENTS=[['10月8日','音乐节目预录制','09:00 集合'],['10月12日','专辑签售会','14:00 入场'],['10月17日','粉丝见面会彩排','18:30 彩排'],['10月21日','电台录制','11:00 录音'],['10月25日','团体练习','16:00 练习室'],['10月28日','公司练习','15:00 世琳哥通知'],['11月2日','专辑拍摄','13:00 妆发确认']];
-function ch4ExploreGate(kind){const token=CH4.session;setTimeout(()=>{if(!ch4Is()||token!==CH4.session||activeApp!==kind)return;const field=kind==='calendar'?'calendarViewed':'deliveryViewed';if(CH4[field])return;CH4[field]=true;ch4Save();if(kind==='calendar'&&CH4.step===7)ch4Next();if(kind==='delivery'&&CH4.step===11)ch4Next()},5500)}
+function ch4ExploreGate(kind){const token=CH4.session;setTimeout(()=>{if(!ch4Is()||token!==CH4.session||activeApp!==kind)return;const field=kind==='calendar'?'calendarViewed':'deliveryViewed';if(CH4[field])return;CH4[field]=true;ch4Save();if(kind==='calendar'&&CH4.step===7)ch4Next();/* 外卖民族仅供自由探索，不触发主线 */},5500)}
 function ch4Calendar(month=10){activeApp='calendar';ch4ExploreGate('calendar');const events=CH4_EVENTS.filter(e=>e[0].startsWith(month+'月'));wrap('日历','<div class="content ch4-explore"><button class="choice" onclick="ch4Calendar('+(month===10?11:10)+')">查看'+(month===10?'十一月':'十月')+'</button><h2>'+month+'月</h2><div class="ch4-cal-grid">'+Array.from({length:month===10?31:30},(_,i)=>'<button class="'+(events.some(e=>e[0]===month+'月'+(i+1)+'日')?'marked':'')+'" onclick="ch4CalendarDay('+month+','+(i+1)+')">'+(i+1)+'</button>').join('')+'</div><h3>工作行程</h3>'+events.map(e=>'<div class="note" onclick="ch4CalendarDay('+month+','+Number(e[0].split('月')[1].replace('日',''))+')"><strong>'+e[0]+' · '+e[1]+'</strong><p>'+e[2]+'</p></div>').join('')+'<h3>提醒事项</h3><div class="note">□ 带练习鞋</div><div class="note">□ 买新的耳机套</div><div class="note">✓ 帮亨俊带过桃子冰茶</div><div class="note">□ 便利店买酸奶</div></div>')}
 function ch4CalendarDay(month,day){activeApp='calendar';ch4ExploreGate('calendar');const events=CH4_EVENTS.filter(e=>e[0]===month+'月'+day+'日');wrap(month+'月'+day+'日','<div class="content ch4-explore">'+(events.length?events.map(e=>'<div class="note"><strong>'+e[1]+'</strong><p>'+e[2]+'</p></div>').join(''):'<p>没有日程</p>')+'<button class="choice" onclick="ch4Calendar('+month+')">返回月视图</button></div>')}
 const CH4_ORDERS=[
@@ -184,4 +184,40 @@ function storyNotesRows(){
 gameNotes=function(){
  activeApp='notes';gameClear('notes');
  wrap('备忘录','<div class="content story-notes">'+storyNotesRows()+'</div>');
+};
+
+/* 第四章：撤回提醒在离开宋亨俊私聊后触发，与外卖民族无关。 */
+let ch4RecallTimer=null;
+function ch4ScheduleRecall(){
+ if(!ch4Is()||CH4.step!==11||ch4RoomVisible('hyeongjun')||ch4RecallTimer)return;
+ const token=CH4.session;
+ ch4RecallTimer=setTimeout(()=>{
+  ch4RecallTimer=null;
+  if(!ch4Is()||token!==CH4.session||CH4.step!==11||ch4RoomVisible('hyeongjun'))return;
+  CH4.step=12;ch4Save();
+  ch4Line('recalled','消息已删除');
+  ch4Pending('recall');
+  phoneReceiveMessage('hyeongjun','撤回了一条消息');
+ },3800);
+}
+function ch4CancelRecallTimer(){if(ch4RecallTimer!==null){clearTimeout(ch4RecallTimer);ch4RecallTimer=null}}
+const ch4RecallPreviousWrap=wrap;
+wrap=function(title,body,extra){
+ const result=ch4RecallPreviousWrap(title,body,extra);
+ if(ch4Is()){
+  if(ch4RoomVisible('hyeongjun'))ch4CancelRecallTimer();
+  else if(CH4.step===11)ch4ScheduleRecall();
+ }
+ return result;
+};
+const ch4RecallPreviousHome=goHome;
+goHome=function(){const result=ch4RecallPreviousHome();if(ch4Is()&&CH4.step===11)ch4ScheduleRecall();return result};
+const ch4RecallPreviousBack=gameNavigateBack;
+gameNavigateBack=function(){
+ const result=ch4RecallPreviousBack();
+ if(ch4Is()){
+  if(ch4RoomVisible('hyeongjun'))ch4CancelRecallTimer();
+  else if(CH4.step===11)ch4ScheduleRecall();
+ }
+ return result;
 };
