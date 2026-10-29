@@ -37,6 +37,9 @@ function ch9After(after){
  if(after==='reservation'){CH9.phase='reservation';if(!CH9.reservationViewed)ch9NoteAdd('hint','今晚的安排','七点半，Restaurant ON。A说预约在 NAVER Map 里。')}
  if(after==='entry1')CH9.phase='entry1';
  if(after==='entry2')CH9.phase='entry2';
+ if(after==='talkChoice')CH9.phase='talkChoice';
+ if(after==='listenChoice')CH9.phase='listenChoice';
+ if(after==='talkFinish')CH9.phase='talkFinish';
  if(after==='home1')CH9.phase='home1';
  if(after==='home2')CH9.phase='home2';
  if(after==='home3')CH9.phase='home3';
@@ -63,6 +66,10 @@ function ch9Room(room='hj',quiet=false){
  if(room==='friend'&&CH9.phase==='friendChoice')opts=ch9Opts(['知道啦 我会早点到','我争取不迟到ㅋㅋ','你先点喝的吧'],'ch9ChooseFriend');
  if(room==='hj'&&CH9.phase==='entry1')opts=ch9Opts(['还有几分钟 你到了？','快到了 你在门口吗','刚过来 你先进去吧'],'ch9ChooseEntry1');
  if(room==='hj'&&CH9.phase==='entry2')opts=ch9Opts(['等我一下 我们一起进去','你先进去吧 我马上到'],'ch9ChooseEntry2');
+ if(room==='hj'&&CH9.phase==='walk')opts=ch9Opts(['你现在急着回去吗','陪我走一会儿吧','我还不想这么快回去'],'ch9ChooseWalk');
+ if(room==='hj'&&CH9.phase==='talkChoice')opts=ch9Opts(['有点紧张。但我想跟你好好说说。','我想先跟你道歉。','其实我就是想跟你再待一会儿。'],'ch9ChooseTalk');
+ if(room==='hj'&&CH9.phase==='listenChoice')opts=ch9Opts(['你还有什么想跟我说的吗','我以前还有什么地方让你难过吗','你以后不开心也直接告诉我 好不好'],'ch9ChooseListen');
+ if(room==='hj'&&CH9.phase==='talkFinish')opts='<button class="story-option" onclick="ch9TalkFinish()">继续</button>';
  if(room==='hj'&&CH9.phase==='home1')opts=ch9Opts(['到了 你呢','刚进门 你到家了？','嗯 刚坐下'],'ch9ChooseHome1');
  if(room==='hj'&&CH9.phase==='home2')opts=ch9Opts(['我也是','那下次我们两个去？','下次我来选地方'],'ch9ChooseHome2');
  if(room==='hj'&&CH9.phase==='home3')opts=ch9Opts(['晚安'],'ch9ChooseHome3');
@@ -127,24 +134,46 @@ function ch9Dinner(){
  },6500);
 }
 const ch9AfterGroup=ch9After;ch9After=function(a){ch9AfterGroup(a);if(a==='walk'){CH9.phase='walk';ch9Save();ch9Walk()}};
+/* The evening conversation uses the existing KakaoTalk room and bubble renderer.
+ * All messages remain in CH9.hj and can be reopened like earlier chapters. */
 function ch9Walk(){
- activeApp='story';wrap('餐厅外 · 当晚片段','<div class="content ch9-scene"><div class="ch9-scene-time">21:08 · 清潭洞</div><p>A先离开了。餐厅外只剩下你和亨俊。</p><p>你想再跟他待一会儿。</p>'+ch9Opts(['你现在急着回去吗','陪我走一会儿吧','我还不想这么快回去'],'ch9ChooseWalk')+'</div>');
+ if(!ch9Is())return;
+ CH9.phase='walk';ch9Save();ch9Room('hj');
 }
 function ch9ChooseWalk(i){
- if(CH9.phase!=='walk')return;CH9.walkChoice=i;CH9.phase='talk';const seq=[
- [['姜敏熙','你现在急着回去吗'],['宋亨俊','还好 怎么了'],['姜敏熙','那陪我走一段吧'],['宋亨俊','嗯 走吧']],
- [['姜敏熙','陪我走一会儿吧'],['宋亨俊','……好啊'],['宋亨俊','往哪边走'],['姜敏熙','随便走走？'],['宋亨俊','行ㅋㅋ']],
- [['姜敏熙','我还不想这么快回去'],['宋亨俊','那就再待一会儿'],['姜敏熙','嗯 我想跟你聊聊'],['宋亨俊','好']]
- ][i];CH9.talkLines=seq.concat(CH9_TALK.slice(0,2));ch9Save();ch9Talk();
+ if(CH9.phase!=='walk')return;
+ CH9.walkChoice=i;CH9.phase='walkReply';ch9Save();
+ const seq=[
+ [['me','你现在急着回去吗'],['them','还好 怎么了'],['me','那陪我走一段吧'],['them','嗯 走吧']],
+ [['me','陪我走一会儿吧'],['them','……好啊'],['them','往哪边走'],['me','随便走走？'],['them','行ㅋㅋ']],
+ [['me','我还不想这么快回去'],['them','那就再待一会儿'],['me','嗯 我想跟你聊聊'],['them','好']]
+ ][i];
+ ch9Queue('hj',seq.concat([['them','你刚刚说想跟我聊聊'],['them','怎么又不说话了ㅋㅋ']]),'talkChoice');
 }
-function ch9Talk(){
- activeApp='story';const lines=CH9.talkLines||[];const opts=CH9.talkChoice===null?ch9Opts(['有点紧张。但我想跟你好好说说。','我想先跟你道歉。','其实我就是想跟你再待一会儿。'],'ch9ChooseTalk'):CH9.listeningChoice===null?ch9Opts(['你还有什么想跟我说的吗','我以前还有什么地方让你难过吗','你以后不开心也直接告诉我 好不好'],'ch9ChooseListen'):'<button class="ch9-action" onclick="ch9TalkFinish()">继续</button>';
- wrap('散步时 · 当晚片段','<div class="content ch9-scene"><div class="ch9-scene-time">21:12 · 散步时</div><p class="ch9-scene-hint">当晚的对话回顾，并非手机录音。</p>'+lines.map(([who,line])=>'<p class="ch9-line"><strong>'+escapeHtml(who)+'</strong><span>'+escapeHtml(line)+'</span></p>').join('')+opts+'</div>');
- const root=document.querySelector('.ch9-scene');if(root)root.scrollTop=root.scrollHeight;
+function ch9ChooseTalk(i){
+ if(CH9.phase!=='talkChoice')return;
+ CH9.talkChoice=i;CH9.phase='talkReply';ch9Save();
+ const words=['有点紧张。但我想跟你好好说说。','我想先跟你道歉。','其实我就是想跟你再待一会儿。'];
+ const replies=[
+ [['them','那你说吧 我听着']],
+ [['them','你不用每次见我都先道歉'],['them','先说你在想什么吧']],
+ [['them','可以啊'],['them','不过你不是有话想说吗'],['me','嗯 是有的']]
+ ];
+ const lines=CH9_TALK.slice(2).map(([who,line])=>[who==='姜敏熙'?'me':'them',line]);
+ ch9Push('hj','me',words[i]);ch9Queue('hj',replies[i].concat(lines),'listenChoice');
 }
-function ch9ChooseTalk(i){if(CH9.talkChoice!==null)return;CH9.talkChoice=i;const words=['有点紧张。但我想跟你好好说说。','我想先跟你道歉。','其实我就是想跟你再待一会儿。'];const replies=[[['宋亨俊','那你说吧 我听着']],[['宋亨俊','你不用每次见我都先道歉'],['宋亨俊','先说你在想什么吧']],[['宋亨俊','可以啊'],['宋亨俊','不过你不是有话想说吗'],['姜敏熙','嗯 是有的']]];CH9.talkLines.push(['姜敏熙',words[i]],...replies[i],...CH9_TALK.slice(2));ch9Save();ch9Talk()}
-function ch9ChooseListen(i){if(CH9.listeningChoice!==null)return;CH9.listeningChoice=i;const q=['你还有什么想跟我说的吗','我以前还有什么地方让你难过吗','你以后不开心也直接告诉我 好不好'];const a=[[['宋亨俊','有啊 不过也不用今晚全部说完'],['宋亨俊','以后慢慢说吧']],[['宋亨俊','有的吧ㅋㅋ'],['宋亨俊','但今天先到这里'],['宋亨俊','我不想把今晚变成翻旧账']],[['宋亨俊','好'],['宋亨俊','你也是 别什么都憋着']]];CH9.talkLines.push(['姜敏熙',q[i]],...a[i],['宋亨俊','走吧 有点晚了']);ch9Save();ch9Talk()}
-function ch9TalkFinish(){if(CH9.listeningChoice===null)return;CH9.phase='home';CH9.clock=22*60+13;ch9Save();ch9Queue('hj',[['them','你到家了吗']],'home1');ch9Room('hj')}
+function ch9ChooseListen(i){
+ if(CH9.phase!=='listenChoice')return;
+ CH9.listeningChoice=i;CH9.phase='listenReply';ch9Save();
+ const q=['你还有什么想跟我说的吗','我以前还有什么地方让你难过吗','你以后不开心也直接告诉我 好不好'];
+ const replies=[
+ [['them','有啊 不过也不用今晚全部说完'],['them','以后慢慢说吧']],
+ [['them','有的吧ㅋㅋ'],['them','但今天先到这里'],['them','我不想把今晚变成翻旧账']],
+ [['them','好'],['them','你也是 别什么都憋着']]
+ ];
+ ch9Push('hj','me',q[i]);ch9Queue('hj',replies[i].concat([['them','走吧 有点晚了']]),'talkFinish');
+}
+function ch9TalkFinish(){if(CH9.phase!=='talkFinish')return;CH9.phase='home';CH9.clock=22*60+13;ch9Save();ch9Queue('hj',[['them','你到家了吗']],'home1');ch9Room('hj')}
 function ch9ChooseHome1(i){if(CH9.phase!=='home1')return;CH9.homeChoice=i;CH9.phase='homeReply';ch9Push('hj','me',['到了 你呢','刚进门 你到家了？','嗯 刚坐下'][i]);ch9Queue('hj',[['them',['我也到了','到了ㅋㅋ','那就好 我也刚到'][i]],['them','A刚刚还给我发消息'],['me','说什么了'],['them','说下次绝对不让我们两个选餐厅'],['me','ㅋㅋㅋㅋ'],['them','他今天真的很能说'],['me','明明你也一直在笑'],['them','我哪有'],['me','有啊'],['them','ㅋㅋ'],['them','不过今天还挺开心的']],'home2')}
 function ch9ChooseHome2(i){if(CH9.phase!=='home2')return;CH9.homeInvite=i;CH9.phase='homeReply2';ch9Push('hj','me',['我也是','那下次我们两个去？','下次我来选地方'][i]);const replies=[[['them','嗯'],['them','下次再出来吧']],[['them','可以啊'],['them','不过换一家ㅋㅋ']],[['them','好啊'],['them','这次别又说随便']]];ch9Queue('hj',replies[i],'home3')}
 function ch9ChooseHome3(){if(CH9.phase!=='home3')return;CH9.phase='ending';ch9Push('hj','me','晚安');ch9Queue('hj',[['them','晚安']],'end')}
