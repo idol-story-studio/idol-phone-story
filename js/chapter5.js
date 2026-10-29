@@ -4,29 +4,29 @@ const CH5={active:false,done:false,phase:'',messages:[],notes:[],choice:null,bra
 const CH5_INTRO='昨天和亨俊通完电话，醒来还是有点不真实。\n\n他说头还疼不疼……先看看有没有新消息吧。';
 const CH5_PHOTO='assets/ch5_hyeongjun_birthday_haidilao.jpg';
 const CH5_HISTORY=[
-['them','刚才廷谟哥问我要不要去吃海底捞'],['them','本来都准备出门了'],['me','哦'],['them','怎么了'],['me','没怎么'],['them','你怎么突然这样ㅋㅋ'],['me','哪样'],['them','说话怪怪的'],['me','你们去吃吧'],['them','没去成'],['them','廷谟哥临时有事'],['me','哦哦'],['them','你是不是也想去'],['me','没有啊'],['them','真的？'],['me','有一点吧'],['them','那你怎么不说'],['me','你都跟廷谟哥约好了'],['them','约好了又怎么了'],['them','又不是不能一起去'],['me','我又不知道你们想不想叫我'],['them','……'],['them','你想来就跟我说啊'],['me','这种事还要我自己说吗'],['them','不然呢'],['them','我怎么知道你想不想来'],['me','算了'],['them','你又来了'],['me','我怎么了'],['them','每次都这样'],['them','明明自己有想法又不说'],['them','然后我没猜到你就不高兴'],['me','我也没说你什么啊'],['them','你现在不就是在生气吗'],['me','我没有'],['them','姜敏熙'],['them','你到底有什么不能直接说的？'],['me','我只是觉得你应该会想到我'],['them','我当然会想到你'],['them','但我又不是每次都能猜到你在想什么'],['me','……'],['them','算了'],['them','我现在不想说了'],['me','哦']
+['them','刚才廷谟哥问我要不要去吃海底捞。'],['them','本来都准备出门了。'],['me','哦。'],['them','怎么了。'],['me','没怎么。'],['them','你怎么突然这样ㅋㅋ'],['me','哪样。'],['them','说话怪怪的。'],['me','你们去吃吧。'],['them','没去成。'],['them','廷谟哥临时有事。'],['me','哦哦。'],['them','你是不是也想去。'],['me','没有啊。'],['them','真的？'],['me','有一点吧。'],['them','那你怎么不说。'],['me','你都跟廷谟哥约好了。'],['them','约好了又怎么了。'],['them','又不是不能一起去。'],['me','我又不知道你们想不想叫我。'],['them','……'],['them','你想来就跟我说啊。'],['me','这种事还要我自己说吗。'],['them','不然呢。'],['them','我怎么知道你想不想来。'],['me','算了。'],['them','你又来了。'],['me','我怎么了。'],['them','每次都这样。'],['them','明明自己有想法又不说。'],['them','然后我没猜到你就不高兴。'],['me','我也没说你什么啊。'],['them','你现在不就是在生气吗。'],['me','我没有。'],['them','姜敏熙。'],['them','你到底有什么不能直接说的？'],['me','我只是觉得你应该会想到我。'],['them','我当然会想到你。'],['them','但我又不是每次都能猜到你在想什么。'],['me','……'],['them','算了。'],['them','我现在不想说了。'],['me','哦。']
 ];
 const CH5_A=[
-{mine:['不疼了ㅋㅋ'],lines:[['them','嗯'],['them','昨天不是还说有点晕'],['me','睡一觉好多了'],['them','那就行']]},
-{mine:['好多了 你呢'],lines:[['them','我能有什么事'],['me','随便问问嘛'],['them','嗯'],['them','你自己注意点就行']]},
-{mine:['怎么一醒来就查岗ㅋㅋ'],lines:[['them','谁查岗了'],['them','昨天你才出院'],['them','万一今天又不舒服'],['them','公司那边也不好安排'],['me','哦 原来是因为这个ㅋㅋ'],['them','不然呢']]}
+{mine:['不疼了ㅋㅋ'],lines:[['them','嗯。'],['them','昨天不是还说有点晕。'],['me','睡一觉好多了。'],['them','那就行。']]},
+{mine:['好多了 你呢'],lines:[['them','我能有什么事。'],['me','随便问问嘛。'],['them','嗯。'],['them','你自己注意点就行。']]},
+{mine:['怎么一醒来就查岗ㅋㅋ'],lines:[['them','谁查岗了。'],['them','昨天你才出院。'],['them','万一今天又不舒服。'],['them','公司那边也不好安排。'],['me','哦，原来是因为这个ㅋㅋ'],['them','不然呢。']]}
 ];
 const CH5_B=[
-{mine:['还没吃'],lines:[['them','都几点了'],['me','刚起嘛'],['them','……'],['them','先去吃饭'],['them','别空腹去练习'],['me','知道了'],['them','嗯']]},
-{mine:['吃过了'],lines:[['them','吃的什么'],['me','面包和牛奶'],['them','就这些？'],['me','够了啦ㅋㅋ'],['them','随便你'],['them','中午记得正常吃饭']]},
-{mine:['你呢 吃了没'],lines:[['them','吃了'],['me','没空腹喝咖啡吧'],['them','没有'],['them','你先管好自己'],['me','我也没说什么啊ㅋㅋ'],['them','嗯']]}
+{mine:['还没吃'],lines:[['them','都几点了。'],['me','刚起嘛。'],['them','……'],['them','先去吃饭。'],['them','别空腹去练习。'],['me','知道了。'],['them','嗯。']]},
+{mine:['吃过了'],lines:[['them','吃的什么。'],['me','面包和牛奶。'],['them','就这些？'],['me','够了啦ㅋㅋ'],['them','随便你。'],['them','中午记得正常吃饭。']]},
+{mine:['你呢 吃了没'],lines:[['them','吃了。'],['me','没空腹喝咖啡吧。'],['them','没有。'],['them','你先管好自己。'],['me','我也没说什么啊ㅋㅋ'],['them','嗯。']]}
 ];
 const CH5_C=[
-{mine:['明天练习的时候，我想跟你一起'],lines:[['me','明天练习的时候'],['me','我想跟你一起'],['them','……'],['them','不是都在一个练习室吗'],['me','我是说想跟你单独练一会儿'],['them','你明天不是还有安排吗'],['me','有'],['me','不过我想先跟你练'],['them','……'],['them','几点'],['me','三点左右？'],['them','我三点以后应该在'],['them','你自己过来吧']]},
-{mine:['明天能不能等我一下？我想和你一起练'],lines:[['me','明天能不能等我一下'],['me','我想和你一起练'],['them','等你？'],['them','你不是有自己的安排吗'],['me','有啊'],['me','不过我想跟你一起'],['them','……'],['them','你今天怎么突然说这个'],['me','就是想一起嘛ㅋㅋ'],['them','……'],['them','我练完可能会晚一点走'],['them','你要来就来']]},
-{mine:['其实我就是想多跟你待一会儿'],lines:[['me','其实我就是想多跟你待一会儿'],['them','……'],['them','你突然说什么呢'],['me','就是想明天一起练习'],['them','你不是一直都自己练吗'],['me','那明天不想自己练了ㅋㅋ'],['them','……'],['them','随便你'],['them','我下午三点应该在练习室']]}
+{mine:['明天练习的时候，我想跟你一起'],lines:[['me','明天练习的时候。'],['me','我想跟你一起。'],['them','……'],['them','不是都在一个练习室吗。'],['me','我是说想跟你单独练一会儿。'],['them','你明天不是还有安排吗。'],['me','有。'],['me','不过我想先跟你练。'],['them','……'],['them','几点。'],['me','三点左右？'],['them','我三点以后应该在。'],['them','你自己过来吧。']]},
+{mine:['明天能不能等我一下？我想和你一起练'],lines:[['me','明天能不能等我一下。'],['me','我想和你一起练。'],['them','等你？'],['them','你不是有自己的安排吗。'],['me','有啊。'],['me','不过我想跟你一起。'],['them','……'],['them','你今天怎么突然说这个。'],['me','就是想一起嘛ㅋㅋ'],['them','……'],['them','我练完可能会晚一点走。'],['them','你要来就来。']]},
+{mine:['其实我就是想多跟你待一会儿'],lines:[['me','其实我就是想多跟你待一会儿。'],['them','……'],['them','你突然说什么呢。'],['me','就是想明天一起练习。'],['them','你不是一直都自己练吗。'],['me','那明天不想自己练了ㅋㅋ'],['them','……'],['them','随便你。'],['them','我下午三点应该在练习室。']]}
 ];
 const CH5_REFLECTION='想起来几年前亨俊去济州岛的那次，我其实也想去。\n\n但那时候觉得他们都安排好了，突然说要跟着去好像很奇怪，所以一直没开口。\n\n后来看他们发的照片，我又有点不开心。\n\n亨俊当时也问过我，想去为什么不直接告诉他。\n\n原来这种事情不止发生了一次。\n\n……难怪他会那么生气。';
 function ch5Is(){return CH5.active&&game.stage==='chapter5'}
 function ch5Save(){try{localStorage.setItem(CH5_KEY,JSON.stringify(CH5))}catch(e){}}
 function ch5Time(n){const x=n??CH5.clock;return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(Math.floor(x%60)).padStart(2,'0')}
 function ch5AddNote(id,title,text,dest){if(CH5.notes.some(n=>n.id===id))return;CH5.notes.push({id,title,text,dest});ch5Save();phoneReceiveNote(title,'ch5-note-'+id)}
-function ch5Start(){try{localStorage.setItem('idol_current_chapter_v1','5')}catch(e){}if(CH5.active){game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;ch5Save();ch5IntroNote();return}if(!CH4.done){gameLocked();return}Object.assign(CH5,{active:true,done:false,phase:'morning',messages:[],notes:[],choice:null,branchA:null,branchB:null,branchC:null,calendarSeen:false,photoSeen:false,captionSeen:false,searchUnlocked:false,historySeen:false,reflectionSeen:false,eveningStarted:false,unreadReminder:false,clock:618,session:CH5.session+1,queue:null,queueIndex:0,queueAfter:null});game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;ch5Save();ch5Queue([['them','起了没'],['them','头还疼吗']],'a');ch5IntroNote()}
+function ch5Start(){try{localStorage.setItem('idol_current_chapter_v1','5')}catch(e){}if(CH5.active){game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;ch5Save();ch5IntroNote();return}if(!CH4.done){gameLocked();return}Object.assign(CH5,{active:true,done:false,phase:'morning',messages:[],notes:[],choice:null,branchA:null,branchB:null,branchC:null,calendarSeen:false,photoSeen:false,captionSeen:false,searchUnlocked:false,historySeen:false,reflectionSeen:false,eveningStarted:false,unreadReminder:false,clock:618,session:CH5.session+1,queue:null,queueIndex:0,queueAfter:null});game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;ch5Save();ch5Queue([['them','起了没。'],['them','头还疼吗。']],'a');ch5IntroNote()}
 function ch5Push(who,text){if(!ch5Is())return;CH5.messages.push({who,text,time:ch5Time(),id:'ch5-'+CH5.messages.length});CH5.clock+=text.length>18?0.75:0.35;ch5Save();if(phoneRoomOpen('hyeongjun'))ch5Room(true);else if(who==='them'){phoneReceiveMessage('hyeongjun',text);if(activeApp==='kkt'&&document.querySelector('.ch5-friends'))ch5Friends()}}
 let ch5QueueTimer=null;
 function ch5Queue(lines,after){CH5.queue=lines;CH5.queueIndex=0;CH5.queueAfter=after;ch5Save();ch5ResumeQueue(true)}
@@ -38,13 +38,13 @@ CH5.queueIndex=i+1;ch5Push(who,text);ch5QueueTimer=setTimeout(tick,phoneMessageD
 ch5QueueTimer=setTimeout(tick,phoneMessageDelay('',first))}
 function ch5Prompt(which){if(!ch5Is())return;CH5.choice=which;ch5Save();if(phoneRoomOpen('hyeongjun'))ch5Room(true)}
 function ch5Choose(i){if(!ch5Is()||!CH5.choice)return;const which=CH5.choice;const data=which==='a'?CH5_A:which==='b'?CH5_B:CH5_C;if(!data[i])return;CH5.choice=null;CH5['branch'+which.toUpperCase()]=i;ch5Save();const b=data[i];if(which==='a'){ch5Push('me',b.mine[0]);ch5Queue([...b.lines,
-['them','今天来公司吗'],['me','应该会去'],['them','嗯'],['them','你最近别练太久'],['me','知道啦'],['them','知道就行'],['them','别到时候又不舒服'],['me','你怎么比经纪人还操心ㅋㅋ'],['them','谁操心了'],['them','就是提醒一下'],['me','哦哦ㅋㅋ'],['them','……'],['them','吃饭了吗']
+['them','今天来公司吗。'],['me','应该会去。'],['them','嗯。'],['them','你最近别练太久。'],['me','知道啦。'],['them','知道就行。'],['them','别到时候又不舒服。'],['me','你怎么比经纪人还操心ㅋㅋ'],['them','谁操心了。'],['them','就是提醒一下。'],['me','哦哦ㅋㅋ'],['them','……'],['them','吃饭了吗。']
 ],'b')}
 else if(which==='b'){ch5Push('me',b.mine[0]);ch5Queue([...b.lines,
-['them','对了'],['them','昨天那个面包'],['them','放公司冰箱了'],['me','你还留着啊'],['them','不然呢'],['them','不是说要给你吗'],['me','谢谢'],['them','嗯'],['them','自己记得拿'],['them','我明天不一定在']
+['them','对了。'],['them','昨天那个面包。'],['them','放公司冰箱了。'],['me','你还留着啊。'],['them','不然呢。'],['them','不是说要给你吗。'],['me','谢谢。'],['them','嗯。'],['them','自己记得拿。'],['them','我明天不一定在。']
 ],'birthday')}
 else{ch5Queue([...b.lines,
-['me','那明天见'],['them','嗯'],['them','对了'],['them','明天别空腹来'],['me','知道啦ㅋㅋ'],['them','练习会很累'],['me','我又没说什么ㅋㅋ'],['them','……'],['them','随便你']
+['me','那明天见。'],['them','嗯。'],['them','对了。'],['them','明天别空腹来。'],['me','知道啦ㅋㅋ'],['them','练习会很累。'],['me','我又没说什么ㅋㅋ'],['them','……'],['them','随便你。']
 ],'complete')}}
 function ch5HistoryRows(){if(!CH5.searchUnlocked)return '';return '<div class="story-date">之前 · 海底捞</div>'+CH5_HISTORY.map(([who,t],i)=>'<div id="ch5-old-'+i+'" data-history-index="'+i+'">'+gameBubble(who==='me',t,phoneTimeAt(19*60+10,i,2),false,false,i===0||CH5_HISTORY[i-1][0]!==who)+'</div>').join('')}
 function ch5HistoryWatch(){if(CH5.historySeen||!CH5.searchUnlocked)return;const el=$('ch5-old-'+(CH5_HISTORY.length-1));if(!el)return;const sc=$('chatbody');if(!sc)return;const visible=el.getBoundingClientRect().top<sc.getBoundingClientRect().bottom&&el.getBoundingClientRect().bottom>sc.getBoundingClientRect().top;if(visible){CH5.historySeen=true;CH5.phase='reflection';ch5Save();ch5AddNote('reflection','以前也是这样',CH5_REFLECTION,null)}}
@@ -118,7 +118,7 @@ function ch5PhotoDetail(){if(!ch5Is()||!CH5.photoSeen)return;activeApp='photos';
 function ch5Search(){if(!CH5.searchUnlocked)return;const root=document.querySelector('.ch5-chat .ch3-tools');if(!root)return;root.innerHTML='<div class="ch3-search-inline"><button class="ch3-search-back" onclick="ch5Room()">‹</button><input id="ch5-q" placeholder="搜索聊天记录" onkeydown="if(event.key===\'Enter\')ch5SearchResults()"><button onclick="ch5SearchResults()">搜索</button></div>';$('ch5-q')?.focus()}
 function ch5SearchResults(){const q=($('ch5-q')?.value||'').trim();activeApp='kkt';const hits=CH5_HISTORY.map(([who,t],i)=>({who,t,i})).filter(x=>q&&x.t.includes(q));wrap('搜索结果','<div class="content ch5-search"><p>找到 '+hits.length+' 条相关消息</p>'+hits.map(x=>'<div class="note" onclick="ch5History('+x.i+')"><strong>'+(x.who==='me'?'姜敏熙':'宋亨俊')+' · 历史消息</strong><p>'+escapeHtml(x.t)+'</p></div>').join('')+'<button class="choice" onclick="ch5Search()">返回搜索</button></div>')}
 function ch5History(focus=0){if(!ch5Is()||!CH5.searchUnlocked)return;ch5Room();const el=$('ch5-old-'+focus);if(el){el.scrollIntoView({block:'center'});el.style.outline='2px solid #e6c65c';setTimeout(()=>{if(el.isConnected)el.style.outline=''},2400)}}
-function ch5ReflectionNext(){if(!ch5Is()||CH5.eveningStarted||!CH5.reflectionSeen)return;CH5.reflectionSeen=true;CH5.eveningStarted=true;CH5.phase='evening';CH5.clock=20*60+16;ch5Save();ch5Queue([['them','明天练习时间改了'],['them','下午两点'],['them','群里发了'],['me','嗯 看到了'],['them','那就行'],['them','别迟到'],['me','亨俊啊'],['them','嗯？']],'c')}
+function ch5ReflectionNext(){if(!ch5Is()||CH5.eveningStarted||!CH5.reflectionSeen)return;CH5.reflectionSeen=true;CH5.eveningStarted=true;CH5.phase='evening';CH5.clock=20*60+16;ch5Save();ch5Queue([['them','明天练习时间改了。'],['them','下午两点。'],['them','群里发了。'],['me','嗯，看到了。'],['them','那就行。'],['them','别迟到。'],['me','亨俊啊。'],['them','嗯？']],'c')}
 function ch5IntroNote(){if(!ch5Is())return;activeApp='notes';phoneReadRoom('notes');wrap('第五章','<div class="content story-prose ch5-note"><h2>第五章 · 你为什么不说？</h2><p>'+escapeHtml(CH5_INTRO)+'</p><button class="choice" onclick="ch5Room()">前往宋亨俊的 KakaoTalk 私聊</button></div>')}
 function ch5NotesRows(){let html=storyNotesRows();const jump='<div class="note" onclick="gameChapterMenu()"><strong>跳转至其他章节</strong></div>';html=html.replace(jump,'');const row=(title,fn)=>'<div class="note" onclick="'+fn+'"><strong>'+escapeHtml(title)+'</strong></div>';html+=row('第五章 · 你为什么不说？','ch5IntroNote()');let index=0;for(const n of CH5.notes){if(n.id==='end'){html+=row('第五章已结束',"ch5Note('end')");continue}index++;html+=row('新线索'+index,"ch5Note('"+n.id+"')")}html+=jump;return html}
 const ch5OldNotes=gameNotes;gameNotes=function(){if(ch5Is()){activeApp='notes';phoneReadRoom('notes');wrap('备忘录','<div class="content story-notes">'+ch5NotesRows()+'</div>');return}return ch5OldNotes()};
