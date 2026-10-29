@@ -129,7 +129,7 @@ function ch10ChooseNight(i){
 }
 function ch10BeginHome(){
  if(!ch10Is()||CH10.phase!=='homeReady')return;CH10.phase='homeChat';CH10.day=3;CH10.clock=1217;ch10Save();
- ch10Queue([['them','结束了吗'],['me','嗯 刚结束'],['them','我也差不多了'],['me','那等我一下好不好'],['them','好啊'],['them','想一起回去？'],['me','嗯 想跟你多待一会儿']],'homeChoice');ch10Room();
+ ch10Queue([['them','结束了吗'],['me','嗯 刚结束'],['them','我也差不多了'],['me','那等我一下好不好'],['them','好啊'],['them','想一起回去？'],['me','嗯 想跟你多待一会儿']],'homeChoice');
 }
 function ch10ChooseHome(i){
  if(CH10.phase!=='homeChoice')return;CH10.phase='homeReply';CH10.choices.home=i;ch10Push('me',['你现在在哪儿','我想见你','可以等我一下吗'][i]);
