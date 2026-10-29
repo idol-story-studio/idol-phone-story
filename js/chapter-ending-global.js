@@ -20,9 +20,37 @@ function storyEndingAttach(n){if(!storyEndingReady(n))return;const root=document
 }
 function storyEndingRow(n){return '<div class="note" onclick="storyEndingView('+n+')"><strong>第'+STORY_END_NAMES[n]+'章已结束</strong></div>'}
 function storyEndingNormalizeNotes(){
- if(activeApp!=='notes')return;const root=document.querySelector('.story-notes');if(!root)return;
- for(let n=1;n<=8;n++){const rows=[...root.querySelectorAll('.note')];const label='第'+STORY_END_NAMES[n]+'章已结束';if(!storyEndingReady(n)){rows.filter(x=>x.textContent.trim()===label).forEach(x=>x.remove());continue}let found=rows.find(x=>x.textContent.trim()===label);if(found){found.setAttribute('onclick','storyEndingView('+n+')')}else{const jump=rows.find(x=>/跳转至其他章节/.test(x.textContent));const node=document.createElement('div');node.className='note';node.setAttribute('onclick','storyEndingView('+n+')');node.innerHTML='<strong>'+label+'</strong>';if(jump)root.insertBefore(node,jump);else root.appendChild(node)}}
+ if(activeApp!=='notes')return;
+ const root=document.querySelector('.story-notes');if(!root)return;
+ // The Notes list belongs to the active chapter, not to a global archive of completed chapters.
+ // Keep older chapters' own notes accessible through chapter navigation without appending them here.
+ const stage=String(game.stage||'');
+ const match=stage.match(/^chapter(\\d+)$/);
+ const current=match?Number(match[1]):(CH8.active?8:null);
+ const labels=STORY_END_NAMES.slice(1).map(x=>'第'+x+'章已结束');
+ const rows=[...root.querySelectorAll('.note')];
+ for(const row of rows){
+  const label=row.textContent.trim();
+  if(!labels.includes(label))continue;
+  const n=labels.indexOf(label)+1;
+  if(n!==current||!storyEndingReady(n)){row.remove();continue}
+  const duplicate=[...root.querySelectorAll('.note')].find(x=>x!==row&&x.textContent.trim()===label);
+  if(duplicate){row.remove();continue}
+  row.setAttribute('onclick','storyEndingView('+n+')');
+ }
+ // Only append the current chapter's ending when the chapter list does not already contain it.
+ if(current&&storyEndingReady(current)){
+  const label='第'+STORY_END_NAMES[current]+'章已结束';
+  if(![...root.querySelectorAll('.note')].some(x=>x.textContent.trim()===label)){
+   const node=document.createElement('div');node.className='note';
+   node.setAttribute('onclick','storyEndingView('+current+')');
+   node.innerHTML='<strong>'+label+'</strong>';
+   const jump=[...root.querySelectorAll('.note')].find(x=>/跳转至其他章节/.test(x.textContent));
+   if(jump)root.insertBefore(node,jump);else root.appendChild(node);
+  }
+ }
 }
+
 const storyEndOldGameNotes=gameNotes;gameNotes=function(){const r=storyEndOldGameNotes.apply(this,arguments);storyEndingNormalizeNotes();return r};
 for(const name of ['ch6Notes','ch7Notes']){const old=globalThis[name];if(typeof old==='function')globalThis[name]=function(){const r=old.apply(this,arguments);storyEndingNormalizeNotes();return r}}
 const storyEndOldCh2=ch2Ending;ch2Ending=function(){storyEndingView(2)};
