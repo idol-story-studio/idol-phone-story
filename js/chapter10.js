@@ -80,7 +80,14 @@ function ch10PhotoZoom(){
  if(!ch10Is())return;activeApp='photoism';wrap('查看照片','<div class="ch10-zoom"><button class="ch10-back" onclick="ch10PhotoDetail()">‹ 返回详情</button>'+ch10PhotoImage()+'</div>');
 }
 function ch10SavePhoto(){CH10.photoSaved=true;ch10Save();ch10PhotoDetail()}
-function ch10Album(){if(!ch10Is())return;activeApp='photos';igAlbum();const root=document.querySelector('.content');if(root&&CH10.photoSaved&&!root.querySelector('.ch10-album'))root.insertAdjacentHTML('afterbegin','<div class="ch10-album"><h3>PHOTOISM · 获奖纪念照</h3><button onclick="ch10AlbumDetail()" class="ch10-album-tile">'+ch10PhotoImage()+'</button></div>')}
+function ch10Album(){
+ if(!ch10Is())return;
+ activeApp='photos';igAlbum();
+ if(!CH10.photoSaved)return;
+ const root=document.querySelector('#appbody .ig-scroll');
+ if(!root)return;
+ root.insertAdjacentHTML('afterbegin','<section class="ch10-album"><h3>最近保存</h3><button class="ch10-album-tile" onclick="ch10AlbumDetail()" aria-label="查看获奖纪念人生四格"><img src="'+CH10_PHOTO+'" alt="获奖纪念人生四格" style="width:100%;height:100%;object-fit:cover"></button><p>获奖纪念人生四格 · 2025.06.21</p></section>');
+}
 function ch10AlbumDetail(){activeApp='photos';wrap('照片','<div class="ch10-photo-detail">'+ch10PhotoImage()+'<p class="ch10-photo-caption">2025.06.21 · 获奖纪念照</p><button class="ch10-secondary" onclick="ch10Album()">返回相册</button></div>')}
 function ch10BeginNight(){
  if(!ch10Is()||!CH10.photoViewed||CH10.phase!=='photoReady')return;
