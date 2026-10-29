@@ -37,3 +37,8 @@ const storyEndOldCh7After=ch7After;ch7After=function(a){const r=storyEndOldCh7Af
 const storyEndOldCh3Next=ch3Next;ch3Next=function(){const was=CH3.done;const r=storyEndOldCh3Next.apply(this,arguments);if(!was&&CH3.done)storyEndingNotify(3);return r};
 const storyEndOldCh4EndCall=ch4EndCall;ch4EndCall=function(){const r=storyEndOldCh4EndCall.apply(this,arguments);storyEndingNotify(4);return r};
 const storyEndOldPhoneOpen=phoneOpenRoom;phoneOpenRoom=function(id){if(typeof id==='string'&&id.startsWith('story-end-'))return storyEndingView(Number(id.slice(10)));return storyEndOldPhoneOpen.apply(this,arguments)};
+
+/* Completion notes are created at the end of the story, before they are read.
+ * Notify at creation, not only when the user opens the ending note. */
+const storyEndOldCh6AddNote=ch6AddNote;ch6AddNote=function(id,title,text,dest){const existed=CH6.notes.some(n=>n.id===id);const r=storyEndOldCh6AddNote.apply(this,arguments);if(id==='end'&&!existed){CH6.done=true;CH6.phase='complete';ch6Save();storyEndingNotify(6)}return r};
+const storyEndOldCh7NoteAdd=ch7NoteAdd;ch7NoteAdd=function(id,title,text,dest){const existed=CH7.notes.some(n=>n.id===id);const r=storyEndOldCh7NoteAdd.apply(this,arguments);if(id==='end'&&!existed){CH7.done=true;CH7.phase='complete';ch7Save();storyEndingNotify(7)}return r};
