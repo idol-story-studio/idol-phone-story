@@ -1,6 +1,6 @@
 /* Chapter navigation and restore coordinator. Test jumps start the selected chapter anew. */
 const STORY_CHAPTER_KEY='idol_current_chapter_v1';
-const STORY_CHAPTER_NAMES=['','一','二','三','四','五'];
+const STORY_CHAPTER_NAMES=['','一','二','三','四','五','六'];
 function storyChapterSet(n){try{localStorage.setItem(STORY_CHAPTER_KEY,String(n))}catch(e){}}
 function storyChapterResetUnread(){
  if(typeof phoneSetCount==='function'){
@@ -9,11 +9,12 @@ function storyChapterResetUnread(){
 }
 function storyChapterJump(n){
  n=Number(n);
- if(!Number.isInteger(n)||n<1||n>5)return;
+ if(!Number.isInteger(n)||n<1||n>6)return;
  // Invalidate outstanding chapter timers before switching.
  if(typeof CH3!=='undefined'){CH3.active=false;CH3.session=(CH3.session||0)+1}
  if(typeof CH4!=='undefined'){CH4.active=false;CH4.session=(CH4.session||0)+1}
  if(typeof CH5!=='undefined'){CH5.active=false;CH5.session=(CH5.session||0)+1;CH5.queue=null;CH5.queueIndex=0;CH5.queueAfter=null}
+ if(typeof CH6!=='undefined'){CH6.active=false;CH6.session=(CH6.session||0)+1;CH6.queue=null;document.getElementById('ch6-facetime')?.remove();clearInterval(ch6ClockTimer)}
  if(typeof CH2!=='undefined')CH2.session=(CH2.session||0)+1;
  storyChapterSet(n);
  storyChapterResetUnread();
@@ -36,12 +37,12 @@ function storyChapterJump(n){
  }
  CH2.done=true;CH3.done=true;CH4.done=true;
  // Keep earlier chat history where available, but restart only chapter five.
- CH5.active=false;
- ch5Start();
+ if(n===5){CH5.active=false;ch5Start();return}
+ CH5.done=true;CH6.active=false;ch6Start();
 }
 function storyChapterMenu(){
  activeApp='notes';
- const currentNumber=game.stage==='chapter5'?5:game.stage==='chapter4'?4:game.stage==='chapter3'?3:game.stage==='chapter2'?2:1;
+ const currentNumber=game.stage==='chapter6'?6:game.stage==='chapter5'?5:game.stage==='chapter4'?4:game.stage==='chapter3'?3:game.stage==='chapter2'?2:1;
  const buttons=STORY_CHAPTER_NAMES.slice(1).map((name,i)=>{
   const n=i+1;
   return '<button class="note story-chapter-button" onclick="storyChapterJump('+n+')"><strong>前往第'+name+'章</strong></button>';
@@ -62,6 +63,7 @@ const storySavedChapter=(()=>{try{return localStorage.getItem(STORY_CHAPTER_KEY)
 if(storySavedChapter==='3'&&CH3.active){game.stage='chapter3';game.chapter2=true}
 else if(storySavedChapter==='4'&&CH4.active){game.stage='chapter4';game.chapter2=true}
 else if(storySavedChapter==='5'&&CH5.active){game.stage='chapter5';game.chapter2=true;game.chatBlocked=false;setTimeout(()=>ch5ResumeQueue(true),1200)}
+else if(storySavedChapter==='6'&&CH6.active){game.stage='chapter6';game.chapter2=true;game.chatBlocked=false;if(CH6.callStatus==='connected'||CH6.callStatus==='ringing'){CH6.callStatus='ringing';setTimeout(ch6Incoming,1200)}else setTimeout(ch6ResumeQueue,1200)}
 // A legacy fifth-chapter save without an explicit current-chapter selection is
 // historical progress, not permission to force the player back into chapter five.
 
@@ -74,3 +76,6 @@ const storyOriginalCh4Start=ch4Start;
 ch4Start=function(){storyChapterSet(4);return storyOriginalCh4Start()};
 const storyOriginalCh5Start=ch5Start;
 ch5Start=function(){storyChapterSet(5);return storyOriginalCh5Start()};
+
+const storyOriginalCh6Start=ch6Start;
+ch6Start=function(){storyChapterSet(6);return storyOriginalCh6Start()};
