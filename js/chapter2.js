@@ -12,7 +12,7 @@ const CH2_FILE=[
 ];
 function ch2Active(){return !!game.chapter2}
 function ch2Timer(fn,ms){const session=CH2.session;const id=setTimeout(()=>{if(session===CH2.session&&ch2Active())fn()},ms);CH2.timers.push(id)}
-function ch2Notify(id){const node=$('ch2-chat');if(activeApp==='kkt'&&current==='appview'&&node&&node.dataset.id===id){ch2Chat(id);return}CH2.unread[id]=(CH2.unread[id]||0)+1;phoneReceiveMessage(id,CH2.messages[id].at(-1)?.[1]||'新消息')}
+function ch2Notify(id){const node=$('ch2-chat');if(activeApp==='kkt'&&current==='appview'&&node&&node.dataset.id===id){ch2Chat(id);return}phoneReceiveMessage(id,CH2.messages[id].at(-1)?.[1]||'新消息')}
 function ch2Append(id,who,text,delay){ch2Timer(()=>{CH2.messages[id].push([who,text]);if(who==='them')ch2Notify(id);else if(activeApp==='kkt'&&$('ch2-chat')&&$('ch2-chat').dataset.id===id)ch2Chat(id)},delay)}
 function ch2Sequence(id,lines,after){const session=CH2.session;let i=0;function next(){if(session!==CH2.session||!ch2Active())return;if(i>=lines.length){if(after)ch2Timer(after,700);return}const [who,text]=lines[i];const deliver=()=>{if(session!==CH2.session||!ch2Active())return;CH2.messages[id].push([who,text]);if(who==='them')ch2Notify(id);else if(phonePlayerCanAutoReply(id))ch2Chat(id);i++;ch2Timer(next,phoneMessageDelay(text))};if(who==='me'&&!phonePlayerCanAutoReply(id)){phoneWaitForPlayerRoom(id,deliver);return}deliver()}ch2Timer(next,phoneMessageDelay('',true))}
 function ch2Start(){CH2.session++;CH2.phase='dm';CH2.dmSeen=false;CH2.dmSeenAt=0;CH2.dmLastMessageIndex=-1;CH2.postSeen=false;CH2.commentSeen=false;CH2.igCommentIds=new Set();CH2.igNote=false;CH2.igNoteRead=false;CH2.dmRead=false;CH2.dmScrollReady=false;CH2.dmSent=false;CH2.photosNote=false;CH2.photosSeen=new Set();CH2.woobinStep=0;CH2.serimStep=0;CH2.fileSeen=false;CH2.earringSeen=false;CH2.woobinFinal=0;CH2.done=false;CH2.chatFinished={woobin:false,serim:false};CH2.messages={woobin:[],serim:[]};CH2.unread={woobin:0,serim:0};const existing=igChats.hyeongjun||[];const oldChapter2=existing.filter(m=>m.ch2Script);const earlier=existing.filter(m=>!m.ch2Script);igChats.hyeongjun=[...CH2_DM.map(([from,text],i)=>({from,text,time:i===0?'几周前':i===16?'两周前':'',ch2Script:true})),...earlier];igSave();game.chapter2=true;game.stage='chapter2';game.chapterEnd=true;game.phoneNoteRead=true;game.xExited=true;game.chatBlocked=true;game.callDone=true;game.unread.notes=0;gameBadge();activeApp='notes';ch2ReadInitialNote()}
@@ -61,7 +61,7 @@ function ch2Friends(){
   const isNew=id==='woobin'||id==='serim';
   const history=isNew?CH2.messages[id]:null;
   const preview=isNew?(history?.at(-1)?.[1]||'新消息'):id==='hyeongjun'?(game.chatBlocked?'消息未能送达':CH1.morning.at(-1)):game.wonjinReplyDelivered?'去ig碰碰运气吧，说不定还能私信他':'历史对话';
-  return '<div class="item" onclick="'+(isNew?'ch2Chat(\''+id+'\')':'gameChat(\''+id+'\')')+'"><div class="avatar">'+name.slice(0,1)+'</div><div class="itemmain"><div class="itemtitle">'+name+'</div><div class="itemsub">'+escapeHtml(preview)+'</div></div>'+(isNew&&CH2.unread[id]?'<span class="story-contact-unread">'+CH2.unread[id]+'</span>':'')+'</div>';
+  return '<div class="item" onclick="'+(isNew?'ch2Chat(\''+id+'\')':'gameChat(\''+id+'\')')+'"><div class="avatar">'+name.slice(0,1)+'</div><div class="itemmain"><div class="itemtitle">'+name+'</div><div class="itemsub">'+escapeHtml(preview)+'</div></div>'+gameContactBadge(id)+'</div>';
  }).join('')+'</div>');
 }
 function ch2RefreshChat(id){const node=$('ch2-chat');if(node&&node.dataset.id===id&&activeApp==='kkt')ch2Chat(id)}
