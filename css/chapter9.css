@@ -1,0 +1,32 @@
+/* Chapter 9. Keep global KKT bubble and Notes styles untouched. */
+.ch9-chat .story-send{bottom:52px!important;z-index:25;display:block;max-height:42%;overflow-y:auto}
+.ch9-chat .story-options{display:flex;flex-direction:column;gap:5px}
+.ch9-chat .story-option{width:100%;text-align:left;background:#fee500;border-radius:13px;padding:10px 12px;font-size:13px;color:#302800}
+.ch9-chat .chatbody{height:auto!important;position:absolute;top:0;bottom:155px;left:0;right:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.ch9-chat:has(.story-end) .chatbody{bottom:85px}
+.ch9-naver .nm-body{padding:16px 20px 95px;overflow-y:auto}
+.ch9-naver .nm-search{gap:14px}
+.ch9-naver .nm-search strong{font-size:16px}
+.ch9-panel{background:#fff;border:1px solid #e6e9ed;border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 3px 12px #00000009}
+.ch9-panel small{font-size:12px;color:#03a45a;font-weight:600}
+.ch9-panel h2,.ch9-panel h3{margin:12px 0;font-size:21px}
+.ch9-panel p{font-size:14px;color:#59606a;line-height:1.7}
+.ch9-action{display:block;width:100%;padding:13px 15px;margin:13px 0;border-radius:13px;background:#fee500;color:#262200;font-weight:650;text-align:center}
+.ch9-action.secondary{background:#f1f1f4}
+.ch9-taxi{height:calc(100% - 115px);background:#f6f7f9;overflow-y:auto}
+.ch9-taxi-head{padding:18px 22px;background:#fee500;color:#1c1c1c;font-size:25px;font-weight:700}
+.ch9-taxi-head strong{font-size:30px}.ch9-taxi-head small{font-size:13px;font-weight:400;margin-left:10px}
+.ch9-taxi-content{padding:20px 22px 60px}
+.ch9-taxi-content h2{font-size:23px}
+.ch9-choice{display:block;width:100%;background:#fff;border:1px solid #e3e4e7;border-radius:13px;text-align:left;padding:14px;margin:9px 0}
+.ch9-choice.on{border:2px solid #e2c400;background:#fffde6}
+.ch9-link{display:block;background:none;color:#4b5665;margin:16px 0;padding:10px;text-align:left}
+.ch9-scene{background:#f7f7f8;padding:22px 20px 90px!important;overflow-y:auto;height:calc(100% - 115px)}
+.ch9-scene-time{color:#666;font-size:13px;margin-bottom:20px}
+.ch9-scene-hint{font-size:12px;color:#909399;line-height:1.6;margin-bottom:24px}
+.ch9-line{display:flex;flex-direction:column;gap:5px;background:white;border-radius:14px;padding:12px 14px;margin:11px 0;line-height:1.65;font-size:14px}
+.ch9-line strong{font-size:12px;color:#66707b}
+.ch9-scene .story-options{display:flex;flex-direction:column;gap:8px;margin:25px 0}
+.ch9-scene .story-option{background:#fee500;border-radius:12px;padding:13px;text-align:left}
+.ch9-naver .nm-tabs button{min-width:80px}
+@media(max-height:700px){.ch9-chat .story-send{max-height:46%}.ch9-scene{padding-bottom:105px!important}}
