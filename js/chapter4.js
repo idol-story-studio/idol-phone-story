@@ -139,6 +139,7 @@ openApp=function(k){if(k==='youtube'||k==='spotify'){mediaEggApp(k);return}retur
 
 /* Single Notes list renderer for chapters 1–4. Chapter content stays in its original module. */
 function storyNotesChapter(){
+ if(typeof ch5Is==='function'&&ch5Is())return 5;
  if(typeof ch4Is==='function'&&ch4Is())return 4;
  if(typeof CH3!=='undefined'&&CH3.active&&game.stage==='chapter3')return 3;
  if(game.chapter2)return 2;
