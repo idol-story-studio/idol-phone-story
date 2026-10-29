@@ -165,7 +165,7 @@ function ch8SendIntro(i){
 function ch8Draft(s){CH8.draft=s;ch8Save();const target=CH8.phase==='type1'?'我希望你可以来':'我有话想跟你说';const b=document.getElementById('ch8-send');if(b)b.disabled=s.trim()!==target}
 function ch8TypeSend(){
  if(!ch8Is()||!['type1','type2'].includes(CH8.phase))return;
- const t=CH8.phase==='type1'?'我希望你可以来':'我有话想跟你说';if(CH8.draft.trim()!==t){const e=document.getElementById('ch8-error');if(e)e.textContent='请按提示输入这句话';return}
+ const t=CH8.phase==='type1'?'我希望你可以来':'我有话想跟你说';const input=document.getElementById('ch8-input');if(input)CH8.draft=input.value;if(CH8.draft.trim()!==t){const e=document.getElementById('ch8-error');if(e)e.textContent='请按提示输入这句话';return}
  ch8Push('hj','me',t);CH8.draft='';CH8.typed++;CH8.phase=CH8.typed===1?'type2':'typedDone';ch8Save();ch8Room(true);if(CH8.typed===2)ch8Queue('hj',[['them','什么话']],'question')
 }
 function ch8MeetReply(){if(CH8.phase!=='meetReply')return;ch8Push('hj','me','见面再说吧');CH8.phase='replying';ch8Save();ch8Queue('hj',[['them','……'],['them','知道了'],['them','我看看能不能过去']],'consider');ch8Room(true)}
