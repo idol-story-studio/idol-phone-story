@@ -41,7 +41,7 @@ function ch8Push(room,who,text){
 }
 function ch8Queue(room,lines,after){CH8.pending=lines.map(x=>[room,...x]);CH8.pendingAfter=after;ch8Save();ch8Resume()}
 function ch8Resume(){if(!ch8Is()||ch8Timer||!CH8.pending.length)return;const token=CH8.session;function tick(){ch8Timer=null;if(!ch8Is()||CH8.session!==token)return;if(!CH8.pending.length){const a=CH8.pendingAfter;CH8.pendingAfter='';ch8Save();ch8After(a);return}const [room,who,msg]=CH8.pending.shift();ch8Push(room,who,msg);ch8Timer=setTimeout(tick,phoneMessageDelay(msg))}ch8Timer=setTimeout(tick,650)}
-function ch8After(a){if(a==='declineReply'){CH8.phase='declineReply';ch8Save();if(phoneRoomOpen('ch8friend'))ch8FriendRoom(true)}
+function ch8After(a){if(a==='intro1'||a==='intro2'){CH8.phase=a;ch8Save();if(phoneRoomOpen('hyeongjun'))ch8Room(true)}if(a==='declineReply'){CH8.phase='declineReply';ch8Save();if(phoneRoomOpen('ch8friend'))ch8FriendRoom(true)}
  if(a==='locationReady'){CH8.phase='map';ch8Save()}
  if(a==='introDone'){CH8.phase='type1';ch8Save();if(phoneRoomOpen('hyeongjun'))ch8Room(true)}
  if(a==='question'){CH8.phase='meetReply';ch8Save();if(phoneRoomOpen('hyeongjun'))ch8Room(true)}
