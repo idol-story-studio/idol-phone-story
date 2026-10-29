@@ -61,7 +61,7 @@ function ch10Finish(){
  CH10.notes=CH10.notes.filter(n=>n.id!=='tomorrow');
  ch10AddNote('end','第十章已结束',CH10_END,false);
  ch10Save();
- storyEndingNotify(10);
+ storyEndingNotified.add(10);
  // The ending is a Notes notification; the user can open it when ready.
  phoneBanner('notes','备忘录','第十章已结束','ch10-note-end');
 }
