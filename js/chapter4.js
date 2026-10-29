@@ -152,7 +152,7 @@ function storyNotesRows(){
  html+=row('第一章','gameReadNote()');
  if(current===1){
   if(game.xExited)html+=row('新的线索','gameReadPhoneNote()');
-  if(game.chapterEnd)html+=row('第一章已结束','gameReadEnding()');
+  if(game.chapterEnd)html+=row('第一章已结束','storyEndingView(1)');
  }
  if(current>=2){
   html+=row('第二章','ch2ReadInitialNote()');
