@@ -26,7 +26,7 @@ function storyEndingNormalizeNotes(){
  // Keep older chapters' own notes accessible through chapter navigation without appending them here.
  const stage=String(game.stage||'');
  const match=stage.match(/^chapter(\d+)$/);
- const current=match?Number(match[1]):(stage==='end'?1:(CH9.active?9:CH8.active?8:null));
+ const current=match?Number(match[1]):((stage==='end'||stage==='intro'||stage==='kkt'||stage==='wonjin'||stage==='phone'||stage==='x')?1:(CH9.active?9:CH8.active?8:null));
  const labels=STORY_END_NAMES.slice(1).map(x=>'第'+x+'章已结束');
  const rows=[...root.querySelectorAll('.note')];
  for(const row of rows){
