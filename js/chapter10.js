@@ -1,6 +1,6 @@
 /* Chapter 10 — 以后都告诉你. Uses existing phone, KakaoTalk, Notes and ending contracts. */
 const CH10_KEY='idol_ch10_v1';
-const CH10={active:false,done:false,phase:'',clock:610,day:1,session:0,messages:[],notes:[],queue:null,giftViewed:false,giftClaimed:false,photoViewed:false,photoSaved:false,photoNotice:false,choices:{},endingRead:false};
+const CH10={active:false,done:false,phase:'',clock:610,day:1,session:0,messages:[],notes:[],queue:null,giftViewed:false,giftClaimed:false,photoViewed:false,photoSaved:false,photoNotice:false,photoDueAt:0,choices:{},endingRead:false};
 const CH10_PHOTO='assets/chapter10/award-memory.jpg'; // reserved asset path; missing file gets a truthful placeholder
 const CH10_OPEN='昨晚回来以后睡得还不错。\n\n今天没什么特别要做的事。先看看手机吧。';
 const CH10_END='今天和亨俊带着奖杯拍了人生四格。\n\n拿到一位的那一刻很开心，和他一起留下这张照片，也很开心。\n\n以前觉得有些话不用说他也会懂。现在发现，想念和喜欢都可以直接告诉他。\n\n这一次，我会记得把想说的话告诉他。';
@@ -17,7 +17,7 @@ function ch10AddNote(id,title,text,notify=true){if(CH10.notes.some(n=>n.id===id)
 function ch10Start(){
  if(!CH9.done){gameLocked();return}
  if(CH10.active){game.stage='chapter10';game.chapter2=true;game.chatBlocked=false;storyChapterSet(10);ch10Resume();ch10Notes();return}
- Object.assign(CH10,{active:true,done:false,phase:'morning',clock:610,day:1,session:CH10.session+1,messages:[],notes:[],queue:null,giftViewed:false,giftClaimed:false,photoViewed:false,photoSaved:false,photoNotice:false,choices:{},endingRead:false});
+ Object.assign(CH10,{active:true,done:false,phase:'morning',clock:610,day:1,session:CH10.session+1,messages:[],notes:[],queue:null,giftViewed:false,giftClaimed:false,photoViewed:false,photoSaved:false,photoNotice:false,photoDueAt:0,choices:{},endingRead:false});
  game.stage='chapter10';game.chapter2=true;game.chatBlocked=false;storyChapterSet(10);
  ch10AddNote('intro','第十章',CH10_OPEN,false);
  ch10Queue([['them','醒了吗'],['me','醒了 还在床上'],['them','我就知道ㅋㅋ'],['them','我刚才在楼下看到一只猫'],['them','懒洋洋的样子特别像你赖床的时候'],['me','那你拍了吗'],['them','跑掉了 没拍到'],['me','那你下次拍给我'],['them','好'],['them','你今天不是还要练习吗'],['me','嗯 等下就出门'],['them','先吃点东西再走'],['me','知道啦'],['me','你也是'],['them','嗯 我吃过了']],'morningChoice');
@@ -30,7 +30,9 @@ function ch10Push(who,text,type){
 }
 function ch10Queue(lines,after){CH10.queue={lines,index:0,after};ch10Save();ch10Resume()}
 function ch10Resume(){
- if(!ch10Is()||!CH10.queue||ch10Timer)return;
+ if(!ch10Is())return;
+ if(CH10.phase==='photoWaiting'&&!CH10.photoNotice){ch10SchedulePhotoNotice();return}
+ if(!CH10.queue||ch10Timer)return;
  const token=CH10.session;
  const tick=()=>{
   ch10Timer=null;if(!ch10Is()||token!==CH10.session||!CH10.queue)return;
@@ -47,7 +49,7 @@ function ch10After(after){
  if(after==='giftChoice')CH10.phase='giftChoice';
  
  if(after==='photoChoice')CH10.phase='photoChoice';
- if(after==='photoReady'){CH10.phase='photoWaiting';ch10Save();ch10PhotoTimer=setTimeout(()=>{ch10PhotoTimer=null;if(ch10Is()&&CH10.phase==='photoWaiting'){CH10.phase='photoReady';ch10AddNote('photo','新照片','PHOTOISM 有新的照片可以查看。',false);ch10PhotoNotice();ch10Save();/* Keep the current app open; PHOTOISM arrives as a system banner. */}},12000)}
+ if(after==='photoReady'){CH10.phase='photoWaiting';CH10.photoDueAt=Date.now()+12000;ch10Save();ch10SchedulePhotoNotice()}
  if(after==='nightChoice')CH10.phase='nightChoice';
  if(after==='nightEnd'){ch10Finish()}
  if(after==='homeChoice')CH10.phase='homeChoice';
@@ -70,10 +72,22 @@ function ch10ChooseMorning(i){
  if(CH10.phase!=='morningChoice')return;
  CH10.choices.morning=i;CH10.phase='morningReply';
  const first=i===0?[['me','那我明天叫你起床？'],['them','好啊'],['them','你打电话我肯定接']]:[['me','等下练习完要不要一起吃饭'],['them','好'],['them','你结束了告诉我']];
- ch10Queue([...first,['me','那我先去准备了'],['them','嗯 去吧'],['them','我也要去忙了'],['them','晚点找你'],['me','好 想你了'],['them','干嘛突然这么肉麻啊ㅋㅋ'],['them','我也是']],'afternoon');
+ ch10Queue([...first,['me','那我先去准备了'],['them','嗯 去吧'],['them','我也要去忙了'],['them','晚点找你'],['me','好'],['me','想你了'],['them','干嘛突然这么肉麻啊ㅋㅋ'],['them','我也是']],'afternoon');
 }
 function ch10PhotoConversation(){
- return [['them','你看到群里发的消息了吗'],['me','还没 怎么了'],['them','拿一位那天的照片发出来了'],['me','我看看'],['me','啊 那张拿奖杯的'],['them','嗯ㅋㅋ'],['me','那天真的特别开心'],['them','我也是'],['me','突然想起来'],['me','我们拿了一位 要不要带奖杯去拍个人生四格纪念一下'],['them','好啊'],['them','我也想拍'],['me','那练习结束就去？'],['them','嗯 我把奖杯带上'],['me','好 等下见'],['them','等下见']];
+ return [['them','你看到群里发的消息了吗'],['me','还没 怎么了'],['them','拿一位那天的照片发出来了'],['me','我看看'],['me','啊 那张拿奖杯的'],['them','嗯ㅋㅋ'],['me','那天真的特别开心'],['them','我也是'],['me','拿了一位了，要不要带奖杯去拍个人生四格纪念一下？'],['them','好啊'],['them','我也想拍'],['me','那练习结束就去？'],['them','嗯 我把奖杯带上'],['me','好 等下见'],['them','等下见']];
+}
+function ch10SchedulePhotoNotice(){
+ if(!ch10Is()||CH10.phase!=='photoWaiting'||CH10.photoNotice||ch10PhotoTimer)return;
+ const token=CH10.session;
+ const delay=Math.max(0,(CH10.photoDueAt||Date.now()+12000)-Date.now());
+ ch10PhotoTimer=setTimeout(()=>{
+  ch10PhotoTimer=null;
+  if(!ch10Is()||CH10.session!==token||CH10.phase!=='photoWaiting'||CH10.photoNotice)return;
+  CH10.phase='photoReady';CH10.photoDueAt=0;
+  ch10AddNote('photo','新照片','PHOTOISM 有新的照片可以查看。',false);
+  ch10PhotoNotice();ch10Save();
+ },delay);
 }
 function ch10PhotoNotice(){
  if(CH10.photoNotice)return;CH10.photoNotice=true;CH10.day=2;CH10.clock=1040;ch10Save();
