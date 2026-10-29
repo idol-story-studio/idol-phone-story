@@ -85,7 +85,7 @@ function ch9Notes(){
  activeApp='notes';phoneReadRoom('notes');
  const old=[['第一章','gameReadNote()'],['第二章','ch2ReadInitialNote()'],['第三章','ch3Note(-1)'],['第四章','ch4ReadNote(0)'],['第五章','ch5IntroNote()'],['第六章','ch6Note("intro")'],['第七章','ch7Note("intro")'],['第八章','ch8Note("intro")']];
  const rows=old.map(([t,f])=>'<div class="note" onclick=\''+f+'\'><strong>'+t+'</strong></div>').join('');
- const mine=CH9.notes.map(n=>'<div class="note" onclick="ch9Note(\''+n.id+'\')"><strong>'+escapeHtml(n.title)+'</strong></div>').join('');
+ const mine=CH9.notes.concat(CH9.done&&!CH9.notes.some(n=>n.id==='end')?[{id:'end',title:'第九章已结束',text:CH9_END}]:[]).map(n=>'<div class="note" onclick="ch9Note(\''+n.id+'\')"><strong>'+escapeHtml(n.title)+'</strong></div>').join('');
  wrap('备忘录','<div class="content story-notes">'+rows+mine+'<div class="note" onclick="gameChapterMenu()"><strong>跳转至其他章节</strong></div></div>');
 }
 function ch9Note(id){
@@ -149,6 +149,8 @@ function ch9TalkFinish(){if(CH9.listeningChoice===null)return;CH9.phase='home';C
 function ch9ChooseHome1(i){if(CH9.phase!=='home1')return;CH9.homeChoice=i;CH9.phase='homeReply';ch9Push('hj','me',['到了 你呢','刚进门 你到家了？','嗯 刚坐下'][i]);ch9Queue('hj',[['them',['我也到了','到了ㅋㅋ','那就好 我也刚到'][i]],['them','A刚刚还给我发消息'],['me','说什么了'],['them','说下次绝对不让我们两个选餐厅'],['me','ㅋㅋㅋㅋ'],['them','他今天真的很能说'],['me','明明你也一直在笑'],['them','我哪有'],['me','有啊'],['them','ㅋㅋ'],['them','不过今天还挺开心的']],'home2')}
 function ch9ChooseHome2(i){if(CH9.phase!=='home2')return;CH9.homeInvite=i;CH9.phase='homeReply2';ch9Push('hj','me',['我也是','那下次我们两个去？','下次我来选地方'][i]);const replies=[[['them','嗯'],['them','下次再出来吧']],[['them','可以啊'],['them','不过换一家ㅋㅋ']],[['them','好啊'],['them','这次别又说随便']]];ch9Queue('hj',replies[i],'home3')}
 function ch9ChooseHome3(){if(CH9.phase!=='home3')return;CH9.phase='ending';ch9Push('hj','me','晚安');ch9Queue('hj',[['them','晚安']],'end')}
+/* Extend the existing NAVER Map bottom navigation without replacing its saved places or search. */
+const ch9PrevNmRender=nmRender;nmRender=function(){const v=ch9PrevNmRender();if(ch9Is()){const nav=document.querySelector('.nm-tabs');if(nav&&!nav.querySelector('.ch9-reservation-tab'))nav.insertAdjacentHTML('beforeend','<button class="ch9-reservation-tab" onclick="ch9Reservation()">▤<span>预约/订单</span></button>')}return v};
 const ch9PrevOpen=openApp;openApp=function(k){if(ch9Is()&&k==='kakaot')return ch9Taxi();return ch9PrevOpen(k)};
 const ch9PrevUnlock=gameUnlock;gameUnlock=function(k){if(ch9Is())return ['kkt','notes','photos','calendar','ig','phone','delivery','files','x','youtube','spotify','map','melon','kakaot'].includes(k);return ch9PrevUnlock(k)};
 const ch9PrevChat=gameChat;gameChat=function(id){if(ch9Is()){if(id==='hyeongjun')return ch9Room('hj');if(id==='ch8friend')return ch9Room('friend');if(id==='ch9group')return ch9Room('group');if(['group','woobin','manager','wonjin','serim'].includes(id))return ch7LegacyRoom(id)}return ch9PrevChat(id)};
