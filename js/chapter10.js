@@ -49,10 +49,21 @@ function ch10After(after){
  if(after==='photoChoice')CH10.phase='photoChoice';
  if(after==='photoReady'){CH10.phase='photoWaiting';ch10Save();ch10PhotoTimer=setTimeout(()=>{ch10PhotoTimer=null;if(ch10Is()&&CH10.phase==='photoWaiting'){CH10.phase='photoReady';ch10AddNote('photo','新照片','PHOTOISM 有新的照片可以查看。',false);ch10PhotoNotice();ch10Save();/* Keep the current app open; PHOTOISM arrives as a system banner. */}},12000)}
  if(after==='nightChoice')CH10.phase='nightChoice';
- if(after==='nightEnd'){CH10.phase='homeWaiting';ch10AddNote('tomorrow','明天','明天结束工作后，亨俊可能会发消息。',false);ch10WaitForHome()}
+ if(after==='nightEnd'){ch10Finish()}
  if(after==='homeChoice')CH10.phase='homeChoice';
- if(after==='end'){CH10.phase='complete';CH10.done=true;CH10.queue=null;ch10AddNote('end','第十章已结束',CH10_END,false);storyEndingNotify(10)}
+ if(after==='end'){ch10Finish()}
  ch10Save();if(phoneRoomOpen('hyeongjun'))ch10Room(true);
+}
+function ch10Finish(){
+ if(CH10.done)return;
+ clearTimeout(ch10HomeTimer);ch10HomeTimer=null;
+ CH10.phase='complete';CH10.done=true;CH10.queue=null;
+ CH10.notes=CH10.notes.filter(n=>n.id!=='tomorrow');
+ ch10AddNote('end','第十章已结束',CH10_END,false);
+ ch10Save();
+ storyEndingNotify(10);
+ // The ending is a Notes notification; the user can open it when ready.
+ phoneBanner('notes','备忘录','第十章已结束','ch10-note-end');
 }
 function ch10Options(labels,fn){return '<div class="story-options">'+labels.map((t,i)=>'<button class="story-option" onclick="'+fn+'('+i+')">'+escapeHtml(t)+'</button>').join('')+'</div>'}
 function ch10ChooseMorning(i){
@@ -172,11 +183,13 @@ function ch10Friends(){
  wrap('KakaoTalk','<div class="content ch5-friends">'+entries.map(([name,id,sub])=>'<div class="item" onclick="gameChat(\''+id+'\')"><div class="avatar">'+escapeHtml(name[0])+'</div><div class="itemmain"><div class="itemtitle">'+escapeHtml(name)+'</div><div class="itemsub">'+escapeHtml(sub)+'</div></div>'+gameContactBadge(id)+'</div>').join('')+'</div>');
 }
 function ch10Notes(){
- if(!ch10Is())return;activeApp='notes';phoneReadRoom('notes');
- const old=[['第一章','gameReadNote()'],['第二章','ch2ReadInitialNote()'],['第三章','ch3Note(-1)'],['第四章','ch4ReadNote(0)'],['第五章','ch5IntroNote()'],['第六章','ch6Note("intro")'],['第七章','ch7Note("intro")'],['第八章','ch8Note("intro")'],['第九章','ch9Note("intro")']];
- const rows='';
- const mine=CH10.notes.map(n=>'<div class="note" onclick="ch10Note(\''+n.id+'\')"><strong>'+escapeHtml(n.title)+'</strong></div>').join('');
- wrap('备忘录','<div class="content story-notes">'+rows+mine+'<div class="note" onclick="gameChapterMenu()"><strong>跳转至其他章节</strong></div></div>');
+ if(!ch10Is())return;
+ activeApp='notes';phoneReadRoom('notes');
+ // Show only unlocked new clues, not previous chapter navigation or full note bodies.
+ const clues=CH10.notes.filter(n=>n.id!=='intro'&&n.id!=='tomorrow'&&n.id!=='end');
+ const rows=clues.map((n,i)=>'<div class="note" onclick="ch10Note(\''+n.id+'\')"><strong>新线索'+(i+1)+'</strong></div>').join('');
+ const ending=CH10.done?'<div class="note" onclick="ch10Note(\'end\')"><strong>第十章已结束</strong></div>':'';
+ wrap('备忘录','<div class="content story-notes">'+rows+ending+'</div>');
 }
 function ch10Note(id){
  if(!ch10Is())return;const n=CH10.notes.find(x=>x.id===id);if(!n)return ch10Notes();
