@@ -46,7 +46,7 @@ function ch10After(after){
  if(after==='giftChoice')CH10.phase='giftChoice';
  
  if(after==='photoChoice')CH10.phase='photoChoice';
- if(after==='photoReady'){CH10.phase='photoWaiting';ch10Save();ch10PhotoTimer=setTimeout(()=>{ch10PhotoTimer=null;if(ch10Is()&&CH10.phase==='photoWaiting'){CH10.phase='photoReady';ch10AddNote('photo','新照片','PHOTOISM 有新的照片可以查看。',false);ch10PhotoNotice();ch10Save();if(phoneRoomOpen('hyeongjun'))ch10Room(true)}},12000)}
+ if(after==='photoReady'){CH10.phase='photoWaiting';ch10Save();ch10PhotoTimer=setTimeout(()=>{ch10PhotoTimer=null;if(ch10Is()&&CH10.phase==='photoWaiting'){CH10.phase='photoReady';ch10AddNote('photo','新照片','PHOTOISM 有新的照片可以查看。',false);ch10PhotoNotice();ch10Save();/* Keep the current app open; PHOTOISM arrives as a system banner. */}},12000)}
  if(after==='nightChoice')CH10.phase='nightChoice';
  if(after==='nightEnd'){CH10.phase='homeWaiting';ch10AddNote('tomorrow','明天','明天结束工作后，亨俊可能会发消息。',false);ch10WaitForHome()}
  if(after==='homeChoice')CH10.phase='homeChoice';
