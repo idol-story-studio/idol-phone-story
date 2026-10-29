@@ -27,6 +27,15 @@
 
 .ch3-tools{height:42px;display:flex;align-items:center;justify-content:flex-end;padding:0 14px;background:#b5d4e5;border-bottom:1px solid #9fbdd0;position:relative;z-index:2}.ch3-search-icon{border:0;background:transparent;padding:7px;display:flex;align-items:center;justify-content:center;color:#2b3d49;cursor:pointer}.ch3-search-inline{display:flex;align-items:center;gap:7px;width:100%}.ch3-search-inline input{flex:1;min-width:0;background:#eaf2f7;border:0;border-radius:8px;padding:9px 11px;font-size:14px;outline:none}.ch3-search-inline button{border:0;background:transparent;color:#2b3d49;font-size:14px}.ch3-wonjin-options{width:100%;display:flex;flex-direction:column;gap:8px;max-height:200px;overflow:auto}.ch3-wonjin-options button{display:block;width:100%;border:0;border-radius:12px;padding:11px 12px;background:#fee500;text-align:left;color:#342b00;font-size:13px;cursor:pointer}.ch3-group-entry{margin-bottom:9px}.ch3-group-name{display:block;font-size:11px;color:#526675;margin-left:12px;margin-bottom:3px}\n
 .ch3-ig-send{padding:10px 12px 18px;background:#fff;max-height:220px;overflow-y:auto}.ch3-ig-send .story-options{display:flex;flex-direction:column;gap:8px}.ch3-ig-send .story-option{display:block;width:100%;border:1px solid #e3e7ee;border-radius:13px;background:#f5f6f9;color:#222;padding:12px;text-align:left;font-size:13px;cursor:pointer}.ch3-read{text-align:right;color:#8e8e93;font-size:11px;padding:3px 13px 8px}
+
+/* Fifth chapter: touch-friendly date picker wheels */
+.ch5-picker{position:relative;display:flex;gap:8px;justify-content:center;max-width:360px;margin:20px auto 26px;height:220px;overflow:hidden}
+.ch5-wheel{flex:1;min-width:0;height:220px;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative;z-index:2}
+.ch5-wheel::-webkit-scrollbar{display:none}
+.ch5-wheel-pad{height:88px;flex-shrink:0}
+.ch5-wheel-item{display:block;width:100%;height:44px;line-height:44px;padding:0;background:transparent;color:#202124;font-size:20px;text-align:center;scroll-snap-align:center;white-space:nowrap}
+.ch5-wheel-item[aria-selected="true"]{font-weight:600}
+.ch5-picker-highlight{position:absolute;top:88px;left:0;right:0;height:44px;background:rgba(120,120,128,.11);border-top:1px solid rgba(120,120,128,.2);border-bottom:1px solid rgba(120,120,128,.2);border-radius:9px;pointer-events:none;z-index:1}
 </style>
 <link rel="stylesheet" href="css/instagram.css">
 <link rel="stylesheet" href="css/story.css">
@@ -177,4 +186,4 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 <script src="js/chapter1.js?v=20261029-reset-a"></script>
 <script src="js/chapter2.js?v=20261029-reset-a"></script>
 <script src="js/chapter3.js?v=20261029-reset-a"></script>
-<script src="js/chapter4.js?v=20261029-memo-nav"></script><script src="js/phone-global.js?v=20261029-reset-a"></script><script src="js/chapter5.js?v=20261029-calendar-reminder"></script><script src="js/chapter-navigation.js?v=20261029-memo-nav"></script></body></html>
+<script src="js/chapter4.js?v=20261029-memo-nav"></script><script src="js/phone-global.js?v=20261029-reset-a"></script><script src="js/chapter5.js?v=20261029-datewheel"></script><script src="js/chapter-navigation.js?v=20261029-memo-nav"></script></body></html>
