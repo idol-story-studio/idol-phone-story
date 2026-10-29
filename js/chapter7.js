@@ -44,13 +44,13 @@ function ch7Start(){
 }
 function ch7Push(who,text,type='text',songId=null){if(!ch7Is())return;CH7.messages.push({who,text,type,songId,time:ch7Time()});CH7.clock+=0.6;ch7Save();if(activeApp==='kkt'&&current==='appview'&&document.querySelector('#ch2-chat[data-id="hyeongjun"]'))ch7Room(true);else if(who==='them')phoneReceiveMessage('hyeongjun',type==='song'?'分享了一首歌曲':text)}
 function ch7Queue(items,after){CH7.queue={items,index:0,after};ch7Save();ch7Resume()}
-function ch7Resume(){if(!ch7Is()||!CH7.queue||ch7Timer)return;const token=CH7.session;const step=()=>{ch7Timer=null;if(!ch7Is()||token!==CH7.session||!CH7.queue)return;const q=CH7.queue;if(q.index>=q.items.length){CH7.queue=null;ch7Save();ch7After(q.after);return}const [who,text]=q.items[q.index++];ch7Push(who,text);ch7Timer=setTimeout(step,typeof phoneMessageDelay==='function'?phoneMessageDelay(text):850)};ch7Timer=setTimeout(step,500)}
+function ch7Resume(){if(!ch7Is()||!CH7.queue||ch7Timer)return;const token=CH7.session;const step=()=>{ch7Timer=null;if(!ch7Is()||token!==CH7.session||!CH7.queue)return;const q=CH7.queue;if(q.index>=q.items.length){CH7.queue=null;ch7Save();ch7After(q.after);return}const [who,text]=q.items[q.index];if(who==='me'&&!phonePlayerCanAutoReply('hyeongjun')){ch7Timer=setTimeout(step,350);return}q.index++;ch7Push(who,text);ch7Timer=setTimeout(step,typeof phoneMessageDelay==='function'?phoneMessageDelay(text):850)};ch7Timer=setTimeout(step,500)}
 function ch7After(a){
  if(a==='introDone'){CH7.phase='adPending';ch7Save();ch7ScheduleAd()}
- if(a==='received'){CH7.phase='replyA';ch7Save();ch7Room(true)}
+ if(a==='received'){CH7.phase='replyA';ch7Save();if(phoneRoomOpen('hyeongjun'))ch7Room(true)}
  if(a==='listen'){CH7.phase='listening';ch7Save();setTimeout(()=>{if(ch7Is()&&CH7.phase==='listening')ch7Queue([['them','听完了'],['them','你以前也经常突然给我发歌'],['them','有时候半夜发一首'],['them','第二天还会问我听了没有ㅋㅋ'],['me','我以前经常这样吗'],['them','嗯'],['them','不过今天这首还挺好听的'],['them','所以今天怎么突然想发给我？']],'finalQuestion')},12500)}
- if(a==='finalQuestion'){CH7.phase='replyB';ch7Save();ch7Room(true)}
- if(a==='end'){CH7.phase='ending';ch7Save();ch7NoteAdd('end','第七章已结束','今天给亨俊发了一首歌。\n\n按下发送之前，其实犹豫了很久。\n\n他真的听了，还认真回复了我。\n\n虽然以前的事还是想不起来，但今天这首歌，是现在的我自己想分享给他的。\n\n好像还挺开心的。',null);ch7Room(true)}
+ if(a==='finalQuestion'){CH7.phase='replyB';ch7Save();if(phoneRoomOpen('hyeongjun'))ch7Room(true)}
+ if(a==='end'){CH7.phase='ending';ch7Save();ch7NoteAdd('end','第七章已结束','今天给亨俊发了一首歌。\n\n按下发送之前，其实犹豫了很久。\n\n他真的听了，还认真回复了我。\n\n虽然以前的事还是想不起来，但今天这首歌，是现在的我自己想分享给他的。\n\n好像还挺开心的。',null);if(phoneRoomOpen('hyeongjun'))ch7Room(true)}
 }
 function ch7ScheduleAd(){if(CH7.adShown||!ch7Is()||ch7AdTimer)return;const token=CH7.session;ch7AdTimer=setTimeout(()=>{ch7AdTimer=null;if(!ch7Is()||token!==CH7.session||CH7.adShown)return;if(activeApp==='kkt'&&document.querySelector('#ch2-chat[data-id="hyeongjun"]')){ch7ScheduleAd();return}CH7.adShown=true;CH7.phase='explore';ch7Save();ch7MelonAd()},4500)}
 function ch7MelonAd(){
