@@ -38,7 +38,7 @@ function ch10Resume(){
   ch10Timer=null;if(!ch10Is()||token!==CH10.session||!CH10.queue)return;
   const q=CH10.queue;
   if(q.index>=q.lines.length){CH10.queue=null;ch10Save();ch10After(q.after);return}
-  const line=q.lines[q.index++];ch10Push(line[0],line[1],line[2]);ch10Save();
+  const line=q.lines[q.index];if(line[0]==='me'&&!phonePlayerCanAutoReply('hyeongjun')){ch10Timer=setTimeout(tick,350);return}q.index++;ch10Push(line[0],line[1],line[2]);ch10Save();
   ch10Timer=setTimeout(tick,Math.min(3500,phoneMessageDelay(line[1],false)));
  };
  ch10Timer=setTimeout(tick,800);
