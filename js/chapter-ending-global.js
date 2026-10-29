@@ -25,7 +25,7 @@ function storyEndingNormalizeNotes(){
  // The Notes list belongs to the active chapter, not to a global archive of completed chapters.
  // Keep older chapters' own notes accessible through chapter navigation without appending them here.
  const stage=String(game.stage||'');
- const match=stage.match(/^chapter(\\d+)$/);
+ const match=stage.match(/^chapter(\d+)$/);
  const current=match?Number(match[1]):(CH8.active?8:null);
  const labels=STORY_END_NAMES.slice(1).map(x=>'第'+x+'章已结束');
  const rows=[...root.querySelectorAll('.note')];
