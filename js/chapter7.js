@@ -56,6 +56,7 @@ function ch7ScheduleAd(){if(CH7.adShown||!ch7Is()||ch7AdTimer)return;const token
 function ch7MelonAd(){
  const item={app:'melon',message:'Melon：CRAVITY 新专辑《sonorous》上线啦，一起来听听看吧？',target:'melon',time:ch7Time()};
  if(typeof storyNotifications!=='undefined'){storyNotifications.unshift(item);storyRefreshNotificationCenter()}
+ if(typeof ding==='function')ding();
  if(current==='lock'||current==='pass'){gameLockBanner('melon',item.message);return}
  const t=$('toast');if(!t)return;t.className='toast story-notification';t.innerHTML='<div class="story-notification-icon" style="background:#03c75a;color:white">m</div><div class="story-notification-text"><div class="story-notification-app">Melon <span>现在</span></div><div class="story-notification-body">CRAVITY 新专辑《sonorous》上线啦，一起来听听看吧？</div></div>';t.style.display='flex';t.onclick=()=>{clearTimeout(toastTimer);t.style.display='none';melonOpen('home')};clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.display='none',8500)
 }
