@@ -44,7 +44,7 @@ function storyChapterMenu(){
  const currentNumber=game.stage==='chapter5'?5:game.stage==='chapter4'?4:game.stage==='chapter3'?3:game.stage==='chapter2'?2:1;
  const buttons=STORY_CHAPTER_NAMES.slice(1).map((name,i)=>{
   const n=i+1;
-  return '<button class="note story-chapter-button" onclick="storyChapterJump('+n+')"><strong>从头进入第'+name+'章</strong></button>';
+  return '<button class="note story-chapter-button" onclick="storyChapterJump('+n+')"><strong>前往第'+name+'章</strong></button>';
  }).join('');
  wrap('跳转至其他章节','<div class="content story-notes"><p class="story-chapter-hint">测试入口：选择章节会重新开始该章，其他章节的已保存剧情不会被删除。</p>'+buttons+'<button class="note story-chapter-button" onclick="gameNotes()"><strong>返回备忘录</strong></button></div>');
 }
