@@ -6,6 +6,7 @@ const CH10_OPEN='昨晚回来以后睡得还不错。\n\n今天没什么特别�
 const CH10_END='今天又和亨俊一起回去了。\n\n以前觉得有些话不用说他也会懂。现在发现，说出来也没什么难的。\n\n想见面就说想见面，想一起回去就问他要不要等我。\n\n他今天真的在楼下等我。\n\n好像又回到了很熟悉的日子。\n\n不过这次，我会记得把想说的话告诉他。';
 let ch10Timer=null;
 let ch10PhotoTimer=null;
+let ch10AfternoonTimer=null;
 function ch10Is(){return CH10.active&&game.stage==='chapter10'}
 function ch10Save(){try{localStorage.setItem(CH10_KEY,JSON.stringify(CH10))}catch(e){}}
 function ch10Time(){const t=Math.floor(CH10.clock);return String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
@@ -16,7 +17,7 @@ function ch10Start(){
  Object.assign(CH10,{active:true,done:false,phase:'morning',clock:610,day:1,session:CH10.session+1,messages:[],notes:[],queue:null,giftViewed:false,giftClaimed:false,photoViewed:false,photoSaved:false,photoNotice:false,choices:{},endingRead:false});
  game.stage='chapter10';game.chapter2=true;game.chatBlocked=false;storyChapterSet(10);
  ch10AddNote('intro','第十章',CH10_OPEN,false);
- ch10Queue([['them','起了没'],['them','我刚刚在楼下看到一只猫'],['them','跟你起床的时候好像ㅋㅋ'],['me','哪里像了'],['them','都是一脸不想理人的样子'],['me','我早上有那么凶吗'],['them','还好吧'],['them','反正我习惯了ㅋㅋ'],['me','你才是早上最难叫醒的那个吧'],['them','那你明天叫我啊']],'morningChoice');
+ ch10Queue([['them','醒了吗'],['me','醒了 还在床上'],['them','我就知道ㅋㅋ'],['them','我刚才在楼下看到一只猫'],['me','给我看看'],['them','跑掉了 没拍到'],['me','那你下次拍给我'],['them','好'],['them','你今天不是还要练习吗'],['me','嗯 等下就出门'],['them','先吃点东西再走'],['me','知道啦'],['me','你也是'],['them','嗯 我吃过了']],'morningChoice');
  ch10Notes();
 }
 function ch10Push(who,text,type){
@@ -39,9 +40,9 @@ function ch10Resume(){
 }
 function ch10After(after){
  if(after==='morningChoice')CH10.phase='morningChoice';
- if(after==='gift'){CH10.phase='gift';CH10.clock=625;ch10Push('them','不是有人念叨了好几次吗ㅋㅋ','gift')}
+ if(after==='afternoon'){CH10.phase='afternoonWaiting';ch10Save();ch10AfternoonTimer=setTimeout(()=>{ch10AfternoonTimer=null;if(ch10Is()&&CH10.phase==='afternoonWaiting'){CH10.phase='photoChat';CH10.clock=820;ch10Queue(ch10PhotoConversation(),'photoReady')}},10000)}
  if(after==='giftChoice')CH10.phase='giftChoice';
- if(after==='giftEnd'){CH10.phase='photoChat';CH10.clock=820;ch10Queue(ch10PhotoConversation(),'photoReady')}
+ 
  if(after==='photoChoice')CH10.phase='photoChoice';
  if(after==='photoReady'){CH10.phase='photoWaiting';ch10Save();ch10PhotoTimer=setTimeout(()=>{ch10PhotoTimer=null;if(ch10Is()&&CH10.phase==='photoWaiting'){CH10.phase='photoReady';ch10AddNote('photo','新照片','PHOTOISM 有新的照片可以查看。',false);ch10PhotoNotice();ch10Save();if(phoneRoomOpen('hyeongjun'))ch10Room(true)}},12000)}
  if(after==='nightChoice')CH10.phase='nightChoice';
@@ -53,43 +54,12 @@ function ch10After(after){
 function ch10Options(labels,fn){return '<div class="story-options">'+labels.map((t,i)=>'<button class="story-option" onclick="'+fn+'('+i+')">'+escapeHtml(t)+'</button>').join('')+'</div>'}
 function ch10ChooseMorning(i){
  if(CH10.phase!=='morningChoice')return;
- CH10.choices.morning=i;CH10.phase='morningReply';ch10Push('me',['好啊 你可别赖床','叫醒你有什么奖励'][i]);
- const reply=i===0?[['them','你先起得来再说ㅋㅋ']]:[['them','你想要什么'],['them','先说好不能太过分ㅋㅋ']];
- ch10Queue([...reply,['me','等我想好了再告诉你'],['them','行'],['them','我先去忙了 晚点聊'],['me','嗯 晚点见']],'gift');
-}
-function ch10GiftCard(){
- return '<button class="ch10-gift-card" onclick="ch10Gift()" aria-label="查看KakaoTalk礼物"><span class="ch10-gift-symbol">🎁</span><span><strong>收到一份礼物</strong><small>草莓蛋糕兑换券 · 1份</small><small>不是有人念叨了好几次吗ㅋㅋ</small><em>查看礼物 ›</em></span></button>';
-}
-function ch10Gift(){
- if(!ch10Is())return;CH10.giftViewed=true;ch10Save();activeApp='kkt';
- wrap('KakaoTalk · 送礼','<div class="ch10-gift-page"><button class="ch10-back" onclick="ch10Room()">‹ 返回聊天</button><div class="ch10-gift-hero">🍓<span>草莓蛋糕</span></div><h2>草莓蛋糕兑换券</h2><p>1份 · 虚构礼物演示</p><div class="ch10-gift-note"><strong>宋亨俊 送给你</strong><p>不是有人念叨了好几次吗ㅋㅋ</p></div><p class="ch10-muted">仅供游戏体验，不涉及真实支付、兑换或订单。</p><button class="ch10-primary" onclick="ch10ClaimGift()">'+(CH10.giftClaimed?'已领取 · 返回聊天':'领取礼物')+'</button><button class="ch10-secondary" onclick="ch10Room()">返回聊天</button></div>');
- if(CH10.phase==='gift')ch10GiftDialogue();
-}
-function ch10ClaimGift(){if(!CH10.giftClaimed){CH10.giftClaimed=true;ch10Save()}ch10Room()}
-function ch10GiftDialogue(){
- if(CH10.phase!=='gift')return;CH10.phase='giftChat';ch10Queue([['me','你怎么突然给我送蛋糕'],['them','不是有人上次一直说想吃吗'],['me','我哪有一直说'],['them','好好好'],['them','就说了三遍ㅋㅋ'],['me','你还数了啊'],['them','没办法 某人太吵了'],['me','那你别买给我啊ㅋㅋ'],['them','行啊 那你还我'],['me','不还'],['them','ㅋㅋㅋㅋ 我就知道']],'giftChoice');
-}
-function ch10ChooseGift(i){
- if(CH10.phase!=='giftChoice')return;CH10.phase='giftReply';CH10.choices.gift=i;
- ch10Push('me',['谢啦 宝宝','下次我也给你买','其实我想跟你一起吃'][i]);
- const replies=[[['them','咦'],['them','你干嘛突然这么叫ㅋㅋ'],['me','不爱听啊？'],['them','……又没说不爱听'],['them','别在外面这么叫就行ㅋㅋ']],[['them','那我可要挑贵的'],['me','你还真不客气'],['them','谁让你先说的ㅋㅋ']],[['them','你直接说不就好了ㅋㅋ'],['them','那就一起去']]][i];
- const ending=i===2?[['me','不过这张券我先收下了'],['them','本来就是给你的'],['me','说好了啊'],['them','好'],['them','到时候别又说吃不下ㅋㅋ'],['me','你管我']]:[['me','不过这张券我先收下了'],['them','本来就是给你的'],['me','那下次陪我去店里吃'],['them','好'],['them','到时候别又说吃不下ㅋㅋ'],['me','你管我']];
- ch10Queue([...replies,...ending],'giftEnd');
+ CH10.choices.morning=i;CH10.phase='morningReply';
+ const first=i===0?[['me','那我明天叫你起床？'],['them','好啊'],['them','你打电话我肯定接']]:[['me','等下练习完要不要一起吃饭'],['them','好'],['them','你结束了告诉我']];
+ ch10Queue([...first,['me','那我先去准备了'],['them','嗯 去吧'],['them','我也要去忙了'],['them','晚点找你'],['me','好 想你了'],['them','我也是 ♡']],'afternoon');
 }
 function ch10PhotoConversation(){
- return [['them','诶 你看到群里发的消息没'],['me','哪个'],['them','拿一位那天的照片啊'],['me','啊 看到了ㅋㅋ'],['me','你拿奖杯那张笑得好傻'],['them','你自己不也笑得眼睛都没了'],['me','那可是拿一位诶'],['them','ㅋㅋ 也是'],['me','对了'],['me','我们一起去拍个人生四格纪念一下吧'],['them','现在？'],['me','等练习结束啊ㅋㅋ'],['them','好啊'],['them','但是这次你别临时换四次动作'],['me','你上次明明也换了'],['them','行行行 都怪我ㅋㅋ'],['me','那说定了'],['them','嗯 说定了'],['me','拍完记得把电子版发我'],['them','知道啦'],['them','到时候一起挑']];
-}
-function ch10Invite(){
- if(!ch10Is()||CH10.phase!=='photoInvite')return;
- CH10.phase='photoChat';CH10.clock=820;ch10Save();
- ch10Queue(ch10PhotoConversation(),'photoChoice');ch10Room();
-}
-function ch10ChoosePhoto(i){
- if(CH10.phase!=='photoChoice')return;
- CH10.phase='photoReply';CH10.choices.photo=i;
- ch10Push('me',['那天拿奖杯的照片也要存着','这次一定要拍好看一点','你不许又笑场ㅋㅋ'][i]);
- const replies=[[['them','当然'],['them','那么开心的一天怎么能不留着']],[['them','那你到时候别一直动ㅋㅋ']],[['them','我尽量ㅋㅋ'],['them','你也别逗我']]][i];
- ch10Queue([...replies,['me','拍完记得把电子版发我'],['them','知道啦'],['them','到时候一起挑']],'photoReady');
+ return [['them','你看到群里发的消息了吗'],['me','还没 怎么了'],['them','拿一位那天的照片发出来了'],['me','等一下 我看看'],['me','看到了！'],['me','那天真的好开心'],['them','嗯 我也是'],['them','我刚刚又翻了一遍'],['me','突然想到'],['me','我们去拍个人生四格纪念一下吧'],['them','好啊'],['them','等你练习结束我们就去'],['me','真的？'],['them','嗯 我也想和你拍'],['me','那我结束了找你'],['them','好 不着急'],['them','我等你 ♡']];
 }
 function ch10PhotoNotice(){
  if(CH10.photoNotice)return;CH10.photoNotice=true;CH10.day=2;CH10.clock=1040;ch10Save();
@@ -115,20 +85,25 @@ function ch10AlbumDetail(){activeApp='photos';wrap('照片','<div class="ch10-ph
 function ch10BeginNight(){
  if(!ch10Is()||!CH10.photoViewed||CH10.phase!=='photoReady')return;
  CH10.phase='nightChat';CH10.clock=1230;ch10Save();
- ch10Queue([['them','照片看了吗'],['me','看了ㅋㅋ'],['me','你看右下角'],['me','获奖纪念照','photo'],['them','干嘛ㅋㅋ'],['me','你笑得眼睛都没了'],['them','你不也是'],['me','但是看起来真的很开心'],['them','当然开心啊'],['them','拿一位了诶'],['me','嗯'],['me','而且那天你一直在我旁边'],['them','因为你一直拉着我拍照ㅋㅋ']],'nightChoice');ch10Room();
+ ch10Queue([['them','照片看了吗'],['me','看了'],['me','你看这张'],['me','获奖纪念照','photo'],['them','我也存了ㅋㅋ'],['me','感觉又回到那天了'],['them','嗯'],['them','那天结束以后还一直很兴奋'],['me','而且今天又跟你一起拍了'],['them','下次也一起去吧']],'nightChoice');ch10Room();
 }
 function ch10ChooseNight(i){
- if(CH10.phase!=='nightChoice')return;CH10.phase='nightReply';CH10.choices.night=i;ch10Push('me',['下次拿奖还要一起拍','那下次不带奖杯拍','这张我想一直留着'][i]);
- const replies=[[['them','当然'],['them','奖杯可别忘了拿ㅋㅋ']],[['them','怎么 奖杯失宠了？ㅋㅋ'],['them','行啊 就我们两个']],[['them','留着啊'],['them','我那边也存了']]][i];
- ch10Queue([...replies,['me','今天又看了好几遍'],['them','这么喜欢？'],['me','喜欢啊'],['them','ㅋㅋㅋ 知道了'],['them','早点睡 明天还有事'],['me','你也是'],['them','晚安'],['me','晚安 宝宝'],['them','……ㅋㅋ 晚安']],'nightEnd');
+ if(CH10.phase!=='nightChoice')return;
+ CH10.phase='nightReply';CH10.choices.night=i;
+ const branches=[
+  [['me','今天的照片我好喜欢'],['them','我也是'],['them','特别是你靠过来那张']],
+  [['me','下次还想跟你一起拍'],['them','好啊'],['them','下次换个背景']],
+  [['me','想把这张设成壁纸'],['them','可以啊ㅋㅋ'],['them','我也留一张']]
+ ];
+ ch10Queue([...branches[i],['me','那说好了'],['them','嗯'],['them','早点睡 明天还要忙'],['me','你也早点睡'],['me','晚安 宝宝'],['them','ㅋㅋ 怎么又突然叫这个'],['me','不喜欢吗'],['them','喜欢'],['them','只跟我这么叫就好'],['me','知道啦 ♡'],['them','晚安 ♡']],'nightEnd');
 }
 function ch10BeginHome(){
  if(!ch10Is()||CH10.phase!=='homeReady')return;CH10.phase='homeChat';CH10.day=3;CH10.clock=1217;ch10Save();
- ch10Queue([['them','你还在公司？'],['me','嗯 刚结束'],['them','我也差不多了'],['me','那等我一下'],['them','干嘛ㅋㅋ'],['me','想跟你一起回去'],['them','哦～'],['them','今天怎么这么黏人ㅋㅋ']],'homeChoice');ch10Room();
+ ch10Queue([['them','结束了吗'],['me','嗯 刚结束'],['them','我也差不多了'],['me','那等我一下好不好'],['them','好啊'],['them','想一起回去？'],['me','嗯 想跟你多待一会儿']],'homeChoice');ch10Room();
 }
 function ch10ChooseHome(i){
- if(CH10.phase!=='homeChoice')return;CH10.phase='homeReply';CH10.choices.home=i;ch10Push('me',['不行吗','因为想见你','那你愿不愿意等我'][i]);
- const replies=[[['them','谁说不行了']],[['them','……知道啦ㅋㅋ']],[['them','愿意啊'],['them','我又没说不等']]][i];
+ if(CH10.phase!=='homeChoice')return;CH10.phase='homeReply';CH10.choices.home=i;ch10Push('me',['你现在在哪儿','我想见你','可以等我一下吗'][i]);
+ const replies=[[['them','在楼下'],['them','正好等你']],[['them','我也是'],['them','下来就能见到了']],[['them','当然可以'],['them','慢慢收拾']]][i];
  ch10Queue([...replies,['them','我在楼下等你'],['me','马上来 ♡'],['them','慢慢来 不用跑']],'end');
 }
 function ch10OldHistory(){
@@ -139,21 +114,21 @@ function ch10OldHistory(){
 function ch10Room(quiet=false){
  if(!ch10Is())return;activeApp='kkt';phoneReadRoom('hyeongjun');
  const rows=CH10.messages.map((m,i)=>{
-  if(m.type==='gift')return '<div class="bubbleline"><div class="ch10-gift-wrap">'+ch10GiftCard()+'</div><span class="chatmeta">'+escapeHtml(m.time)+'</span></div>';
+  
   if(m.type==='photo')return '<div class="bubbleline me"><button class="ch10-chat-photo" onclick="ch10PhotoDetail()">'+ch10PhotoImage()+'<span>获奖纪念照 · 查看</span></button></div>';
   return gameBubble(m.who==='me',m.text,m.time,false,false,i===0||(CH10.messages[i-1]||{}).who!==m.who);
  }).join('');
  let opts='';
  const p=CH10.phase;
- if(p==='morningChoice')opts=ch10Options(['好啊 你可别赖床','叫醒你有什么奖励'],'ch10ChooseMorning');
- if(p==='gift')opts='<button class="story-option" onclick="ch10Gift()">查看礼物</button>';
- if(p==='giftChoice')opts=ch10Options(['谢啦 宝宝','下次我也给你买','其实我想跟你一起吃'],'ch10ChooseGift');
+ if(p==='morningChoice')opts=ch10Options(['那我明天叫你起床？','等下练习完要不要一起吃饭'],'ch10ChooseMorning');
+ 
+ 
  if(p==='photoInvite')opts='';
- if(p==='photoWaiting')opts='<div class="story-end">照片整理中，稍后会收到 PHOTOISM 提醒</div>';
+ 
  if(p==='photoReady')opts='';
- if(p==='nightChoice')opts=ch10Options(['下次拿奖还要一起拍','那下次不带奖杯拍','这张我想一直留着'],'ch10ChooseNight');
+ if(p==='nightChoice')opts=ch10Options(['今天的照片我好喜欢','下次还想跟你一起拍','想把这张设成壁纸'],'ch10ChooseNight');
  if(p==='homeReady')opts='<button class="story-option" onclick="ch10BeginHome()">查看下班后的消息</button>';
- if(p==='homeChoice')opts=ch10Options(['不行吗','因为想见你','那你愿不愿意等我'],'ch10ChooseHome');
+ if(p==='homeChoice')opts=ch10Options(['你现在在哪儿','我想见你','可以等我一下吗'],'ch10ChooseHome');
  if(CH10.done)opts='<div class="story-end">当前对话已结束</div>';
  wrap('宋亨俊','<div id="ch2-chat" data-id="hyeongjun" class="ch3-kkt ch5-chat ch9-chat ch10-chat"><div class="chatbody" id="chatbody">'+ch10OldHistory()+'<div class="story-date">第十章 · 以后都告诉你</div>'+rows+'</div><div class="story-send">'+opts+'</div></div>');
  const el=document.getElementById('chatbody');if(el)el.scrollTop=el.scrollHeight;
@@ -188,7 +163,7 @@ const ch10PrevEndReady=storyEndingReady;storyEndingReady=function(n){return n===
 STORY_END_TITLES[10]='以后都告诉你';
 if(STORY_CHAPTER_NAMES.length===10)STORY_CHAPTER_NAMES.push('十');
 const ch10PrevEndNext=storyEndingNext;storyEndingNext=function(n){if(Number(n)===10){if(!CH9.done)CH9.done=true;return ch10Start()}return ch10PrevEndNext(n)};
-const ch10PrevJump=storyChapterJump;storyChapterJump=function(n){if(Number(n)!==10){CH10.active=false;CH10.session++;clearTimeout(ch10Timer);clearTimeout(ch10PhotoTimer);ch10Timer=null;ch10PhotoTimer=null;return ch10PrevJump(n)}/* Testing chapter jump: match chapters 2–9 by preparing earlier completion flags. */CH2.done=true;CH3.done=true;CH4.done=true;CH5.done=true;CH6.done=true;CH7.done=true;CH8.done=true;CH9.done=true;CH9.active=false;CH9.session=(CH9.session||0)+1;CH9.queue=null;clearTimeout(ch9Timer);CH10.active=false;CH10.session++;clearTimeout(ch10Timer);clearTimeout(ch10PhotoTimer);ch10Timer=null;ch10PhotoTimer=null;storyChapterResetUnread();ch10Start()};
+const ch10PrevJump=storyChapterJump;storyChapterJump=function(n){if(Number(n)!==10){CH10.active=false;CH10.session++;clearTimeout(ch10Timer);clearTimeout(ch10PhotoTimer);clearTimeout(ch10AfternoonTimer);ch10Timer=null;ch10PhotoTimer=null;ch10AfternoonTimer=null;return ch10PrevJump(n)}/* Testing chapter jump: match chapters 2–9 by preparing earlier completion flags. */CH2.done=true;CH3.done=true;CH4.done=true;CH5.done=true;CH6.done=true;CH7.done=true;CH8.done=true;CH9.done=true;CH9.active=false;CH9.session=(CH9.session||0)+1;CH9.queue=null;clearTimeout(ch9Timer);CH10.active=false;CH10.session++;clearTimeout(ch10Timer);clearTimeout(ch10PhotoTimer);clearTimeout(ch10AfternoonTimer);ch10Timer=null;ch10PhotoTimer=null;ch10AfternoonTimer=null;storyChapterResetUnread();ch10Start()};
 const ch10PrevEndAttach=storyEndingAttach;storyEndingAttach=function(n){ch10PrevEndAttach(n);if(n===9){const root=document.querySelector('.story-ending-unified');if(root){const p=[...root.querySelectorAll('p')].find(x=>x.textContent.includes('后续章节尚未开放'));if(p)p.outerHTML='<button class="choice" onclick="storyEndingNext(10)">前往第十章</button>'}}};
 const ch10PrevEndView=storyEndingView;storyEndingView=function(n){if(n===10){if(!CH10.done)return;activeApp='notes';phoneReadRoom('notes');CH10.endingRead=true;ch10Save();wrap('第十章 · 完结','<div class="content story-prose story-ending"><h2>第十章已结束</h2><p>以后都告诉你</p><p>当前回忆进度：10/10</p><div class="story-progress"><span style="width:100%"></span></div><p>所有回忆都找回来了。但属于他们的故事，还会继续。</p><button class="choice" onclick="ch10Notes()">继续使用手机</button></div>');return}return ch10PrevEndView(n)};
 const ch10PrevEndNormalize=storyEndingNormalizeNotes;storyEndingNormalizeNotes=function(){if(ch10Is())return;return ch10PrevEndNormalize()};
