@@ -3,7 +3,7 @@ const CH10_KEY='idol_ch10_v1';
 const CH10={active:false,done:false,phase:'',clock:610,day:1,session:0,messages:[],notes:[],queue:null,giftViewed:false,giftClaimed:false,photoViewed:false,photoSaved:false,photoNotice:false,choices:{},endingRead:false};
 const CH10_PHOTO='assets/chapter10/award-memory.jpg'; // reserved asset path; missing file gets a truthful placeholder
 const CH10_OPEN='昨晚回来以后睡得还不错。\n\n今天没什么特别要做的事。先看看手机吧。';
-const CH10_END='今天又和亨俊一起回去了。\n\n以前觉得有些话不用说他也会懂。现在发现，说出来也没什么难的。\n\n想见面就说想见面，想一起回去就问他要不要等我。\n\n他今天真的在楼下等我。\n\n好像又回到了很熟悉的日子。\n\n不过这次，我会记得把想说的话告诉他。';
+const CH10_END='今天和亨俊带着奖杯拍了人生四格。\n\n拿到一位的那一刻很开心，和他一起留下这张照片，也很开心。\n\n以前觉得有些话不用说他也会懂。现在发现，想念和喜欢都可以直接告诉他。\n\n这一次，我会记得把想说的话告诉他。';
 let ch10Timer=null;
 let ch10PhotoTimer=null;
 let ch10AfternoonTimer=null;
@@ -62,8 +62,8 @@ function ch10Finish(){
  ch10AddNote('end','第十章已结束',CH10_END,false);
  ch10Save();
  storyEndingNotified.add(10);
- // The ending is a Notes notification; the user can open it when ready.
- phoneBanner('notes','备忘录','第十章已结束','ch10-note-end');
+ // Display after the final KakaoTalk render and update Notes unread badge.
+ setTimeout(()=>{if(ch10Is()&&CH10.done)phoneReceiveNote('第十章已结束','ch10-note-end')},700);
 }
 function ch10Options(labels,fn){return '<div class="story-options">'+labels.map((t,i)=>'<button class="story-option" onclick="'+fn+'('+i+')">'+escapeHtml(t)+'</button>').join('')+'</div>'}
 function ch10ChooseMorning(i){
@@ -173,7 +173,7 @@ function ch10Room(quiet=false){
  
  if(p==='homeChoice')opts=ch10Options(['你现在在哪儿','我想见你','可以等我一下吗'],'ch10ChooseHome');
  if(CH10.done)opts='<div class="story-end">当前对话已结束</div>';
- wrap('宋亨俊','<div id="ch2-chat" data-id="hyeongjun" class="ch3-kkt ch5-chat ch9-chat ch10-chat"'+(CH10.wallpaperUnlocked?' style="--ch10-wallpaper:url('+CH10_PHOTO+')"':'')+'><div class="chatbody" id="chatbody">'+ch10OldHistory()+'<div class="story-date">第十章 · 以后都告诉你</div>'+rows+'</div><div class="story-send">'+opts+'</div></div>');
+ wrap('宋亨俊','<div id="ch2-chat" data-id="hyeongjun" class="ch3-kkt ch5-chat ch9-chat ch10-chat"'+(CH10.wallpaperUnlocked?' style="--ch10-wallpaper:url('+CH10_PHOTO+')"':'')+'><div class="chatbody" id="chatbody"'+(CH10.wallpaperUnlocked?' style="background-image:linear-gradient(rgba(255,255,255,.38),rgba(255,255,255,.38)),url('+CH10_PHOTO+')!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important"':'')+'>'+ch10OldHistory()+'<div class="story-date">第十章 · 以后都告诉你</div>'+rows+'</div><div class="story-send">'+opts+'</div></div>');
  const el=document.getElementById('chatbody');if(el)el.scrollTop=el.scrollHeight;
 }
 function ch10Friends(){
