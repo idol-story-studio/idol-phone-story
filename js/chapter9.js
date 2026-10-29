@@ -26,7 +26,7 @@ function ch9Start(){
  if(!CH8.done){gameLocked();return}
  if(CH9.active){game.stage='chapter9';game.chapter2=true;game.chatBlocked=false;ch9Notes();ch9Resume();return}
  Object.assign(CH9,{active:true,done:false,phase:'friend',clock:1115,session:CH9.session+1,friend:[],hj:[],group:[],notes:[],queue:null,choiceA:null,entryChoice:null,arrived:false,reservationViewed:false,taxiState:'none',taxiType:'普通出租车',taxiStep:0,dinnerPart:0,walkChoice:null,talkChoice:null,listeningChoice:null,talkPart:0,homeChoice:null,homeInvite:null,history:[],endNotified:false});
- game.stage='chapter9';game.chapter2=true;game.chatBlocked=false;storyChapterSet(9);ch9Save();ch9NoteAdd('intro','第九章 · 这次我会说清楚',CH9_OPEN);ch9Notes();
+ game.stage='chapter9';game.chapter2=true;game.chatBlocked=false;storyChapterSet(9);ch9Save();ch9NoteAdd('intro','第九章',CH9_OPEN);ch9Notes();
  ch9Queue('friend',[['them','我订好位置了'],['them','七点半 三个人'],['them','你们别都踩点来啊ㅋㅋ']],'friendChoice');
 }
 function ch9Push(room,who,text){const m={who,text,time:ch9Time(),id:'ch9-'+room+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,6)};CH9[room].push(m);CH9.clock+=0.6;ch9Save();if(activeApp==='kkt'&&current==='appview'&&document.querySelector('[data-id="'+(room==='friend'?'ch8friend':room==='hj'?'hyeongjun':'ch9group')+'"]'))ch9Room(room,true);else if(who==='them'){const id=room==='friend'?'ch8friend':room==='hj'?'hyeongjun':'ch9group';if(typeof phoneReceiveMessage==='function')phoneReceiveMessage(id,text);else if(typeof phoneSetCount==='function')phoneSetCount(id,1)}}
