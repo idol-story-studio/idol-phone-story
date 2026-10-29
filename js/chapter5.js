@@ -61,6 +61,7 @@ function ch5Photos(){activeApp='photos';ch5OldAlbum();const scroll=document.quer
 /* iOS-style vertical date wheels for the Photos date filter. */
 const CH5_PICKER_YEAR=new Date().getFullYear()-1;
 let ch5PickerDate={year:CH5_PICKER_YEAR,month:10,day:1};
+function ch5RandomPickerDate(){const dates=[{month:3,day:14},{month:6,day:8},{month:8,day:22},{month:10,day:5},{month:12,day:17}];const d=dates[Math.floor(Math.random()*dates.length)];return {year:CH5_PICKER_YEAR,month:d.month,day:d.day}}
 function ch5PickerDays(y,m){return new Date(y,m,0).getDate()}
 function ch5PickerColumn(type,values,selected){
  return '<div class="ch5-wheel" data-wheel="'+type+'" role="listbox" aria-label="'+({year:'年份',month:'月份',day:'日期'}[type])+'"><div class="ch5-wheel-pad"></div>'+
@@ -70,13 +71,13 @@ function ch5PickerColumn(type,values,selected){
 function ch5DateSearch(){
  activeApp='photos';
  const y=CH5_PICKER_YEAR;
- ch5PickerDate={year:y,month:10,day:1};
+ ch5PickerDate=ch5RandomPickerDate();
  const years=Array.from({length:8},(_,i)=>y-4+i);
  const months=Array.from({length:12},(_,i)=>i+1);
  const days=Array.from({length:31},(_,i)=>i+1);
  igBase('<button class="ig-icon" onclick="ch5Photos()">‹</button><strong>选择日期</strong>',
  '<div class="ig-scroll ch5-date-search"><p>上下滑动选择照片拍摄日期</p><div class="ch5-picker">'+
- ch5PickerColumn('year',years,y)+ch5PickerColumn('month',months,10)+ch5PickerColumn('day',days,1)+
+ ch5PickerColumn('year',years,ch5PickerDate.year)+ch5PickerColumn('month',months,ch5PickerDate.month)+ch5PickerColumn('day',days,ch5PickerDate.day)+
  '<div class="ch5-picker-highlight"></div></div><button class="choice" onclick="ch5DateResults()">查看这一天的照片</button><div id="ch5-date-results" aria-live="polite"></div></div>',false);
  document.querySelectorAll('.ch5-wheel').forEach(w=>{
   const items=[...w.querySelectorAll('.ch5-wheel-item')];
@@ -102,6 +103,7 @@ function ch5DateSearch(){
 }
 function ch5DateResults(){
  const result=$('ch5-date-results');if(!result)return;
+ document.querySelectorAll('.ch5-wheel').forEach(w=>{const items=[...w.querySelectorAll('.ch5-wheel-item')];const index=Math.max(0,Math.min(items.length-1,Math.round(w.scrollTop/44)));if(items[index])ch5PickerDate[w.dataset.wheel]=Number(items[index].dataset.value)});
  const {year,month,day}=ch5PickerDate;
  if(day>ch5PickerDays(year,month)){result.innerHTML='<p>所选月份没有这一天。</p>';return}
  if(year!==CH5_PICKER_YEAR||month!==11||day!==30||!CH5.calendarSeen){
@@ -109,7 +111,7 @@ function ch5DateResults(){
  }
  result.innerHTML='<h3>'+year+'年11月30日 · 1张照片</h3><div class="ig-grid"><button class="ig-tile" onclick="ch5Photo()"><img src="'+CH5_PHOTO+'" alt="生日碰杯合照" style="width:100%;height:100%;object-fit:cover"></button></div>';
 }
-function ch5DateAlbum(){ch5DateSearch();ch5PickerDate={year:CH5_PICKER_YEAR,month:11,day:30};document.querySelectorAll('.ch5-wheel').forEach(w=>{const items=[...w.querySelectorAll('.ch5-wheel-item')];const idx=items.findIndex(x=>Number(x.dataset.value)===ch5PickerDate[w.dataset.wheel]);if(idx>=0)w.scrollTop=idx*44});ch5DateResults()}
+function ch5DateAlbum(){ch5DateSearch()}
 function ch5OriginalPhotos(){return ch5Photos()}
 function ch5Photo(){if(!CH5.calendarSeen)return ch5DateSearch();activeApp='photos';CH5.photoSeen=true;ch5Save();igBase('<button class="ig-icon" onclick="ch5DateAlbum()">‹</button><strong>11月30日 · 海底捞</strong>','<div class="ig-scroll ch5-photo-detail"><img src="'+CH5_PHOTO+'" alt="宋亨俊和姜敏熙在海底捞碰杯" class="ch5-photo-full"><div class="ig-album-caption"><b>去年11月30日 · 海底捞</b><p>去年宋亨俊生日，九个人一起吃海底捞。</p><p>11.30 🎂\n今年也一起过生日了。\n明明是寿星，最后一直在给我夹菜ㅋㅋ\n说好了下次还要一起来。</p><button class="choice" onclick="ch5PhotoDetail()">查看照片备注</button></div></div>',false)}
 function ch5PhotoDetail(){if(!ch5Is()||!CH5.photoSeen)return;activeApp='photos';CH5.captionSeen=true;CH5.searchUnlocked=true;ch5Save();ch5AddNote('search','海底捞','亨俊前阵子是不是也说过要去海底捞？\n\n好像是和廷谟哥。\n\n当时我是不是有点不高兴……\n\n去聊天记录里搜一下吧。','search');igBase('<button class="ig-icon" onclick="ch5Photo()">‹</button><strong>照片备注</strong>','<div class="ig-scroll ch5-photo-detail"><img src="'+CH5_PHOTO+'" class="ch5-photo-full" alt="生日碰杯合照"><div class="ig-album-caption"><h3>近期补充备注</h3><p>亨俊前阵子是不是也说过要去海底捞？好像是和廷谟哥。当时我是不是有点不高兴……</p><button class="choice" onclick="ch5Note(\'search\')">查看备忘录</button></div></div>',false)}
