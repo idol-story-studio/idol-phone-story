@@ -149,7 +149,7 @@ function gameReplyWonjin(choice){
  [2500,5100,7700].forEach((delay,i)=>setTimeout(()=>{
   game.wonjinDelivered=4+i;if(i===2)game.wonjinReplyDelivered=true;
   if(activeApp==='kkt'&&document.getElementById('wonjin-chat'))gameWonjinChat();else gameNotifyContact('wonjin');
-  if(i===2)setTimeout(()=>{if(game.chapterEnd)return;game.chapterEnd=true;game.stage='end';gameNotify('notes','第一章已结束')},3000);
+  if(i===2){gameNotify('notes','新的线索 · Instagram');setTimeout(()=>{if(game.chapterEnd)return;game.chapterEnd=true;game.stage='end';gameNotify('notes','第一章已结束')},3000);}
  },delay));
 }
 /* Swipe down from the top edge to inspect recent notifications without losing the current app. */
