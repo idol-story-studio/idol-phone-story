@@ -8,7 +8,7 @@
    story module reads persistent state. Never clear unrelated site data. */
 (function(){
  const keys=['story_chat','story_notes','story_likes','story_index','idol_ig_chats',
- 'idol_ch3_progress_v1','idol_ch4_v2','idol_ch5_v1',
+ 'idol_ch3_progress_v1','idol_ch4_v2','idol_ch5_v1','idol_ch6_v1',
  'idol_current_chapter_v1','idol_phone_unread_v1'];
  try{keys.forEach(k=>localStorage.removeItem(k))}catch(e){}
 })();
@@ -41,6 +41,22 @@
 <link rel="stylesheet" href="css/story.css">
 <link rel="stylesheet" href="css/chapter4.css">
 <link rel="stylesheet" href="css/chapter5.css">
+<style id="ch6-styles">
+.ch6-facetime{position:absolute;inset:0;z-index:110;background:#0c0e12;color:white;display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
+.ch6-stage{position:relative;flex:1;min-height:0;overflow:hidden;background:#17191d}
+.ch6-stage>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform 1.2s ease-in-out;will-change:transform}
+.ch6-dim{position:absolute;inset:0;background:linear-gradient(#0007,transparent 24%,transparent 55%,#0008);pointer-events:none}
+.ch6-call-top{position:absolute;top:55px;left:22px;display:flex;flex-direction:column;gap:4px;text-shadow:0 1px 8px #000b}
+.ch6-call-top strong{font-size:22px}.ch6-call-top small{font-size:12px}
+.ch6-self{position:absolute;top:80px;right:15px;width:94px;height:128px;border-radius:14px;overflow:hidden;box-shadow:0 3px 15px #0006;background:#222}
+.ch6-self img{width:100%;height:100%;object-fit:cover}.ch6-camera-off{position:absolute;inset:0;background:#292d34;display:grid;place-items:center;font-size:11px;text-align:center;padding:6px}
+.ch6-caption{position:absolute;bottom:18px;left:18px;right:18px;border-radius:13px;background:#14151abb;padding:13px 14px;font-size:14px;line-height:1.55;text-align:center;min-height:42px}
+.ch6-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;padding:12px 8px;background:#14161c}
+.ch6-controls button{background:#353943;color:white;padding:11px 10px;border-radius:22px;font-size:12px}.ch6-controls .ch6-hang{background:#e64a4a}.ch6-controls .ch6-answer{background:#34b66b}
+.ch6-next{padding:10px 14px 22px;display:flex;flex-wrap:wrap;gap:7px;justify-content:center;background:#14161c}
+.ch6-next p{width:100%;text-align:center;margin:0 0 5px;font-size:13px}.ch6-next button{border-radius:13px;background:#323741;color:white;padding:10px 13px;font-size:13px}
+.ch6-note p{white-space:pre-line;line-height:1.85}
+</style>
 </head>
 <body>
 <div id="phone">
@@ -186,4 +202,4 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 <script src="js/chapter1.js?v=20261029-reset-a"></script>
 <script src="js/chapter2.js?v=20261029-reset-a"></script>
 <script src="js/chapter3.js?v=20261029-reset-a"></script>
-<script src="js/chapter4.js?v=20261029-notes-ch5"></script><script src="js/phone-global.js?v=20261029-reset-a"></script><script src="js/chapter5.js?v=20261029-photo-note"></script><script src="js/chapter-navigation.js?v=20261029-memo-nav"></script></body></html>
+<script src="js/chapter4.js?v=20261029-notes-ch5"></script><script src="js/phone-global.js?v=20261029-reset-a"></script><script src="js/chapter5.js?v=20261029-photo-note"></script><script src="js/chapter6.js?v=20261029-ch6-v1"></script><script src="js/chapter-navigation.js?v=20261029-ch6-nav"></script></body></html>
