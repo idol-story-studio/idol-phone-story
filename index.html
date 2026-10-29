@@ -9,7 +9,7 @@
 (function(){
  const keys=['story_chat','story_notes','story_likes','story_index','idol_ig_chats',
  'idol_ch3_progress_v1','idol_ch4_v2','idol_ch5_v1','idol_ch6_v1','idol_ch7_v1',
- 'idol_ch8_v1','idol_current_chapter_v1','idol_phone_unread_v1'];
+ 'idol_ch8_v1','idol_ch9_v1','idol_current_chapter_v1','idol_phone_unread_v1'];
  try{keys.forEach(k=>localStorage.removeItem(k))}catch(e){}
 })();
 </script>
@@ -117,10 +117,11 @@ Object.assign(icons,{
  melon:iconArt('#03c75a','<text x="32" y="39" text-anchor="middle" fill="#fff" font-size="19" font-weight="900">melon</text>'),
  spotify:iconArt('#1ed760','<circle cx="32" cy="32" r="25" fill="#101010"/><path d="M16 25Q32 19 49 27M18 33Q32 28 47 35M20 41Q32 37 44 43" stroke="#1ed760" stroke-width="4.5" stroke-linecap="round" fill="none"/>'),
  delivery:iconArt('#24c6ae','<path d="M10 17H54V46H10Z" rx="7" fill="#fff"/><path d="M17 27H47M17 36H38" stroke="#24c6ae" stroke-width="5" stroke-linecap="round"/><circle cx="47" cy="43" r="5" fill="#ffdb45"/>'),
+ kakaot:iconArt('#fee500','<text x="32" y="43" text-anchor="middle" fill="#241d00" font-size="44" font-weight="800">T</text>'),
  files:iconArt('#fff','<path d="M8 22Q8 16 15 16H26L31 21H50Q56 21 56 28V46Q56 51 50 51H14Q8 51 8 45Z" fill="#1689ff"/><path d="M8 28H56V45Q56 51 50 51H14Q8 51 8 45Z" fill="#51a7ff"/>')
 });
 
-const apps=[["KakaoTalk","kkt"],["Instagram","ig"],["X","x"],["相册","photos"],["备忘录","notes"],["文件","files"],["日历","calendar"],["NAVER Map","map"],["设置","settings"],["YouTube","youtube"],["Spotify","spotify"],["Melon","melon"],["相机","camera"],["电话","phone"],["外卖民族","delivery"]];
+const apps=[["KakaoTalk","kkt"],["Instagram","ig"],["X","x"],["相册","photos"],["备忘录","notes"],["文件","files"],["日历","calendar"],["NAVER Map","map"],["设置","settings"],["YouTube","youtube"],["Spotify","spotify"],["Melon","melon"],["相机","camera"],["电话","phone"],["外卖民族","delivery"],["Kakao T","kakaot"]];
 function icon(k){return icons[k]||({calendar:icons.generic("31","#fff"),map:icons.generic("🗺️","#b8e3f6"),settings:icons.generic("⚙️","#a5a6ad"),youtube:icons.generic("▶","#fa2222"),spotify:icons.generic("≋","#18c85e"),delivery:icons.generic("배","#28c5ac")}[k]||icons.generic("✦","#888"))}
 function appBtn(name,key,dock=false){return `<button class="app" onclick="openApp('${key}')"><span class="appicon">${icon(key)}</span>${dock?"":`<span>${name}</span>`}</button>`}
 $("apps").innerHTML=apps.slice(0,8).map(a=>appBtn(...a)).join("");$("apps2").innerHTML=apps.slice(8).map(a=>appBtn(...a)).join("");$("dock").innerHTML=[["电话","phone"],["KakaoTalk","kkt"],["信息","msg"],["相机","camera"]].map(a=>appBtn(...a,true)).join("");
@@ -203,4 +204,4 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 <script src="js/chapter1.js?v=20261029-reset-a"></script>
 <script src="js/chapter2.js?v=20261029-readpace-v2"></script>
 <script src="js/chapter3.js?v=20261029-readpace-v2"></script>
-<script src="js/chapter4.js?v=20261029-readpace-v2"></script><script src="js/phone-global.js?v=20261029-readpace-v2"></script><script src="js/chapter5.js?v=20261029-readpace-v2"></script><script src="js/chapter6.js?v=20261029-file-entry-v7"></script><script src="js/chapter-navigation.js?v=20261029-ch6-nav"></script><link rel="stylesheet" href="css/naver-map.css?v=20261029-a"><script src="js/naver-map.js?v=20261029-a"></script><link rel="stylesheet" href="css/chapter7.css?v=20261029-b"><script src="js/chapter7.js?v=20261029-b"></script><link rel="stylesheet" href="css/chapter8.css?v=20261029-input-fix"><script src="js/chapter8.js?v=20261029-newline-fix"></script><script src="js/chapter-ending-global.js?v=20261029-notes-dedupe"></script></body></html>
+<script src="js/chapter4.js?v=20261029-readpace-v2"></script><script src="js/phone-global.js?v=20261029-readpace-v2"></script><script src="js/chapter5.js?v=20261029-readpace-v2"></script><script src="js/chapter6.js?v=20261029-file-entry-v7"></script><script src="js/chapter-navigation.js?v=20261029-ch6-nav"></script><link rel="stylesheet" href="css/naver-map.css?v=20261029-a"><script src="js/naver-map.js?v=20261029-a"></script><link rel="stylesheet" href="css/chapter7.css?v=20261029-b"><script src="js/chapter7.js?v=20261029-b"></script><link rel="stylesheet" href="css/chapter8.css?v=20261029-input-fix"><script src="js/chapter8.js?v=20261029-newline-fix"></script><link rel="stylesheet" href="css/chapter9.css?v=20261029-ch9-a"><script src="js/chapter9.js?v=20261029-ch9-a"></script><script src="js/chapter-ending-global.js?v=20261029-ch9-a"></script></body></html>
