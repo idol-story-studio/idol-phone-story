@@ -97,14 +97,14 @@ function ch10Photoism(){
  wrap('PHOTOISM','<div class="ch10-photo-app"><div class="ch10-photo-brand">PHOTOISM</div><h2>我的照片</h2><button class="ch10-photo-record" onclick="ch10PhotoDetail()"><span class="ch10-record-thumb">▧</span><span><strong>获奖纪念照 · 四图拼贴</strong><small>领取时间 · 第2日 17:20</small><small>图片标示日期 · 2025.06.21</small></span><b>›</b></button><p class="ch10-muted">这里展示游戏内收藏的纪念照片，并非真实 PHOTOISM 云端订单。</p></div>');
 }
 function ch10PhotoDetail(){
- if(!ch10Is())return;activeApp='photoism';CH10.photoViewed=true;ch10Save();
+ if(!ch10Is()||!CH10.photoNotice)return ch10Photoism();activeApp='photoism';CH10.photoViewed=true;ch10Save();
  wrap('获奖纪念照','<div class="ch10-photo-detail"><button class="ch10-back" onclick="ch10Photoism()">‹ 我的照片</button>'+ch10PhotoImage()+'<p class="ch10-photo-caption">获奖纪念照 · 2025.06.21</p><p class="ch10-muted">领取时间：第2日 17:20 · 来源：PHOTOISM纪念收藏（游戏模拟）</p><button class="ch10-primary" onclick="ch10SavePhoto()">'+(CH10.photoSaved?'已保存到相册':'保存到相册')+'</button><button class="ch10-secondary" onclick="ch10PhotoZoom()">放大查看</button><button class="ch10-secondary" onclick="ch10Photoism()">返回我的照片</button><button class="ch10-secondary" onclick="ch10BeginNight()">继续今天的聊天</button></div>');
 }
 function ch10PhotoZoom(){
  if(!ch10Is())return;activeApp='photoism';wrap('查看照片','<div class="ch10-zoom"><button class="ch10-back" onclick="ch10PhotoDetail()">‹ 返回详情</button>'+ch10PhotoImage()+'</div>');
 }
 function ch10SavePhoto(){CH10.photoSaved=true;ch10Save();ch10PhotoDetail()}
-function ch10Album(){if(!ch10Is())return;activeApp='photos';wrap('相册','<div class="content ch10-album"><h2>PHOTOISM</h2><p>我的获奖纪念照片</p>'+(CH10.photoSaved?'<button onclick="ch10AlbumDetail()" class="ch10-album-tile">'+ch10PhotoImage()+'</button>':'<p>还没有保存照片。可以从 PHOTOISM 领取记录保存。</p>')+'<button class="choice" onclick="ch10Photoism()">打开 PHOTOISM</button></div>')}
+function ch10Album(){if(!ch10Is())return;activeApp='photos';igAlbum();const root=document.querySelector('.content');if(root&&CH10.photoSaved&&!root.querySelector('.ch10-album'))root.insertAdjacentHTML('afterbegin','<div class="ch10-album"><h3>PHOTOISM · 获奖纪念照</h3><button onclick="ch10AlbumDetail()" class="ch10-album-tile">'+ch10PhotoImage()+'</button></div>')}
 function ch10AlbumDetail(){activeApp='photos';wrap('照片','<div class="ch10-photo-detail">'+ch10PhotoImage()+'<p class="ch10-photo-caption">2025.06.21 · 获奖纪念照</p><button class="ch10-secondary" onclick="ch10Album()">返回相册</button></div>')}
 function ch10BeginNight(){
  if(!ch10Is()||!CH10.photoViewed||CH10.phase!=='photoReady')return;
@@ -152,7 +152,7 @@ function ch10Room(quiet=false){
  const el=document.getElementById('chatbody');if(el)el.scrollTop=el.scrollHeight;
 }
 function ch10Friends(){
- if(!ch10Is())return;activeApp='kkt';phoneReadRoom('hyeongjun');
+ if(!ch10Is())return;activeApp='kkt';
  const last=CH10.messages.at(-1)?.text||CH9.hj.at(-1)?.text||'历史消息';
  const entries=[['宋亨俊','hyeongjun',last],['CRAVITY 🐾','group','历史消息'],['徐宇瑸','woobin','历史消息'],['咸元进','wonjin','历史消息'],['朴世琳','serim','历史消息'],['A','ch8friend','历史消息']];
  wrap('KakaoTalk','<div class="content ch5-friends">'+entries.map(([name,id,sub])=>'<div class="item" onclick="gameChat(\''+id+'\')"><div class="avatar">'+escapeHtml(name[0])+'</div><div class="itemmain"><div class="itemtitle">'+escapeHtml(name)+'</div><div class="itemsub">'+escapeHtml(sub)+'</div></div>'+gameContactBadge(id)+'</div>').join('')+'</div>');
