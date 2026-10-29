@@ -1,5 +1,7 @@
 /* Chapter 8 — 要不要一起吃饭？ | builds on global KakaoTalk, Notes and NAVER Map. */
 const CH8_KEY='idol_ch8_v1';
+/* Register the new KKT contact with the existing unread/badge system. */
+PHONE_NAMES.ch8friend='A';
 const CH8={active:false,done:false,phase:'',session:0,callIndex:0,callState:'none',callSeconds:0,friend:[],hj:[],memo:false,mapOpened:false,mapSeconds:0,typed:0,draft:'',pending:[],pendingAfter:'',timerAt:0,clock:19*60+10,notes:[],callLog:false};
 const CH8_CALL=[
 ['A','喂，敏熙？'],['me','嗯，怎么啦'],['A','你最近是不是特别忙啊'],['me','还好，怎么突然问这个ㅋㅋ'],['A','没什么，想叫你出来吃个饭'],['A','我们都多久没见了'],['me','是有一阵子了'],['A','我本来想让亨俊直接跟你说的'],['A','结果他说你们现在不住一起了'],['me','……嗯'],['A','我还以为你们一直住一起呢ㅋㅋ'],['A','所以就自己打给你了'],['A','那天有空吗？一起吃饭吧'],['me','好啊，我去'],['A','行，那我等下跟亨俊说一声'],['me','不用了，我自己跟他说'],['A','哦？行啊ㅋㅋ'],['A','那我把地址发你'],['me','好，发我就行'],['A','那到时候见'],['me','到时候见']];
