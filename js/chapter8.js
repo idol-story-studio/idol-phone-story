@@ -6,7 +6,7 @@ const CH8={active:false,done:false,phase:'',session:0,callIndex:0,callState:'non
 const CH8_CALL=[
 ['A','喂，敏熙？'],['me','嗯，怎么啦'],['A','你最近是不是特别忙啊'],['me','还好，怎么突然问这个ㅋㅋ'],['A','没什么，想叫你出来吃个饭'],['A','我们都多久没见了'],['me','是有一阵子了'],['A','我本来想让亨俊直接跟你说的'],['A','结果他说你们现在不住一起了'],['me','……嗯'],['A','我还以为你们一直住一起呢ㅋㅋ'],['A','所以就自己打给你了'],['A','那天有空吗？一起吃饭吧'],['me','好啊，我去'],['A','行，那我等下跟亨俊说一声'],['me','不用了，我自己跟他说'],['A','哦？行啊ㅋㅋ'],['A','那我把地址发你'],['me','好，发我就行'],['A','那到时候见'],['me','到时候见']];
 const CH8_LOCATION={id:'ch8_dinner_place',name:'Restaurant ON',ko:'레스토랑 온',area:'首尔 · 江南区清潭洞',address:'首尔特别市江南区宣陵路148街48号 美俊大厦3层',naverQuery:'레스토랑 온 서울 강남구 선릉로148길 48',sharedBy:'A',time:'19:20'};
-const CH8_HINT='A把聚餐地点发来了。\\n\\n去 KakaoTalk 找亨俊，亲自问问他要不要一起去吧。';
+const CH8_HINT='A把聚餐地点发来了。\n\n去 KakaoTalk 找亨俊，亲自问问他要不要一起去吧。';
 let ch8Timer=null,ch8MapTimer=null,ch8CallTimer=null;
 function ch8Is(){return CH8.active&&game.stage==='chapter8'}
 function ch8Save(){try{localStorage.setItem(CH8_KEY,JSON.stringify(CH8))}catch(e){}}
