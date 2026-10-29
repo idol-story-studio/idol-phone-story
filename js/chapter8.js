@@ -87,7 +87,7 @@ function ch8Push(room,who,text){
  else if(who!=='me'){phoneReceiveMessage(id,text==='[地点]'?'分享了一个地点':text)}
 }
 function ch8Queue(room,lines,after){CH8.pending=lines.map(x=>[room,...x]);CH8.pendingAfter=after;ch8Save();ch8Resume()}
-function ch8Resume(){if(!ch8Is()||ch8Timer||!CH8.pending.length)return;const token=CH8.session;function tick(){ch8Timer=null;if(!ch8Is()||CH8.session!==token)return;if(!CH8.pending.length){const a=CH8.pendingAfter;CH8.pendingAfter='';ch8Save();ch8After(a);return}const [room,who,msg]=CH8.pending.shift();ch8Push(room,who,msg);ch8Timer=setTimeout(tick,phoneMessageDelay(msg))}ch8Timer=setTimeout(tick,650)}
+function ch8Resume(){if(!ch8Is()||ch8Timer||!CH8.pending.length)return;const token=CH8.session;function tick(){ch8Timer=null;if(!ch8Is()||CH8.session!==token)return;if(!CH8.pending.length){const a=CH8.pendingAfter;CH8.pendingAfter='';ch8Save();ch8After(a);return}const [room,who,msg]=CH8.pending[0];if(who==='me'&&!phonePlayerCanAutoReply(room==='friend'?'ch8friend':'hyeongjun')){ch8Timer=setTimeout(tick,350);return}CH8.pending.shift();ch8Save();ch8Push(room,who,msg);ch8Timer=setTimeout(tick,phoneMessageDelay(msg))}ch8Timer=setTimeout(tick,650)}
 function ch8After(a){if(a==='intro1'||a==='intro2'){CH8.phase=a;ch8Save();ch8AutoIntro(a)}if(a==='declineReply'){CH8.phase='declineReply';ch8Save();if(phoneRoomOpen('ch8friend'))ch8FriendRoom(true)}
  if(a==='locationReady'){CH8.phase='map';ch8Save()}
  if(a==='introDone'){CH8.phase='type1';ch8Save();if(phoneRoomOpen('hyeongjun'))ch8Room(true)}
@@ -155,8 +155,8 @@ function ch8Room(quiet=false){
 }
 function ch8AutoStartChat(){if(ch8Is()&&CH8.memo&&CH8.phase==='map'&&!CH8.hj.length)ch8SendIntro(0)}
 function ch8AutoIntro(a){if(!ch8Is())return;setTimeout(()=>{if(!ch8Is()||CH8.phase!==a)return;ch8SendIntro(a==='intro1'?1:2)},1200)}
-function ch8AutoMeetReply(){setTimeout(()=>{if(ch8Is()&&CH8.phase==='meetReply')ch8MeetReply()},1500)}
-function ch8AutoFinalReply(){setTimeout(()=>{if(ch8Is()&&CH8.phase==='finalReply')ch8FinalReply()},1400)}
+function ch8AutoMeetReply(){setTimeout(()=>{if(ch8Is()&&CH8.phase==='meetReply'&&phonePlayerCanAutoReply('hyeongjun'))ch8MeetReply()},1500)}
+function ch8AutoFinalReply(){setTimeout(()=>{if(ch8Is()&&CH8.phase==='finalReply'&&phonePlayerCanAutoReply('hyeongjun'))ch8FinalReply()},1400)}
 function ch8SendIntro(i){
  if(!ch8Is())return;
  if(i===0&&CH8.phase==='map'&&CH8.memo){ch8Push('hj','me','刚刚A给我打电话了');CH8.phase='introWaiting1';ch8Save();ch8Queue('hj',[['them','嗯？']],'intro1')}
