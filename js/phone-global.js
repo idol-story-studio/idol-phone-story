@@ -1,7 +1,7 @@
 /* Global phone contracts — load after all chapter modules.
    New chapters must call phoneReceiveMessage / phoneReceiveNote, and use phoneMessageDelay. */
 const PHONE_RULES_VERSION=2;
-const PHONE_NAMES={hyeongjun:'宋亨俊',wonjin:'咸元进',woobin:'徐宇瑸',serim:'朴世琳',group:'CRAVITY 🐾'};
+const PHONE_NAMES={hyeongjun:'宋亨俊',wonjin:'咸元进',woobin:'徐宇瑸',serim:'朴世琳',group:'CRAVITY 🐾',manager:'经纪人',ch8friend:'A',ch9group:'今晚吃饭 🍽'};
 const PHONE_UNREAD_KEY='idol_phone_unread_v1';
 const phoneUnread=(()=>{try{return JSON.parse(localStorage.getItem(PHONE_UNREAD_KEY))||{}}catch(e){return {}}})();
 const phoneCounts={...phoneUnread};
@@ -18,15 +18,18 @@ function phoneCount(id){return Math.max(0,Number(phoneCounts[id])||0)}
 function phoneSetCount(id,n){phoneCounts[id]=Math.max(0,Number(n)||0);phoneSaveUnread();phoneUpdateBadges()}
 function phoneReadRoom(id,app='kkt'){phoneSetCount(app==='ig'?'ig:'+id:id,0)}
 function phoneIgRoomOpen(id){return activeApp==='ig'&&typeof igScreen!=='undefined'&&igScreen==='chat'&&typeof igTarget!=='undefined'&&igTarget===id&&current==='appview'}
-function phoneReceiveDM(app,id,message){const open=app==='ig'?phoneIgRoomOpen(id):phoneRoomOpen(id);if(open)return;const key=app==='ig'?'ig:'+id:id;phoneSetCount(key,phoneCount(key)+1);phoneBanner(app,PHONE_NAMES[id]||'新消息',String(message||'发来一条新消息'),key)}
+function phoneReceiveDM(app,id,message){const open=app==='ig'?phoneIgRoomOpen(id):phoneRoomOpen(id);if(open){phoneReadRoom(id,app);return}const key=app==='ig'?'ig:'+id:id;phoneSetCount(key,phoneCount(key)+1);phoneBanner(app,PHONE_NAMES[id]||'新消息',String(message||'发来一条新消息'),key)}
 function phoneReceiveMessage(id,message){return phoneReceiveDM('kkt',id,message)}
-function phoneReceiveNote(title,target='notes'){if(activeApp==='notes'&&current==='appview')return;phoneSetCount('notes',phoneCount('notes')+1);phoneBanner('notes','备忘录',title||'有新的内容',target)}
+function phoneReceiveNote(title,target='notes'){if(activeApp==='notes'&&current==='appview'){phoneReadRoom('notes');return}phoneSetCount('notes',phoneCount('notes')+1);phoneBanner('notes','备忘录',title||'有新的内容',target)}
 function phoneUpdateBadges(){
  const total=Object.keys(PHONE_NAMES).reduce((n,k)=>n+phoneCount(k),0);
  game.unread.kkt=total;game.unread.ig=Object.keys(phoneCounts).filter(k=>k.startsWith('ig:')).reduce((n,k)=>n+phoneCount(k),0);game.unread.notes=phoneCount('notes');
  document.querySelectorAll('.app').forEach(btn=>{const key=(btn.getAttribute('onclick')||'').match(/openApp\('([^']+)'\)/)?.[1];if(!key)return;btn.querySelector('.story-badge')?.remove();const n=key==='kkt'?total:key==='ig'?game.unread.ig:key==='notes'?phoneCount('notes'):Math.max(0,game.unread[key]||0);if(n){const b=document.createElement('span');b.className='story-badge';b.textContent=n>99?'99+':String(n);btn.appendChild(b)}});
 }
 function phoneOpenRoom(id){
+  if(id==='photoism'&&typeof ch10Photoism==='function')return ch10Photoism();
+  if(id==='melon'&&typeof melonOpen==='function')return melonOpen('home');
+  if(id==='ch5-birthday'&&typeof ch4Calendar==='function')return ch4Calendar();
  if(id==='notes'){gameNotes();return}if(typeof id==='string'&&id.startsWith('ig:')){instagram();igChat(id.slice(3));return}
  if(typeof CH4!=='undefined'&&CH4.active&&game.stage==='chapter4'){
    if(id==='group')return ch4Group();if(id==='hyeongjun')return ch4Room();
