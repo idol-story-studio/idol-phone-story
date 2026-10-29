@@ -103,6 +103,7 @@ const ch4NavWrap=wrap;
 wrap=function(title,body,extra){
  const app=activeApp||null;
  const currentView=String(title)+'|'+(app||'');
+ if((app==='kkt'&&title==='KakaoTalk')||(app==='notes'&&title==='备忘录')){CH4_NAV.stack=[];CH4_NAV.view=null;CH4_NAV.app=app}
  if(CH4_NAV.app!==app){CH4_NAV.stack=[];CH4_NAV.view=null;CH4_NAV.app=app}
  else if(!CH4_NAV.restoring&&CH4_NAV.view!==currentView&&current==='appview'){
   const el=$('appbody');
@@ -114,6 +115,26 @@ wrap=function(title,body,extra){
  if(back){back.setAttribute('onclick','gameNavigateBack()');back.textContent='‹ 返回'}
 };
 function gameNavigateBack(){
+ if(current==='appview'&&(activeApp==='kkt'||activeApp==='notes')){
+  const title=$('appbody')?.querySelector('.apphead span')?.textContent||'';
+  if((activeApp==='kkt'&&title==='KakaoTalk')||(activeApp==='notes'&&title==='备忘录')){
+   CH4_NAV.stack=[];CH4_NAV.view=null;CH4_NAV.app=null;
+   return goHome();
+  }
+  CH4_NAV.stack=[];CH4_NAV.view=null;CH4_NAV.app=activeApp;
+  if(activeApp==='notes')return openApp('notes');
+  if(typeof ch10Is==='function'&&ch10Is())return ch10Friends();
+  if(typeof ch9Is==='function'&&ch9Is())return ch9Friends();
+  if(typeof ch8Is==='function'&&ch8Is())return ch8Friends();
+  if(typeof ch7Is==='function'&&ch7Is())return ch7Friends();
+  if(typeof ch6Is==='function'&&ch6Is())return ch6Friends();
+  if(typeof ch5Is==='function'&&ch5Is())return ch5Friends();
+  if(typeof ch4Is==='function'&&ch4Is())return ch4Friends();
+  if(typeof CH3!=='undefined'&&CH3.active&&game.stage==='chapter3')return ch3Friends();
+  if(typeof ch2Active==='function'&&ch2Active())return ch2Friends();
+  return gameFriends();
+ }
+
  // Direct notification links may open a conversation without visiting its list.
  // In that case Back must reconstruct the parent, not exit the app.
  if(!CH4_NAV.stack.length&&current==='appview'){
