@@ -44,7 +44,7 @@
 <style id="ch6-styles">
 .ch6-facetime{position:absolute;inset:0;z-index:110;background:#0c0e12;color:white;display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
 .ch6-stage{position:relative;flex:1;min-height:0;overflow:hidden;background:#17191d}
-.ch6-stage>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform 1.2s ease-in-out;will-change:transform}
+.ch6-stage>img{position:absolute;top:0;left:0;width:auto;max-width:none;height:100%;object-fit:contain;transform-origin:left center;transition:transform 2.2s cubic-bezier(.4,0,.2,1);will-change:transform}
 .ch6-dim{position:absolute;inset:0;background:linear-gradient(#0007,transparent 24%,transparent 55%,#0008);pointer-events:none}
 .ch6-call-top{position:absolute;top:55px;left:22px;display:flex;flex-direction:column;gap:4px;text-shadow:0 1px 8px #000b}
 .ch6-call-top strong{font-size:22px}.ch6-call-top small{font-size:12px}
@@ -202,4 +202,4 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 <script src="js/chapter1.js?v=20261029-reset-a"></script>
 <script src="js/chapter2.js?v=20261029-readpace-v2"></script>
 <script src="js/chapter3.js?v=20261029-readpace-v2"></script>
-<script src="js/chapter4.js?v=20261029-readpace-v2"></script><script src="js/phone-global.js?v=20261029-readpace-v2"></script><script src="js/chapter5.js?v=20261029-readpace-v2"></script><script src="js/chapter6.js?v=20261029-relay-v3"></script><script src="js/chapter-navigation.js?v=20261029-ch6-nav"></script></body></html>
+<script src="js/chapter4.js?v=20261029-readpace-v2"></script><script src="js/phone-global.js?v=20261029-readpace-v2"></script><script src="js/chapter5.js?v=20261029-readpace-v2"></script><script src="js/chapter6.js?v=20261029-facetime-auto-v4"></script><script src="js/chapter-navigation.js?v=20261029-ch6-nav"></script></body></html>
