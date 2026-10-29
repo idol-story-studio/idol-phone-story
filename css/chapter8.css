@@ -9,3 +9,11 @@
 .ch8-cheongdam-map::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 41%,#fff 41%,#fff 47%,transparent 47%),linear-gradient(12deg,transparent 57%,#fff 57%,#fff 63%,transparent 63%);opacity:.8}
 .ch8-cheongdam-map strong,.ch8-cheongdam-map small,.ch8-map-pin{position:relative;z-index:1}.ch8-cheongdam-map strong{font-size:17px;background:#fff;padding:4px 9px;border-radius:8px}.ch8-cheongdam-map small{font-size:10px;color:#547569;background:#ffffffc9;padding:3px 7px;border-radius:6px}
 .ch8-map-pin{color:#03c75a;font-size:35px;text-shadow:0 1px 3px #fff}.ch8-map-street{position:absolute;font-size:12px;color:#7e9489;z-index:1}.ch8-street-a{left:12px;bottom:35px}.ch8-street-b{right:14px;top:25px}.ch8-map-address{font-size:13px;line-height:1.6;color:#525a60;margin:12px 0}
+
+/* Keep the two manual KKT replies above the iPhone home gesture layer.
+   The global .story-send bottom:21px was covered by the homebar. */
+#ch2-chat.ch5-chat:has(.ch8-type) .story-send{bottom:58px!important;z-index:25;display:block;padding:10px 12px 12px;pointer-events:auto}
+#ch2-chat .ch8-type{position:relative;z-index:26;width:100%;pointer-events:auto}
+#ch2-chat .ch8-input-row{display:flex;width:100%;align-items:stretch}
+#ch2-chat .ch8-input-row input{position:relative;z-index:27;display:block;min-width:0;flex:1 1 auto;width:0;min-height:46px;pointer-events:auto;user-select:text;-webkit-user-select:text;touch-action:manipulation}
+#ch2-chat .ch8-input-row button{flex:0 0 65px;width:65px!important;text-align:center;pointer-events:auto}
