@@ -1,6 +1,6 @@
 /* Chapter navigation and restore coordinator. Test jumps start the selected chapter anew. */
 const STORY_CHAPTER_KEY='idol_current_chapter_v1';
-const STORY_CHAPTER_NAMES=['','一','二','三','四','五','六','七'];
+const STORY_CHAPTER_NAMES=['','一','二','三','四','五','六','七','八'];
 function storyChapterSet(n){try{localStorage.setItem(STORY_CHAPTER_KEY,String(n))}catch(e){}}
 function storyChapterResetUnread(){
  if(typeof phoneSetCount==='function'){
@@ -9,11 +9,12 @@ function storyChapterResetUnread(){
 }
 function storyChapterJump(n){
  n=Number(n);
- if(!Number.isInteger(n)||n<1||n>7)return;
+ if(!Number.isInteger(n)||n<1||n>8)return;
  // Invalidate outstanding chapter timers before switching.
  if(typeof CH3!=='undefined'){CH3.active=false;CH3.session=(CH3.session||0)+1}
  if(typeof CH4!=='undefined'){CH4.active=false;CH4.session=(CH4.session||0)+1}
  if(typeof CH5!=='undefined'){CH5.active=false;CH5.session=(CH5.session||0)+1;CH5.queue=null;CH5.queueIndex=0;CH5.queueAfter=null}
+ if(typeof CH8!=='undefined'){CH8.active=false;CH8.session=(CH8.session||0)+1;CH8.pending=[];document.getElementById('ch8-call')?.remove()}
  if(typeof CH7!=='undefined'){CH7.active=false;CH7.session=(CH7.session||0)+1;CH7.queue=null}
  if(typeof CH6!=='undefined'){CH6.active=false;CH6.session=(CH6.session||0)+1;CH6.queue=null;document.getElementById('ch6-facetime')?.remove();clearInterval(ch6ClockTimer)}
  if(typeof CH2!=='undefined')CH2.session=(CH2.session||0)+1;
@@ -40,11 +41,12 @@ function storyChapterJump(n){
  // Keep earlier chat history where available, but restart only chapter five.
  if(n===5){CH5.active=false;ch5Start();return}
  CH5.done=true;if(n===6){CH6.active=false;ch6Start();return}
- CH6.done=true;CH7.active=false;ch7Start();
+ CH6.done=true;if(n===7){CH7.active=false;ch7Start();return}
+ CH7.done=true;CH8.active=false;ch8Start();
 }
 function storyChapterMenu(){
  activeApp='notes';
- const currentNumber=game.stage==='chapter7'?7:game.stage==='chapter6'?6:game.stage==='chapter5'?5:game.stage==='chapter4'?4:game.stage==='chapter3'?3:game.stage==='chapter2'?2:1;
+ const currentNumber=game.stage==='chapter8'?8:game.stage==='chapter7'?7:game.stage==='chapter6'?6:game.stage==='chapter5'?5:game.stage==='chapter4'?4:game.stage==='chapter3'?3:game.stage==='chapter2'?2:1;
  const buttons=STORY_CHAPTER_NAMES.slice(1).map((name,i)=>{
   const n=i+1;
   return '<button class="note story-chapter-button" onclick="storyChapterJump('+n+')"><strong>前往第'+name+'章</strong></button>';
